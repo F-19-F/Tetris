@@ -210,4 +210,5 @@ int game_core::Min_R()
     {
         return x;
     }
+    return -1;
 }
