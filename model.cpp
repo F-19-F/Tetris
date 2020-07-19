@@ -1,4 +1,5 @@
 #include "head.h"
+#include "terminal-linux.h"
 //方块模型
 model::model(int mode)
 {
@@ -78,6 +79,8 @@ void model::print_model()
 {
     //clean_screen();
     //cout.flush();
+    //代表某一行已经打印的个数，方便用移动光标的方法换行
+    int R_printed;
     bool end_signal = false;
     bool base_map_black[8][8];
     int temp;
@@ -109,6 +112,7 @@ void model::print_model()
     memset(base_map_black, 0, 64 * sizeof(bool));
     for (int j = c_min; j < 8; j++)
     {
+        R_printed=0;
         for (int i = r_min; i < 8; i++)
         {
             //伪记忆搜索
@@ -123,11 +127,15 @@ void model::print_model()
                     if (base[temp][j])
                         break;
                     if (!base[temp][j])
+                    {
                         cout << " ";
+                        R_printed++;
+                    }
                     temp -= 2;
                 }
                 end_signal = true;
                 cout << "#";
+                R_printed++;
                 cout.flush();
                 if (i - 1 >= 0)
                 {
@@ -165,7 +173,9 @@ void model::print_model()
         }
         if (end_signal)
         {
-            cout << endl;
+            //cout << endl;
+            movedown(1);
+            moveleft(R_printed);
             end_signal = false;
         }
     }
