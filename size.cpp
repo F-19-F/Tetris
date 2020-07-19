@@ -1,5 +1,5 @@
 #include "head.h"
-void Size_deceter(bool changed)
+void Size_deceter(bool* changed)
 {
     int ini_hight = 0;
     int ini_long = 0;
@@ -12,7 +12,7 @@ void Size_deceter(bool changed)
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
         if (ini_hight != w.ws_row || ini_long != w.ws_col)
         {
-            changed = true;
+            *changed = true;
             ini_hight = w.ws_row;
             ini_long = w.ws_col;
         }

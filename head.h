@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 #define Print_base "▇"
 using namespace std;
-void Size_deceter(bool changed);
+void Size_deceter(bool* changed);
 struct clean_base
 {
     int location;
@@ -32,12 +32,13 @@ public:
     //初始化
     game_core(int x, int y);
     ~game_core();
-    //删除表中现有空行
+    //删除表中现有空行---辅助函数
     void flash();
-    //删除clean所返回的需要删除的行
+    //删除clean所返回的需要删除的行--辅助函数
     void R_delete();
-    //返回删除行的个数
+    //执行一次，满行全部删除
     int clean();
+    int Min_R();
 };
 class model
 {
