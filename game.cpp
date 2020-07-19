@@ -3,7 +3,7 @@
 bool changed = false;
 void size()
 {
-    Size_deceter(changed);
+    Size_deceter(&changed);
 }
 int main()
 {
@@ -20,10 +20,11 @@ int main()
     {
         test->debug_core();
         test->print();
-        this_thread::sleep_for(std::chrono::milliseconds(100));//c++特有的休眠方式
+        this_thread::sleep_for(std::chrono::milliseconds(1000));//c++特有的休眠方式
         test->clean();
+        clean_screen();
         test->print();
-        this_thread::sleep_for(std::chrono::milliseconds(200));//c++特有的休眠方式
+        this_thread::sleep_for(std::chrono::milliseconds(2000));//c++特有的休眠方式
         if (changed)
         {
             clean_screen();

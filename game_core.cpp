@@ -36,22 +36,23 @@ void game_core::print()
 {
     //打印边框
     //打印竖直方向的边框
-    red_foreground();
-    red_background();
+    //red_foreground();
+    //blue_background();
+    //clean_screen();
     for (int i = 0; i < x; i++)
     {
         cursor_move(1, x - i + 1);
-        cout << " ";
+        cout << "|";
         cursor_move(y + 2, x - i + 1);
-        cout << " ";
+        cout << "|";
     }
     //打印横方向的边框
     for (int i = 0; i < y; i++)
     {
         cursor_move(2 + i, 1);
-        cout << " ";
+        cout << "-";
         cursor_move(2 + i, x + 2);
-        cout << " ";
+        cout << "-";
     }
     cursor_move(1, 1);
     cout << "┌";
@@ -61,13 +62,14 @@ void game_core::print()
     cout << "┐";
     cursor_move(y + 2, x + 2);
     cout << "┘";
-    end_all();
+    //end_all();
     ///for linux/unix terminal////
-    yellow_background();
+    //yellow_background();
     blue_foreground();
     hide_cursor();
     ///for linux/unix terminal////
-    for (int i = x - 1; i >= 0; i--) //从0行开始到x-1行
+    cout.flush();
+    for (int i = 0; i < Min_R(); i++) //从0行开始到x-1行
     {
         cursor_move(2, x - i + 1); //+1是为了给边框空行
         for (int j = 0; j < y; j++)
@@ -75,7 +77,7 @@ void game_core::print()
             if (*(source + i * y + j))
             {
                 cout << Print_base;
-                //printf(Print_base);
+                cout.flush();
             }
             else
             {
@@ -185,4 +187,27 @@ int game_core::clean()
     //避免内存泄漏
     del_base();
     return sum;
+}
+//返回行标最小的空行
+int game_core::Min_R()
+{
+    int i, j;
+    for (i = 0; i < x; i++)
+    {
+        for (j = 0; j < y; j++)
+        {
+            if (*(source + i * y + j) == true)
+            {
+                break;
+            }
+        }
+        if (j == y)
+        {
+            return i;
+        }
+    }
+    if (i == x)
+    {
+        return x;
+    }
 }
