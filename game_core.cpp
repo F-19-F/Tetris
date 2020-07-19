@@ -93,12 +93,13 @@ void game_core::print()
     cout.flush();
 }
 //初始化x表示能能够占有的行，y表示能够占用的列
-game_core::game_core(int x, int y)
+game_core::game_core(int x, int y,int speed)
 {
     this->x = x - 2; //方便打印边框
     this->y = y;
     source = new bool[x * y];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, x * y * sizeof(bool)); //将方块全部填充为0
+    this->speed=speed;
 }
 game_core::~game_core()
 {
@@ -211,4 +212,22 @@ int game_core::Min_R()
         return x;
     }
     return -1;
+}
+void game_core::Add_model(model *target)
+{
+    clean_screen();
+    print();
+    cout.flush();
+    cursor_move(y/2,2);
+    target->print_model();
+    for (int i=x;i>=Min_R()+2;i--)
+    {
+        clean_screen();
+        print();
+        cout.flush();
+        cursor_move(y/2,x-i+1);
+        target->print_model();
+        cout.flush();
+        this_thread::sleep_for(std::chrono::milliseconds(200));//c++特有的休眠方式
+    }
 }
