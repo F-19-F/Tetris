@@ -53,7 +53,7 @@ int main()
     game_core a(w.ws_row, (w.ws_col / 3) * 2,1);
     model b(1);
     a.Add_model(&b);
-    thread t1(ky);
-    t1.detach();
+    //thread t1(ky);
+    //t1.detach();
     return 0;
 }
