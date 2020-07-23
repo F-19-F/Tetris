@@ -1,9 +1,14 @@
 #include "head.h"
 #include "terminal-linux.h"
 bool changed = false;
+int key_signal = 0;
 void size()
 {
-    Size_deceter(&changed);
+    Size_detecter(&changed);
+}
+void ky()
+{
+    getkey(key_signal);
 }
 /*int main()
 {
@@ -48,5 +53,7 @@ int main()
     game_core a(w.ws_row, (w.ws_col / 3) * 2,1);
     model b(1);
     a.Add_model(&b);
+    thread t1(ky);
+    t1.detach();
     return 0;
 }

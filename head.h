@@ -7,7 +7,8 @@
 #include <sys/ioctl.h>
 #define Print_base "▇"
 using namespace std;
-void Size_deceter(bool* changed);
+void Size_detecter(bool* changed);
+void getkey(int output);
 struct clean_base
 {
     int location;
