@@ -1,5 +1,5 @@
 #include "head.h"
-void Size_deceter(bool* changed)
+void Size_detecter(bool* changed)
 {
     int ini_hight = 0;
     int ini_long = 0;
