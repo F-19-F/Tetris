@@ -1,4 +1,5 @@
-#include "head.h"
+#include <iostream>
+using namespace std;
 #include "terminal-linux.h"
 void getkey(int output)
 {

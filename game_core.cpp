@@ -1,4 +1,9 @@
-#include "head.h"
+//#include "head.h"
+#include <iostream>
+#include <thread>
+#include <memory.h>
+using namespace std;
+#include "game_core.h"
 #include "terminal-linux.h"
 void game_core::del_base()
 {
