@@ -1,5 +1,11 @@
-#include "head.h"
+#include <iostream>
+#include <thread>
+#include <unistd.h>
+#include <sys/ioctl.h>
 #include "terminal-linux.h"
+#include "game_core.h"
+void Size_detecter(bool* changed);
+void getkey(int output);
 bool changed = false;
 int key_signal = 0;
 void size()

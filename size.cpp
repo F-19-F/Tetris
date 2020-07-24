@@ -1,4 +1,6 @@
-#include "head.h"
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <thread>
 void Size_detecter(bool* changed)
 {
     int ini_hight = 0;

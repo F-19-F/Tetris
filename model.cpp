@@ -1,5 +1,9 @@
-#include "head.h"
+//#include "head.h"
+#include <iostream>
 #include "terminal-linux.h"
+#include "model.h"
+#include "memory.h"
+using namespace std;
 //方块模型
 model::model(int mode)
 {
