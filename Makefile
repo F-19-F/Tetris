@@ -26,7 +26,7 @@ include $(DEPEND)
 #下面的命令，第一行删除前面的旧.d文件(如果存在的话)，并生成临时文件，在末尾切换到输出目录
 #第二行在g++的输出的基础上添加一个对应.d的目标文件，并将修改后的内容储存至.d文件中
 %.d : %.cpp
-	rm -rf $@;$(CXX) -MM $< > $(OUTPATH)$@.temp;cd $(OUTPATH);\
+	@rm -rf $@;$(CXX) -MM $< > $(OUTPATH)$@.temp;cd $(OUTPATH);\
 	sed 's,$(patsubst %.cpp,%.o,$<),$(patsubst %.cpp,%.o,$<) $@ ,g' <$@.temp > $@;rm -rf $(patsubst %.cpp,%.d,$<).temp
 test:
 	@echo $(SRC)
