@@ -1,6 +1,6 @@
 #include <iostream>
-#include "./include/terminal-linux.h"
-#include "./include/model.h"
+#include "include/terminal-linux.h"
+#include "include/model.h"
 #include "memory.h"
 using namespace std;
 //方块模型
