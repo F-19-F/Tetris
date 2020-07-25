@@ -3,8 +3,8 @@
 #include <thread>
 #include <memory.h>
 using namespace std;
-#include "./include/game_core.h"
-#include "./include/terminal-linux.h"
+#include "include/game_core.h"
+#include "include/terminal-linux.h"
 void game_core::del_base()
 {
     clean_base *target;

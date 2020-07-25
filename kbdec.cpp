@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
-#include "./include/terminal-linux.h"
+#include "include/terminal-linux.h"
 void getkey(int output)
 {
     char key;
