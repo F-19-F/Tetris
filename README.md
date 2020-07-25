@@ -1,0 +1,22 @@
+# Tetris
+ 
+This a terminal game Tetris.
+ 
+### How to build
+ 
+On Linux/Unix : 
+ 
+```
+make Tetris
+```
+On Windows : you should install mingw to build (not ready now)
+
+```
+mingw32-make Tetris
+```
+
+## Authors
+ 
+* **F-19-F/F19** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+ 
+See also the list of [contributors](https://github.com/F-19-F/Tetris/contributors) who participated in this project.
