@@ -1,5 +1,5 @@
-#include <unistd.h>
-#include <sys/ioctl.h>
+#include <unistd.h>//linux/unix
+#include <sys/ioctl.h>//linux/unix
 #include <thread>
 void Size_detecter(bool* changed)
 {

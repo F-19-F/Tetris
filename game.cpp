@@ -1,8 +1,8 @@
 #include <iostream>
 #include <thread>
 #include <unistd.h>
-#include <sys/ioctl.h>
-#include "include/terminal-linux.h"
+#include <sys/ioctl.h>//linux/unix
+#include "include/terminal-linux.h"//linux/unix
 #include "include/game_core.h"
 void Size_detecter(bool* changed);
 void getkey(int output);
