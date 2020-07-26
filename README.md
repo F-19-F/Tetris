@@ -17,6 +17,6 @@ mingw32-make Tetris
 
 ## Authors
  
-* **F-19-F/F19** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **F-19-F/F19** - 
  
 See also the list of [contributors](https://github.com/F-19-F/Tetris/contributors) who participated in this project.
