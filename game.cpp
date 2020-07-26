@@ -8,6 +8,7 @@ void Size_detecter(bool* changed);
 void getkey(int output);
 bool changed = false;
 int key_signal = 0;
+using namespace std;
 void size()
 {
     Size_detecter(&changed);
@@ -57,9 +58,24 @@ int main()
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     game_core a(w.ws_row, (w.ws_col / 3) * 2,1);
-    model b(1);
-    a.Add_model(&b);
-    //thread t1(ky);
+    model *b;
+    for (int i=1;i<=5;i++)
+    {
+        //a.debug_core();
+        //a.clean();
+        b=new model(i);
+        a.Add_model(b);
+    }
+    //model b(5);
+    //a.Add_model(&b);
+    cout<<endl;
+    /**********直接getchar()行不通
+    while (1)
+    {
+        std::cout<<getchar();
+    }*/
+    
+    //std::thread t1(ky);
     //t1.detach();
     return 0;
 }
