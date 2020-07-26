@@ -231,7 +231,7 @@ void game_core::Add_model(model *target)
     //由于开头已经打印一次，故将重新更换位置
     for (int i=x;i>=Min_R()+target->get_height();i--)
     {
-        clean_screen();
+        //clean_screen();
         print();
         cout.flush();
         cursor_move(y/2,x-i+2);
@@ -239,5 +239,12 @@ void game_core::Add_model(model *target)
         target->print_model();
         cout.flush();
         this_thread::sleep_for(std::chrono::milliseconds(200));//c++特有的休眠方式
+        for (int j=0;j<5;j++)
+        {
+            clean_line();
+            moveup(1);
+        }
+        //movedown(5);
     }
+    print();
 }
