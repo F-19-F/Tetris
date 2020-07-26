@@ -3,7 +3,7 @@
 #include "include/model.h"
 #include "memory.h"
 using namespace std;
-//方块模型
+//方块模型,mode表示方块类型，1-5将构建预设类型，0代表自主构建
 model::model(int mode)
 {
     memset(base, 0, 64 * sizeof(bool));
@@ -53,6 +53,7 @@ model::model(int mode)
         break;
     }
 }
+//输出原始数据，以便调试--for debug
 void model::print_row()
 {
     for (int i = 0; i < 8; i++)
@@ -78,6 +79,7 @@ void model::print_row()
     }
     cout << endl;
 }
+//输出model形状
 void model::print_model()
 {
     //clean_screen();
@@ -184,6 +186,7 @@ void model::print_model()
     }
     cout.flush();
 }
+//以旋转中心逆时针旋转90度
 void model::changer_neg()
 {
     int after_x;
@@ -209,4 +212,38 @@ void model::changer_neg()
             base[i][j] = changed_map[i][j];
         }
     }
+}
+//返回模型的占用的高
+int model::get_height()
+{
+    int sum=0;
+    for (int j=0;j<8;j++)
+    {
+        for (int i=0;i<8;i++)
+        {
+            if (base[i][j])
+            {
+                sum++;
+                break;
+            }
+        }
+    }
+    return sum;
+}
+//返回模型占用的宽
+int model::get_length()
+{
+    int sum=0;
+    for (int i=0;i<8;i++)
+    {
+        for (int j=0;j<8;j++)
+        {
+            if (base[i][j])
+            {
+                sum++;
+                break;
+            }
+        }
+    }
+    return sum;
 }

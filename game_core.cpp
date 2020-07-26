@@ -1,10 +1,10 @@
-//#include "head.h"
 #include <iostream>
 #include <thread>
 #include <memory.h>
 using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
+//删除临时结果
 void game_core::del_base()
 {
     clean_base *target;
@@ -37,6 +37,7 @@ void game_core::debug_core()
         }
     }
 }
+//输出当前表
 void game_core::print()
 {
     //打印边框
@@ -97,7 +98,7 @@ void game_core::print()
     end_all();
     cout.flush();
 }
-//初始化x表示能能够占有的行，y表示能够占用的列
+//初始化x表示能能够占有的行，y表示能够占用的列,speed为模型下落速度
 game_core::game_core(int x, int y,int speed)
 {
     this->x = x - 2; //方便打印边框
@@ -110,7 +111,7 @@ game_core::~game_core()
 {
     delete[] source;
 }
-//除掉空行
+//删除表中现有空行---辅助函数
 void game_core::flash()
 {
     int r_temp;
@@ -145,7 +146,7 @@ void game_core::flash()
         }
     }
 }
-//删除temp中指定的行,
+//删除clean所返回的需要删除的行--辅助函数
 void game_core::R_delete()
 {
     clean_base *target;
@@ -164,6 +165,7 @@ void game_core::R_delete()
     }
     flash();
 }
+//执行一次，满行全部删除
 int game_core::clean()
 {
     int sum = 0;
@@ -223,14 +225,17 @@ void game_core::Add_model(model *target)
     clean_screen();
     print();
     cout.flush();
-    cursor_move(y/2,2);
-    target->print_model();
-    for (int i=x;i>=Min_R()+2;i--)
+    //第二行开始是考虑到了上边界
+    //cursor_move(y/2,2);
+    //target->print_model();
+    //由于开头已经打印一次，故将重新更换位置
+    for (int i=x;i>=Min_R()+target->get_height();i--)
     {
         clean_screen();
         print();
         cout.flush();
-        cursor_move(y/2,x-i+1);
+        cursor_move(y/2,x-i+2);
+        //target->changer_neg();
         target->print_model();
         cout.flush();
         this_thread::sleep_for(std::chrono::milliseconds(200));//c++特有的休眠方式

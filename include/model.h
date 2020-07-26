@@ -15,4 +15,7 @@ class model
     void print_model();
     //以旋转中心逆时针旋转90度
     void changer_neg();
+    //返回模型的边界占用格数的详情
+    int get_length();
+    int get_height();
 };
