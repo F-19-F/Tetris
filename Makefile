@@ -20,7 +20,7 @@ $(EXEC): $(OBJ)
 include $(DEPEND)
 #在g++ -MM的输出中添加.d的目标,以实现自动创建依赖
 $(DEPEND) : $(DEPENDS)
-	rm -rf $(DEPEND);cd $(OUTPATH);cat $(DEPENDS) >>../$(DEPEND)
+	@rm -rf $(DEPEND);cd $(OUTPATH);cat $(DEPENDS) >>../$(DEPEND)
 %.d : %.cpp
 	@rm -rf $(OUTPATH)$@;$(CXX) -MM $< > $(OUTPATH)$@.temp;cd $(OUTPATH);\
 	sed 's,$(patsubst %.cpp,%.o,$<),$(patsubst %.cpp,%.o,$<) $@ ,g' <$@.temp > $@;rm -rf $(patsubst %.cpp,%.d,$<).temp
