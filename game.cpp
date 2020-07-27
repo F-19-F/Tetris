@@ -5,7 +5,7 @@
 #include "include/terminal-linux.h"//linux/unix
 #include "include/game_core.h"
 #include "include/size.h"
-//#include "include/keydec.h"
+#include "include/keydec.h"
 bool changed = false;
 using namespace std;
 void size()
@@ -54,6 +54,11 @@ void size()
 }*/
 int main()
 {
+    int key_signal;
+    int Press_times;
+    bool key_run=true;
+    std::thread t1(getkey,&key_signal,&Press_times,&key_run);
+    t1.detach();
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     game_core a(w.ws_row, (w.ws_col / 3) * 2,1);
@@ -63,11 +68,13 @@ int main()
         //a.debug_core();
         //a.clean();
         b=new model(i);
-        a.Add_model(b);
+        a.Add_model(b,&key_signal,&Press_times);
+        delete b;
     }
     //model b(5);
     //a.Add_model(&b);
     cout<<endl;
+    key_run=false;
     /**********直接getchar()行不通
     while (1)
     {
@@ -76,5 +83,6 @@ int main()
     
     //std::thread t1(ky);
     //t1.detach();
+    t1.~thread();
     return 0;
 }

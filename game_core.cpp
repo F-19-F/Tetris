@@ -1,15 +1,11 @@
 #include <iostream>
 #include <thread>
 #include <memory.h>
+#include <mutex>
 using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
 #include "include/keydec.h"
-int key_signal = 0;
-void ky()
-{
-    getkey(&key_signal);
-}
 //删除临时结果
 void game_core::del_base()
 {
@@ -89,7 +85,7 @@ void game_core::print()
             if (*(source + i * y + j))
             {
                 cout << Print_base;
-                cout.flush();
+                //cout.flush();
             }
             else
             {
@@ -226,12 +222,17 @@ int game_core::Min_R()
     }
     return -1;
 }
-void game_core::Add_model(model *target)
+void game_core::Add_model(model *target,int* signal,int* Press_times)
 {
+    //int key_signal = 0;
+    //int Press_times=0;
     int temp;
+    int timetemp;
     int x_location = y / 2;
-    std::thread t1(ky);
-    t1.detach();
+    //bool key_run=true;
+    //mutex v_lock;//变量锁
+    /*std::thread t1(getkey,&key_signal,&Press_times,&key_run);
+    t1.detach();*/
     clean_screen();
     print();
     cout.flush();
@@ -245,11 +246,11 @@ void game_core::Add_model(model *target)
         print();
         cout.flush();
         cursor_move(x_location, x - i + 2);
-        if (key_signal)
+        if (*signal)
         {
             again:
-            temp=key_signal;
-            switch (key_signal)
+            temp=*signal;
+            switch (*signal)
             {
             case up:
                 target->changer_neg();
@@ -259,7 +260,7 @@ void game_core::Add_model(model *target)
             case left:
                 if (x_location > 2)
                 {
-                    x_location--;
+                    x_location-=*Press_times;//等待解决
                     //cursor_move(x_location, x - i + 2);
                     //target->print_model();
                 }
@@ -267,16 +268,18 @@ void game_core::Add_model(model *target)
             case right:
                 if (x_location + target->get_length() < y)
                 {
-                    x_location++;
+                    x_location+=*Press_times;//Presstimes等待解决
                     //cursor_move(x_location, x - i + 2);
                     //target->print_model();
                 }
             default:
                 break;
             }
-            if (temp!=key_signal)
-            goto again;
-            key_signal = 0;
+            //if (temp!=key_signal)
+            //goto again;
+            //v_lock.lock();
+            *signal = 0;
+            //v_lock.unlock();
             temp=0;
         }
         //target->changer_neg();
@@ -291,5 +294,12 @@ void game_core::Add_model(model *target)
         //movedown(5);
     }
     print();
-    t1.~thread();
+    //v_lock.lock();
+    //key_run=false;
+    //v_lock.unlock();
+    this_thread::sleep_for(std::chrono::milliseconds(200));
+    //v_lock.lock();
+    //key_signal=-1;
+    //v_lock.unlock();
+    
 }

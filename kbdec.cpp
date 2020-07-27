@@ -1,65 +1,114 @@
 #include <termios.h>
 #include <unistd.h>
 #include <iostream>
+#include <mutex>
 #include "include/keydec.h"
 using namespace std;
-int getkey(int* output)
+//output指定哪个按键按下了，times指明按了多少次，run决定能否运行
+int getkey(int *output, int *times, bool *run)
 {
   char c;
+  mutex v_lock;
+  //用来记录上次按下的按键
+  char temp = 0;
   /*Information below can be found in https://man7.org/linux/man-pages/man3/termios.3.html*/
   /*This function works both on Macos and Linux */
   /*This file was analysed by F-19-F*/
   static struct termios oldt, newt;
-  tcgetattr(STDIN_FILENO, &oldt);//意为获取旧终端的某些信息
+  tcgetattr(STDIN_FILENO, &oldt); //意为获取旧终端的某些信息
   /*gets the parameters associated with the object referred
     by fd and stores them in the termios structure referenced by
     termios_p.  This function may be invoked from a background process;
     however, the terminal attributes may be subsequently changed by a
     foreground process.*/
-  newt = oldt;//复制旧终端信息
-  newt.c_lflag &= ~(ICANON);//对旧的终端信息中的local modes进行修改，实现直接输入的关键
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);//应用修改后的终端信息，以实现不回车输入
+  newt = oldt;                             //复制旧终端信息
+  newt.c_lflag &= ~(ICANON);               //对旧的终端信息中的local modes进行修改，实现直接输入的关键
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt); //应用修改后的终端信息，以实现不回车输入
   /*sets the parameters associated with the terminal 
   (unlesssupport is required from the underlying hardware that is not avail‐able) 
   from the termios structure referred to by termios_p.optional_actions specifies 
   when the changes take effect:*/
   //TCSANOW: the change occurs immediately.
   system("stty -echo"); //系统调用，禁止回显
-  while ((c = getchar()) != 'e')//设置输入e时退出
+  while (run)             //设置输入e时退出
   {
     //char d = c + 'A' - 'a'; //将字符转换成大写
     //cout << (int)c << endl;
-    if ((int)c==sp1)
+    /*if (!*run)
     {
-      c=getchar();
-      if ((int)c==sp2)
+      system("stty echo");
+      tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+      return 0;
+    }*/
+    c = getchar();
+    if ((int)c == sp1)
+    {
+      c = getchar();
+      if ((int)c == sp2)
       {
-        c=getchar();
+        c = getchar();
         switch (c)
         {
         case up:
           //cout <<"Up"<<endl;
-          *output=up;
+          if (c == temp)
+          {
+            *times=*times+1;
+          }
+          else
+          {
+            *times = 1;
+          }
+          *output = up;
+          temp = c;
           break;
         case down:
-         //cout<<"Down"<<endl;
-         *output=down;
-         break;
+          //cout<<"Down"<<endl;
+          if (c == temp)
+          {
+            *times=*times+1;
+          }
+          else
+          {
+            *times = 1;
+          }
+          *output = down;
+          temp = c;
+          break;
         case right:
           //cout<<"Right"<<endl;
-          *output=right;
-        break;
+          if (c == temp)
+          {
+            *times=*times+1;
+          }
+          else
+          {
+            *times = 1;
+          }
+          *output = right;
+          temp = c;
+          break;
         case left:
           //cout<<"Left"<<endl;
-          *output=left;
-        break;
+          if (c == temp)
+          {
+            *times=*times+1;
+          }
+          else
+          {
+            *times = 1;
+          }
+          *output = left;
+          temp = c;
+          break;
         default:
           break;
         }
       }
     }
+    //this_thread::sleep_for(std::chrono::milliseconds(20)); //c++特有的休眠方式
   }
-  system("stty echo"); //系统调用，恢复回显
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);//恢复终端模式
+  system("stty echo");                     //系统调用，恢复回显
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt); //恢复终端模式
   return 0;
 }
