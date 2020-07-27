@@ -33,5 +33,5 @@ public:
     int clean();
     //返回最小空行
     int Min_R();
-    void Add_model(model *target);
+    void Add_model(model *target,int* signal,int* Press_times);
 };
