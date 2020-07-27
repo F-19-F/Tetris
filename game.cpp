@@ -4,19 +4,18 @@
 #include <sys/ioctl.h>//linux/unix
 #include "include/terminal-linux.h"//linux/unix
 #include "include/game_core.h"
-void Size_detecter(bool* changed);
-void getkey(int output);
+#include "include/size.h"
+//#include "include/keydec.h"
 bool changed = false;
-int key_signal = 0;
 using namespace std;
 void size()
 {
     Size_detecter(&changed);
 }
-void ky()
+/*void ky()
 {
     getkey(key_signal);
-}
+}*/
 /*int main()
 {
     //test
