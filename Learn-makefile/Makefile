@@ -27,9 +27,9 @@ EXEC =Tetris
 $(EXEC): $(OBJ)
 	cd $(OUTPATH);$(CXX) $(FLAGS) $(OBJ) -o $(EXEC)
 %.o: %.cpp
-	$(CXX) -c $< -o $(OUTPATH)$@
+	$(CXX) $(FLAGS) -c $< -o $(OUTPATH)$@
 %.o: %.c
-	$(CXX) -c $< -o $(OUTPATH)$@
+	$(CXX) $(FLAGS) -c $< -o $(OUTPATH)$@
 include $(DEPEND)
 $(DEPEND) : $(DEPENDS)
 	@rm -rf $(DEPEND);cd $(OUTPATH);cat $(DEPENDS) >>../$(DEPEND)
