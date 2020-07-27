@@ -261,14 +261,22 @@ void game_core::Add_model(model *target,int* signal,int* Press_times)
                 if (x_location > 2)
                 {
                     x_location-=*Press_times;//等待解决
+                    if (x_location<2)
+                    {
+                        x_location=2;
+                    }
                     //cursor_move(x_location, x - i + 2);
                     //target->print_model();
                 }
                 break;
             case right:
-                if (x_location + target->get_length() < y)
+                if (x_location + target->get_length() < y+2)
                 {
                     x_location+=*Press_times;//Presstimes等待解决
+                    if (x_location>=y-target->get_length()+2)
+                    {
+                        x_location=y-target->get_length()+2;
+                    }
                     //cursor_move(x_location, x - i + 2);
                     //target->print_model();
                 }
