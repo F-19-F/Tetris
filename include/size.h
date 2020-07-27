@@ -1,0 +1,1 @@
+void Size_detecter(bool* changed);

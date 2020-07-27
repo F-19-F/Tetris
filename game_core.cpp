@@ -4,6 +4,12 @@
 using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
+#include "include/keydec.h"
+int key_signal = 0;
+void ky()
+{
+    getkey(&key_signal);
+}
 //删除临时结果
 void game_core::del_base()
 {
@@ -99,13 +105,13 @@ void game_core::print()
     cout.flush();
 }
 //初始化x表示能能够占有的行，y表示能够占用的列,speed为模型下落速度
-game_core::game_core(int x, int y,int speed)
+game_core::game_core(int x, int y, int speed)
 {
     this->x = x - 2; //方便打印边框
     this->y = y;
     source = new bool[x * y];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, x * y * sizeof(bool)); //将方块全部填充为0
-    this->speed=speed;
+    this->speed = speed;
 }
 game_core::~game_core()
 {
@@ -222,6 +228,10 @@ int game_core::Min_R()
 }
 void game_core::Add_model(model *target)
 {
+    int temp;
+    int x_location = y / 2;
+    std::thread t1(ky);
+    t1.detach();
     clean_screen();
     print();
     cout.flush();
@@ -229,16 +239,50 @@ void game_core::Add_model(model *target)
     //cursor_move(y/2,2);
     //target->print_model();
     //由于开头已经打印一次，故将重新更换位置
-    for (int i=x;i>=Min_R()+target->get_height();i--)
+    for (int i = x; i >= Min_R() + target->get_height(); i--)
     {
         clean_screen();
         print();
         cout.flush();
-        cursor_move(y/2,x-i+2);
+        cursor_move(x_location, x - i + 2);
+        if (key_signal)
+        {
+            again:
+            temp=key_signal;
+            switch (key_signal)
+            {
+            case up:
+                target->changer_neg();
+                //cursor_move(x_location, x - i + 2);
+                //target->print_model();
+                break;
+            case left:
+                if (x_location > 2)
+                {
+                    x_location--;
+                    //cursor_move(x_location, x - i + 2);
+                    //target->print_model();
+                }
+                break;
+            case right:
+                if (x_location + target->get_length() < y)
+                {
+                    x_location++;
+                    //cursor_move(x_location, x - i + 2);
+                    //target->print_model();
+                }
+            default:
+                break;
+            }
+            if (temp!=key_signal)
+            goto again;
+            key_signal = 0;
+            temp=0;
+        }
         //target->changer_neg();
         target->print_model();
         cout.flush();
-        this_thread::sleep_for(std::chrono::milliseconds(200));//c++特有的休眠方式
+        this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
         /*for (int j=0;j<5;j++)
         {
             clean_line();
@@ -247,4 +291,5 @@ void game_core::Add_model(model *target)
         //movedown(5);
     }
     print();
+    t1.~thread();
 }
