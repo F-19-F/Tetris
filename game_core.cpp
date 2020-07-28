@@ -51,7 +51,7 @@ void game_core::print()
     {
         cursor_move(1, r - i + 1);
         cout << "|";
-        cursor_move(c+2 , r - i + 1);
+        cursor_move(c + 2, r - i + 1);
         cout << "|";
     }
     //打印横方向的边框
@@ -64,11 +64,11 @@ void game_core::print()
     }
     cursor_move(1, 1);
     cout << "┌";
-    cursor_move(1, r+2);
+    cursor_move(1, r + 2);
     cout << "└";
-    cursor_move(c+2 , 1);
+    cursor_move(c + 2, 1);
     cout << "┐";
-    cursor_move(c+2, r+2);
+    cursor_move(c + 2, r + 2);
     cout << "┘";
     //end_all();
     ///for linux/unix terminal////
@@ -104,7 +104,7 @@ void game_core::print()
 game_core::game_core(int r, int c, int speed)
 {
     this->r = r - 2; //方便打印边框
-    this->c = c-2;
+    this->c = c - 2;
     source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
@@ -223,7 +223,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void game_core::Add_model(model *target,int* signal,int* Press_times)
+void game_core::Add_model(model *target, int *signal, int *Press_times)
 {
     int x_location = c / 2;
     clean_screen();
@@ -238,37 +238,41 @@ void game_core::Add_model(model *target,int* signal,int* Press_times)
         cursor_move(x_location, r - i + 2);
         if (*signal)
         {
-            again:
+        again:
             switch (*signal)
             {
             case up:
                 target->changer_neg();
+                *signal = 1;
                 break;
             case left:
+                *signal = 1;
                 if (x_location > 2)
                 {
-                    
-                    x_location-=*Press_times;
+
+                    x_location -= *Press_times;
                     //this_thread::sleep_for(std::chrono::milliseconds(80));
                     //*control=1;
-                    if (x_location<2)
+                    if (x_location < 2)
                     {
-                        x_location=2;
+                        x_location = 2;
                     }
+
                     //cursor_move(x_location, r - i + 2);
                     //target->print_model();
                 }
                 break;
             case right:
-                if (x_location + target->get_length() < c+2)
+                *signal = 1;
+                if (x_location + target->get_length() < c + 2)
                 {
-                    
-                    x_location+=*Press_times;
+
+                    x_location += *Press_times;
                     //this_thread::sleep_for(std::chrono::milliseconds(80));
                     //*control=1;
-                    if (x_location>=c-target->get_length()+2)
+                    if (x_location >= c - target->get_length() + 2)
                     {
-                        x_location=c-target->get_length()+2;
+                        x_location = c - target->get_length() + 2;
                     }
                     //cursor_move(x_location, r - i + 2);
                     //target->print_model();
@@ -288,7 +292,6 @@ void game_core::Add_model(model *target,int* signal,int* Press_times)
         //movedown(5);
     }
     print();
-    //*control=1;
     this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 /*void game_core::beauty(int* x,int* y,int* key_sig)
