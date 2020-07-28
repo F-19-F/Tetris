@@ -38,6 +38,7 @@ int getkey(int *output, int *times, int *reset)
     {
       *times=0;
       *output=0;
+      *reset=0;//修改后重置reset，避免问题
       //system("stty echo");
       //tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
       //return 0;
