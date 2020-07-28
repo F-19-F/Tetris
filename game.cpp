@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <unistd.h>
 #include <sys/ioctl.h>//linux/unix
 #include "include/terminal-linux.h"//linux/unix
@@ -52,11 +53,12 @@ void size()
     cout << endl;
     return 0;
 }*/
+mutex key_lock;
 int main()
 {
-    int key_signal;
-    int Press_times;
-    bool key_run=true;
+    int key_signal=0;
+    int Press_times=0;
+    int key_run=-1;
     std::thread t1(getkey,&key_signal,&Press_times,&key_run);
     t1.detach();
     struct winsize w;
@@ -67,14 +69,19 @@ int main()
     {
         //a.debug_core();
         //a.clean();
+        key_run=0;
         b=new model(i);
         a.Add_model(b,&key_signal,&Press_times);
+        //Press_times=0;
         delete b;
+        key_lock.lock();
+        key_run=-1;
+        key_lock.unlock();
     }
     //model b(5);
     //a.Add_model(&b);
     cout<<endl;
-    key_run=false;
+    key_run=-1;
     /**********直接getchar()行不通
     while (1)
     {

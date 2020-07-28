@@ -4,8 +4,8 @@
 #include <mutex>
 #include "include/keydec.h"
 using namespace std;
-//output指定哪个按键按下了，times指明按了多少次，run决定能否运行
-int getkey(int *output, int *times, bool *run)
+//output指定哪个按键按下了，times指明按了多少次，reset为1时将重置,为0时将运行，为-1时将退出
+int getkey(int *output, int *times, int *reset)
 {
   char c;
   mutex v_lock;
@@ -30,16 +30,24 @@ int getkey(int *output, int *times, bool *run)
   when the changes take effect:*/
   //TCSANOW: the change occurs immediately.
   system("stty -echo"); //系统调用，禁止回显
-  while (run)             //设置输入e时退出
+  while (1)             //设置输入e时退出
   {
     //char d = c + 'A' - 'a'; //将字符转换成大写
     //cout << (int)c << endl;
-    /*if (!*run)
+    if ((*reset)==1)
+    {
+      *times=0;
+      *output=0;
+      //system("stty echo");
+      //tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+      //return 0;
+    }
+    if ((*reset)==-1)
     {
       system("stty echo");
       tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
       return 0;
-    }*/
+    }
     c = getchar();
     if ((int)c == sp1)
     {
@@ -106,7 +114,7 @@ int getkey(int *output, int *times, bool *run)
         }
       }
     }
-    //this_thread::sleep_for(std::chrono::milliseconds(20)); //c++特有的休眠方式
+    //this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
   }
   system("stty echo");                     //系统调用，恢复回显
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt); //恢复终端模式

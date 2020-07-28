@@ -23,18 +23,18 @@ void game_core::del_base()
 //
 void game_core::debug_core()
 {
-    for (int i = 0; i < x; i++)
+    for (int i = 0; i < r; i++)
     {
-        for (int j = 0; j < y; j++)
+        for (int j = 0; j < c; j++)
         {
             if (rand() % 2)
-                *(source + i * y + j) = true;
+                *(source + i * c + j) = true;
         }
         if (i == 3 || i == 6 || i == 4)
         {
-            for (int j = 0; j < y; j++)
+            for (int j = 0; j < c; j++)
             {
-                *(source + i * y + j) = true;
+                *(source + i * c + j) = true;
             }
         }
     }
@@ -47,28 +47,28 @@ void game_core::print()
     //red_foreground();
     //blue_background();
     //clean_screen();
-    for (int i = 0; i < x; i++)
+    for (int i = 0; i < r; i++)
     {
-        cursor_move(1, x - i + 1);
+        cursor_move(1, r - i + 1);
         cout << "|";
-        cursor_move(y + 2, x - i + 1);
+        cursor_move(c+2 , r - i + 1);
         cout << "|";
     }
     //打印横方向的边框
-    for (int i = 0; i < y; i++)
+    for (int i = 0; i < c; i++)
     {
         cursor_move(2 + i, 1);
         cout << "-";
-        cursor_move(2 + i, x + 2);
+        cursor_move(2 + i, r + 2);
         cout << "-";
     }
     cursor_move(1, 1);
     cout << "┌";
-    cursor_move(1, y);
+    cursor_move(1, r+2);
     cout << "└";
-    cursor_move(y + 2, 1);
+    cursor_move(c+2 , 1);
     cout << "┐";
-    cursor_move(y + 2, x + 2);
+    cursor_move(c+2, r+2);
     cout << "┘";
     //end_all();
     ///for linux/unix terminal////
@@ -77,12 +77,12 @@ void game_core::print()
     hide_cursor();
     ///for linux/unix terminal////
     cout.flush();
-    for (int i = 0; i < Min_R(); i++) //从0行开始到x-1行
+    for (int i = 0; i < Min_R(); i++) //从0行开始到r-1行
     {
-        cursor_move(2, x - i + 1); //+1是为了给边框空行
-        for (int j = 0; j < y; j++)
+        cursor_move(2, r - i + 1); //+1是为了给边框空行
+        for (int j = 0; j < c; j++)
         {
-            if (*(source + i * y + j))
+            if (*(source + i * c + j))
             {
                 cout << Print_base;
                 //cout.flush();
@@ -93,20 +93,20 @@ void game_core::print()
                 //printf(" ");
             }
         }
-        //cursor_move(y+3, x - i + 1);
+        //cursor_move(c+3, x - i + 1);
         //cout << "--------line" << i + 1;
         //cout << endl;
     }
     end_all();
     cout.flush();
 }
-//初始化x表示能能够占有的行，y表示能够占用的列,speed为模型下落速度
-game_core::game_core(int x, int y, int speed)
+//初始化x表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
+game_core::game_core(int r, int c, int speed)
 {
-    this->x = x - 2; //方便打印边框
-    this->y = y;
-    source = new bool[x * y];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
-    memset(source, 0, x * y * sizeof(bool)); //将方块全部填充为0
+    this->r = r - 2; //方便打印边框
+    this->c = c-2;
+    source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
+    memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
 }
 game_core::~game_core()
@@ -118,28 +118,28 @@ void game_core::flash()
 {
     int r_temp;
     int empty_made = 0;
-    for (int i = 0; i < x - empty_made; i++)
+    for (int i = 0; i < r - empty_made; i++)
     {
-        for (int j = 0; j < y; j++)
+        for (int j = 0; j < c; j++)
         {
-            if (*(source + i * y + j) == true)
+            if (*(source + i * c + j) == true)
                 break;
             //将空行压缩
-            if (j == y - 1)
+            if (j == c - 1)
             {
                 r_temp = i;
-                for (int m = i + 1; m < x; m++)
+                for (int m = i + 1; m < r; m++)
                 {
-                    for (int n = 0; n < y; n++)
+                    for (int n = 0; n < c; n++)
                     {
-                        *(source + r_temp * y + n) = *(source + m * y + n);
+                        *(source + r_temp * c + n) = *(source + m * c + n);
                     }
                     r_temp = m;
                 }
                 //将原来最后一行变为空行
-                for (int n = 0; n < y; n++)
+                for (int n = 0; n < c; n++)
                 {
-                    *(source + (x - 1) * y + n) = false;
+                    *(source + (r - 1) * c + n) = false;
                 }
                 //行循环更改
                 empty_made++;
@@ -159,9 +159,9 @@ void game_core::R_delete()
     {
         //重置为0
         r_temp = target->location;
-        for (int i = 0; i < y; i++)
+        for (int i = 0; i < c; i++)
         {
-            *(source + r_temp * y + i) = false;
+            *(source + r_temp * c + i) = false;
         }
         target = target->next;
     }
@@ -175,15 +175,15 @@ int game_core::clean()
     temp_fun = new clean_base;
     temp_fun->next = NULL;
     this->temp = temp_fun;
-    for (int i = 0; i < x; i++)
+    for (int i = 0; i < r; i++)
     {
-        for (int j = 0; j < y; j++)
+        for (int j = 0; j < c; j++)
         {
-            if (*(source + i * y + j) == false)
+            if (*(source + i * c + j) == false)
             {
                 break;
             }
-            if (j == y - 1)
+            if (j == c - 1)
             {
                 temp_fun->next = new clean_base;
                 temp_fun->next->location = i;
@@ -202,50 +202,41 @@ int game_core::clean()
 int game_core::Min_R()
 {
     int i, j;
-    for (i = 0; i < x; i++)
+    for (i = 0; i < r; i++)
     {
-        for (j = 0; j < y; j++)
+        for (j = 0; j < c; j++)
         {
-            if (*(source + i * y + j) == true)
+            if (*(source + i * c + j) == true)
             {
                 break;
             }
         }
-        if (j == y)
+        if (j == c)
         {
             return i;
         }
     }
-    if (i == x)
+    if (i == r)
     {
-        return x;
+        return r;
     }
     return -1;
 }
 void game_core::Add_model(model *target,int* signal,int* Press_times)
 {
-    //int key_signal = 0;
-    //int Press_times=0;
     int temp;
     int timetemp;
-    int x_location = y / 2;
-    //bool key_run=true;
-    //mutex v_lock;//变量锁
-    /*std::thread t1(getkey,&key_signal,&Press_times,&key_run);
-    t1.detach();*/
+    int x_location = c / 2;
     clean_screen();
     print();
     cout.flush();
     //第二行开始是考虑到了上边界
-    //cursor_move(y/2,2);
-    //target->print_model();
-    //由于开头已经打印一次，故将重新更换位置
-    for (int i = x; i >= Min_R() + target->get_height(); i--)
+    for (int i = r; i >= Min_R() + target->get_height(); i--)
     {
         clean_screen();
         print();
         cout.flush();
-        cursor_move(x_location, x - i + 2);
+        cursor_move(x_location, r - i + 2);
         if (*signal)
         {
             again:
@@ -254,43 +245,36 @@ void game_core::Add_model(model *target,int* signal,int* Press_times)
             {
             case up:
                 target->changer_neg();
-                //cursor_move(x_location, x - i + 2);
-                //target->print_model();
                 break;
             case left:
                 if (x_location > 2)
                 {
-                    x_location-=*Press_times;//等待解决
+                    x_location-=*Press_times;
                     if (x_location<2)
                     {
                         x_location=2;
                     }
-                    //cursor_move(x_location, x - i + 2);
+                    //cursor_move(x_location, r - i + 2);
                     //target->print_model();
                 }
                 break;
             case right:
-                if (x_location + target->get_length() < y+2)
+                if (x_location + target->get_length() < c+2)
                 {
-                    x_location+=*Press_times;//Presstimes等待解决
-                    if (x_location>=y-target->get_length()+2)
+                    x_location+=*Press_times;
+                    if (x_location>=c-target->get_length()+2)
                     {
-                        x_location=y-target->get_length()+2;
+                        x_location=c-target->get_length()+2;
                     }
-                    //cursor_move(x_location, x - i + 2);
+                    //cursor_move(x_location, r - i + 2);
                     //target->print_model();
                 }
             default:
                 break;
             }
-            //if (temp!=key_signal)
-            //goto again;
-            //v_lock.lock();
             *signal = 0;
-            //v_lock.unlock();
             temp=0;
         }
-        //target->changer_neg();
         target->print_model();
         cout.flush();
         this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
@@ -302,12 +286,5 @@ void game_core::Add_model(model *target,int* signal,int* Press_times)
         //movedown(5);
     }
     print();
-    //v_lock.lock();
-    //key_run=false;
-    //v_lock.unlock();
     this_thread::sleep_for(std::chrono::milliseconds(200));
-    //v_lock.lock();
-    //key_signal=-1;
-    //v_lock.unlock();
-    
 }

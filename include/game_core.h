@@ -10,8 +10,8 @@ class game_core
     //权限设置为private保护游戏核心数据安全
 private:
     bool *source;
-    int x;
-    int y;
+    int r;
+    int c;
     int speed;
     clean_base *temp;
     //返回需要清除的行的位置
@@ -23,7 +23,7 @@ public:
     //输出当前表
     void print();
     //初始化,speed为模型下落速度
-    game_core(int x, int y ,int speed);
+    game_core(int r, int c ,int speed);
     ~game_core();
     //删除表中现有空行---辅助函数
     void flash();
