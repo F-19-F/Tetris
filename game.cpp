@@ -71,11 +71,12 @@ int main()
         //a.clean();
         key_run=0;
         b=new model(i);
-        a.Add_model(b,&key_signal,&Press_times,&key_run);
+        a.Add_model(b,&key_signal,&Press_times);
         //Press_times=0;
         delete b;
         key_lock.lock();
-        key_run=-1;
+        //key_run=1;
+        Press_times=0;
         key_lock.unlock();
     }
     //model b(5);
