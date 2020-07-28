@@ -33,5 +33,8 @@ public:
     int clean();
     //返回最小空行
     int Min_R();
-    void Add_model(model *target,int* signal,int* Press_times);
+    //添加模型
+    void Add_model(model *target,int* signal,int* Press_times,int* control);
+    //Add_model的附加函数，主要是为了提高左右方向的反馈速度
+    void beauty(int* x,int* y,int* key_sig);
 };

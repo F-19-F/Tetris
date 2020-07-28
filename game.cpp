@@ -71,7 +71,7 @@ int main()
         //a.clean();
         key_run=0;
         b=new model(i);
-        a.Add_model(b,&key_signal,&Press_times);
+        a.Add_model(b,&key_signal,&Press_times,&key_run);
         //Press_times=0;
         delete b;
         key_lock.lock();
