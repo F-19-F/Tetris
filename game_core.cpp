@@ -223,7 +223,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void game_core::Add_model(model *target,int* signal,int* Press_times,int* control)
+void game_core::Add_model(model *target,int* signal,int* Press_times)
 {
     int x_location = c / 2;
     clean_screen();
@@ -276,8 +276,6 @@ void game_core::Add_model(model *target,int* signal,int* Press_times,int* contro
             default:
                 break;
             }
-            *signal = 0;
-            temp=0;
         }
         target->print_model();
         cout.flush();
@@ -290,9 +288,10 @@ void game_core::Add_model(model *target,int* signal,int* Press_times,int* contro
         //movedown(5);
     }
     print();
+    //*control=1;
     this_thread::sleep_for(std::chrono::milliseconds(200));
 }
-void game_core::beauty(int* x,int* y,int* key_sig)
+/*void game_core::beauty(int* x,int* y,int* key_sig)
 {
     
-}
+}*/
