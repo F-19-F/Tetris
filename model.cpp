@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "include/terminal-linux.h"
 #include "include/model.h"
 #include "memory.h"
@@ -187,7 +188,7 @@ void model::print_model()
     cout.flush();
 }
 //以旋转中心逆时针旋转90度
-void model::changer_neg()
+void model::changer_neg(int ang)
 {
     int after_x;
     int after_y;
@@ -199,8 +200,8 @@ void model::changer_neg()
         {
             if (base[i][j])
             {
-                after_x = (i - center_y) * 0 + (j - center_y) * 1 + center_x;  //cos(90度)，sin(90度)
-                after_y = -(i - center_x) * 1 + (j - center_y) * 0 + center_y; //sin(90度)，cos(90度)
+                after_x = (int)((i - center_y) * cos(ang*PI/180) + (j - center_y) * sin(ang*PI/180) + center_x+0.5);  //cos(90度)，sin(90度)
+                after_y = (int)(-(i - center_x) * sin(ang*PI/180) + (j - center_y) * cos(ang*PI/180) + center_y+0.5); //sin(90度)，cos(90度)
                 changed_map[after_x][after_y] = true;
             }
         }
