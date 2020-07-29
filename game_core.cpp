@@ -242,7 +242,11 @@ void game_core::Add_model(model *target, int *signal, int *Press_times)
             switch (*signal)
             {
             case up:
-                target->changer_neg();
+                target->changer_neg(90);
+                if (x_location > c - target->get_length() + 2)
+                {
+                    target->changer_neg(-90);
+                }
                 *signal = 1;
                 break;
             case left:
