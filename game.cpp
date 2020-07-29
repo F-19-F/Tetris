@@ -70,7 +70,7 @@ int main()
         //a.debug_core();
         //a.clean();
         key_run=0;
-        b=new model(i);
+        b=new model(2);
         a.Add_model(b,&key_signal,&Press_times);
         //Press_times=0;
         delete b;
