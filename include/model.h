@@ -13,7 +13,7 @@ class model
     //输出原始数据，以便调试--for debug
     void print_row();
     //输出model形状
-    void print_model();
+    void print_model(bool clean);
     //以旋转中心逆时针旋转90度
     void changer_neg(int ang);
     //返回模型的边界占用格数的详情
