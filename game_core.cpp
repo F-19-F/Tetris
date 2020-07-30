@@ -261,7 +261,7 @@ void game_core::Add_model(model *target, int *signal, int *Press_times)
                     {
                         x_location = 2;
                     }
-
+                    
                     //cursor_move(x_location, r - i + 2);
                     //target->print_model();
                 }
@@ -285,7 +285,7 @@ void game_core::Add_model(model *target, int *signal, int *Press_times)
                 break;
             }
         }
-        target->print_model();
+        target->print_model(false);
         cout.flush();
         this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
         /*for (int j=0;j<5;j++)
