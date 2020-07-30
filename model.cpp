@@ -80,8 +80,8 @@ void model::print_row()
     }
     cout << endl;
 }
-//输出model形状
-void model::print_model()
+//输出model形状,clean判定是否清除,true将清除(输出空格)
+void model::print_model(bool clean)
 {
     //clean_screen();
     //cout.flush();
@@ -118,7 +118,7 @@ void model::print_model()
     memset(base_map_black, 0, 64 * sizeof(bool));
     for (int j = c_min; j < 8; j++)
     {
-        R_printed=0;
+        R_printed = 0;
         for (int i = r_min; i < 8; i++)
         {
             //伪记忆搜索
@@ -130,17 +130,27 @@ void model::print_model()
                 while (temp >= r_min)
                 {
                     //有效格为空时则打印空格，以显示其相对位置关系
+                    //7.30修改，改为移动光标
                     if (base[temp][j])
                         break;
                     if (!base[temp][j])
                     {
-                        cout << " ";
+                        //cout << " ";
+                        moveright(1);
                         R_printed++;
                     }
                     temp -= 2;
                 }
                 end_signal = true;
-                cout << "#";
+                if (clean)
+                {
+                    cout << " ";
+                }
+                else
+                {
+                    cout << "#";
+                }
+                //cout << "#";
                 R_printed++;
                 cout.flush();
                 if (i - 1 >= 0)
@@ -200,8 +210,8 @@ void model::changer_neg(int ang)
         {
             if (base[i][j])
             {
-                after_x = (int)((i - center_y) * cos(ang*PI/180) + (j - center_y) * sin(ang*PI/180) + center_x+0.5);  //cos(90度)，sin(90度)
-                after_y = (int)(-(i - center_x) * sin(ang*PI/180) + (j - center_y) * cos(ang*PI/180) + center_y+0.5); //sin(90度)，cos(90度)
+                after_x = (int)((i - center_y) * cos(ang * PI / 180) + (j - center_y) * sin(ang * PI / 180) + center_x + 0.5);  //cos(90度)，sin(90度)
+                after_y = (int)(-(i - center_x) * sin(ang * PI / 180) + (j - center_y) * cos(ang * PI / 180) + center_y + 0.5); //sin(90度)，cos(90度)
                 changed_map[after_x][after_y] = true;
             }
         }
@@ -217,10 +227,10 @@ void model::changer_neg(int ang)
 //返回模型的占用的高
 int model::get_height()
 {
-    int sum=0;
-    for (int j=0;j<8;j++)
+    int sum = 0;
+    for (int j = 0; j < 8; j++)
     {
-        for (int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
             if (base[i][j])
             {
@@ -234,10 +244,10 @@ int model::get_height()
 //返回模型占用的宽
 int model::get_length()
 {
-    int sum=0;
-    for (int i=0;i<8;i++)
+    int sum = 0;
+    for (int i = 0; i < 8; i++)
     {
-        for (int j=0;j<8;j++)
+        for (int j = 0; j < 8; j++)
         {
             if (base[i][j])
             {
