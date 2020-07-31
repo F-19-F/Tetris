@@ -120,7 +120,15 @@ void model::print_model(bool clean)
         {
             if (temp[i][j])
             {
-                cout<<"#";
+                if (clean)
+                {
+                    cout<<" ";
+                }
+                else
+                {
+                    cout<<"#";
+                }
+                
             }
             else
             {
