@@ -36,16 +36,16 @@ int getkey(int *output, int *times, int *reset)
   {
     //char d = c + 'A' - 'a'; //将字符转换成大写
     //cout << (int)c << endl;
-    if ((*reset)==1)
+    if ((*reset) == 1)
     {
-      *times=0;
-      *output=1;
-      *reset=0;//修改后重置reset，避免问题
+      *times = 0;
+      *output = 1;
+      *reset = 0; //修改后重置reset，避免问题
       //system("stty echo");
       //tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
       //return 0;
     }
-    if ((*reset)==-1)
+    if ((*reset) == -1)
     {
       system("stty echo");
       tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
@@ -64,7 +64,7 @@ int getkey(int *output, int *times, int *reset)
           //cout <<"Up"<<endl;
           if (c == temp)
           {
-            *times=*times+1;
+            *times = *times + 1;
           }
           else
           {
@@ -77,7 +77,7 @@ int getkey(int *output, int *times, int *reset)
           //cout<<"Down"<<endl;
           if (c == temp)
           {
-            *times=*times+1;
+            *times = *times + 1;
           }
           else
           {
@@ -90,7 +90,7 @@ int getkey(int *output, int *times, int *reset)
           //cout<<"Right"<<endl;
           if (c == temp)
           {
-            *times=*times+1;
+            *times = *times + 1;
           }
           else
           {
@@ -103,7 +103,7 @@ int getkey(int *output, int *times, int *reset)
           //cout<<"Left"<<endl;
           if (c == temp)
           {
-            *times=*times+1;
+            *times = *times + 1;
           }
           else
           {
@@ -123,9 +123,9 @@ int getkey(int *output, int *times, int *reset)
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt); //恢复终端模式
   return 0;
 }
-int Getkey(model* target,int* signal,int* x,int* y)
+int Getkey(model *target, bool *signal, int *x, int *y)
 {
-  char c;
+  int c;
   /*Information below can be found in https://man7.org/linux/man-pages/man3/termios.3.html*/
   /*This function works both on Macos and Linux */
   /*This file was analysed by F-19-F*/
@@ -145,23 +145,23 @@ int Getkey(model* target,int* signal,int* x,int* y)
   when the changes take effect:*/
   //TCSANOW: the change occurs immediately.
   system("stty -echo"); //系统调用，禁止回显
-  while (1)             //设置输入e时退出
+  while (*signal)       //设置输入e时退出
   {
     //char d = c + 'A' - 'a'; //将字符转换成大写
     //cout << (int)c << endl;
-    if ((*signal)==-1)
+    /*if ((*signal)==-1)
     {
       system("stty echo");
       tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
       return 0;
-    }
-    c = getchar();
+    }*/
+    c = (int)getchar();
     if ((int)c == sp1)
     {
-      c = getchar();
+      c = (int)getchar();
       if ((int)c == sp2)
       {
-        c = getchar();
+        c = (int)getchar();
         switch (c)
         {
         case up:
@@ -174,6 +174,21 @@ int Getkey(model* target,int* signal,int* x,int* y)
           //cout<<"Right"<<endl;
           break;
         case left:
+          //删除当前打印的方块
+
+          
+          //更改地址
+          if (*x - 1 > 2)
+          {
+            cursor_move(*x, *y);
+            target->print_model(true);
+            *x = *x - 1;
+            cursor_move(*x, *y);
+            //this_thread::sleep_for(std::chrono::milliseconds(50));
+            target->print_model(false);
+            cursor_move(*x, *y);
+          }
+
           //cout<<"Left"<<endl;
           break;
         default:
@@ -181,6 +196,7 @@ int Getkey(model* target,int* signal,int* x,int* y)
         }
       }
     }
+    this_thread::sleep_for(std::chrono::milliseconds(100));
     //this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
   }
   system("stty echo");                     //系统调用，恢复回显

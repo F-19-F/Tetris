@@ -8,6 +8,7 @@ using namespace std;
 model::model(int mode)
 {
     memset(base, 0, 64 * sizeof(bool));
+    memset(temp, 0, 16 * sizeof(bool));
     switch (mode)
     {
     case 1:
@@ -53,147 +54,81 @@ model::model(int mode)
     default:
         break;
     }
+    get_temp();
 }
 //输出原始数据，以便调试--for debug
-void model::print_row()
+void model::print_row(int mode)
 {
-    for (int i = 0; i < 8; i++)
+    if (mode == 0)
     {
-        cout << i;
-        for (int j = 0; j < 8; j++)
+        for (int i = 0; i < 8; i++)
         {
-            if (base[j][i])
+            cout << i;
+            for (int j = 0; j < 8; j++)
             {
-                cout << "#";
+                if (base[j][i])
+                {
+                    cout << "#";
+                }
+                else
+                {
+                    cout << " ";
+                }
             }
-            else
-            {
-                cout << " ";
-            }
+            cout << endl;
+        }
+        cout << " ";
+        for (int i = 0; i < 8; i++)
+        {
+            cout << i;
         }
         cout << endl;
     }
-    cout << " ";
-    for (int i = 0; i < 8; i++)
+    else
     {
-        cout << i;
+        for (int i = 0; i < 4; i++)
+        {
+            cout << i;
+            for (int j = 0; j < 4; j++)
+            {
+                if (temp[i][j])
+                {
+                    cout << "#";
+                }
+                else
+                {
+                    cout << " ";
+                }
+            }
+            cout << endl;
+        }
+        cout<<" ";
+        for (int i = 0; i < 4; i++)
+        {
+            cout << i;
+        }
+        cout << endl;
     }
-    cout << endl;
+    
 }
 //输出model形状,clean判定是否清除,true将清除(输出空格)
 void model::print_model(bool clean)
 {
-    //clean_screen();
-    //cout.flush();
-    //代表某一行已经打印的个数，方便用移动光标的方法换行
-    int R_printed;
-    bool end_signal = false;
-    bool base_map_black[8][8];
-    int temp;
-    int r_min = 0;
-    int c_min = 0;
-    bool get_c_min = false;
-    bool get_r_min = false;
-    //获取模型中横坐标和纵坐标的最小值
-    for (int i = 0; i < 8; i++)
+    for (int i=0;i<height;i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j=0;j<length;j++)
         {
-            if (base[i][j] && !get_c_min)
+            if (temp[i][j])
             {
-                r_min = i;
-                get_c_min = true;
+                cout<<"#";
             }
-            if (base[j][i] && !get_r_min)
+            else
             {
-                c_min = i;
-                get_r_min = true;
-            }
-            if (get_c_min && get_r_min)
-            {
-                break;
+                moveright(1);
             }
         }
-    }
-    memset(base_map_black, 0, 64 * sizeof(bool));
-    for (int j = c_min; j < 8; j++)
-    {
-        R_printed = 0;
-        for (int i = r_min; i < 8; i++)
-        {
-            //伪记忆搜索
-            if (base_map_black[i][j])
-                continue;
-            if (base[i][j] == true)
-            {
-                temp = i - 2;
-                while (temp >= r_min)
-                {
-                    //有效格为空时则打印空格，以显示其相对位置关系
-                    //7.30修改，改为移动光标
-                    if (base[temp][j])
-                        break;
-                    if (!base[temp][j])
-                    {
-                        //cout << " ";
-                        moveright(1);
-                        R_printed++;
-                    }
-                    temp -= 2;
-                }
-                end_signal = true;
-                if (clean)
-                {
-                    cout << " ";
-                }
-                else
-                {
-                    cout << "#";
-                }
-                //cout << "#";
-                R_printed++;
-                cout.flush();
-                if (i - 1 >= 0)
-                {
-                    base_map_black[i - 1][j] = true;
-                }
-                if (j - 1 >= 0)
-                {
-                    base_map_black[i][j - 1] = true;
-                }
-                if (i + 1 < 8)
-                {
-                    base_map_black[i + 1][j] = true;
-                }
-                if (j + 1 < 8)
-                {
-                    base_map_black[i][j + 1] = true;
-                }
-                if (i - 1 >= 0 && j - 1 >= 0)
-                {
-                    base_map_black[i - 1][j - 1] = true;
-                }
-                if (i + 1 < 8 && j + 1 < 8)
-                {
-                    base_map_black[i + 1][j + 1] = true;
-                }
-                if (i - 1 >= 0 && j + 1 < 8)
-                {
-                    base_map_black[i - 1][j + 1] = true;
-                }
-                if (i + 1 < 8 && j - 1 >= 0)
-                {
-                    base_map_black[i + 1][j - 1] = true;
-                }
-            }
-        }
-        if (end_signal)
-        {
-            //cout << endl;
-            movedown(1);
-            moveleft(R_printed);
-            end_signal = false;
-        }
+        movedown(1);
+        moveleft(length);
     }
     cout.flush();
 }
@@ -223,38 +158,84 @@ void model::changer_neg(int ang)
             base[i][j] = changed_map[i][j];
         }
     }
+    get_temp();
 }
-//返回模型的占用的高
-int model::get_height()
+void model::get_temp()
 {
-    int sum = 0;
-    for (int j = 0; j < 8; j++)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            if (base[i][j])
-            {
-                sum++;
-                break;
-            }
-        }
-    }
-    return sum;
-}
-//返回模型占用的宽
-int model::get_length()
-{
-    int sum = 0;
+    int r_min = 0;
+    int c_min = 0;
+    //r_temp为横变量
+    //c_temp为竖变量
+    int r_temp = 0;
+    int c_temp = 0;
+    bool get_c_min = false;
+    bool get_r_min = false;
+    //计算height和length所用的临时变量
+    /*int get_h_temp;
+    int get_l_temp;*/
+    //获取模型中横坐标和纵坐标的最小值
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            if (base[i][j])
+            if (base[i][j] && !get_c_min)
             {
-                sum++;
+                c_min = i;
+                get_c_min = true;
+            }
+            if (base[j][i] && !get_r_min)
+            {
+                r_min = i;
+                get_r_min = true;
+            }
+            if (get_c_min && get_r_min)
+            {
                 break;
             }
         }
     }
-    return sum;
+    //此处开始计算temp数组的值
+    memset(temp, 0, 16 * sizeof(bool));
+    for (int i = r_min; i < 8; i += 2)
+    {
+        for (int j = c_min; j < 8; j += 2)
+        {
+            if (base[j][i])
+            {
+                temp[r_temp][c_temp++] = true;
+            }
+            else
+            {
+                c_temp++;
+            }
+        }
+        c_temp = 0;
+        r_temp++;
+    }
+    height=0;
+    length=0;
+    //此处开始计算length以及height
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (temp[i][j])
+            {
+                if (i>height)
+                {
+                    height=i;
+                }
+            }
+            if (temp[j][i])
+            {
+                if (i>length)
+                {
+                    length=i;
+                }
+            }
+        }
+    }
+    //循环只是得到数组中的最大值，实际得加一
+    length+=1;
+    height+=1;
 }
