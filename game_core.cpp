@@ -258,6 +258,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
+                    this_thread::sleep_for(std::chrono::milliseconds(5));
                     cursor_move(*x, *y);
                     target->print_model(false);
                 }
