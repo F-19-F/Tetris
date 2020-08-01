@@ -1,6 +1,8 @@
 #include <termios.h>
 #include <unistd.h>
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <mutex>
 #include "include/keydec.h"
 #include "include/model.h"
