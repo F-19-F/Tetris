@@ -29,8 +29,14 @@ int main()
     this_thread::sleep_for(std::chrono::milliseconds(200));*/
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    model a(1);
-    game_core b(w.ws_row,w.ws_col,1);
-    b.Add_model(&a);
+    model *a;
+    game_core b(w.ws_row,(int)((w.ws_col*2)/3),1);
+    for (int i=1;i<=5;i++)
+    {
+        ;
+        a=new model(i);
+        b.Add_model(a);
+    }
+    //this_thread::sleep_for(std::chrono::milliseconds(2000));
     return 0;
 }

@@ -46,5 +46,6 @@
 // 右移光标
 #define moveright(y) cout<<"\033["<<(y)<<"C"
 // 定位光标
-#define cursor_move(x,y) cout<<"\033["<<(y)<<";"<<(x)<<"H"
+//#define cursor_move(x,y) cout<<"\033["<<(y)<<";"<<(x)<<"H"
+#define cursor_move(x,y) printf("\033[%d;%dH",y,x)
 //为了实现快速跨平台，故将终端控制命令操作单独做成一个cpp，在更换平台时，只需写终端操作集就行

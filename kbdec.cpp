@@ -75,8 +75,8 @@ void key_proc(bool ctrl, Key_dec *output)
       //控制按键发现线程
       if (output->psignal == 0)
       {
-        cout << "end";
-        cout.flush();
+        //cout << "end";
+        //cout.flush();
         c_lock.lock();
         run = false;
         c_lock.unlock();
