@@ -50,26 +50,26 @@ void game_core::print()
     for (int i = 0; i < r; i++)
     {
         cursor_move(1, r - i + 1);
-        cout << "|";
+        printf( "|");
         cursor_move(c + 2, r - i + 1);
-        cout << "|";
+        printf( "|");
     }
     //打印横方向的边框
     for (int i = 0; i < c; i++)
     {
         cursor_move(2 + i, 1);
-        cout << "-";
+        printf( "-");
         cursor_move(2 + i, r + 2);
-        cout << "-";
+        printf( "-");
     }
     cursor_move(1, 1);
-    cout << "┌";
+    printf( "┌");
     cursor_move(1, r + 2);
-    cout << "└";
+    printf( "└");
     cursor_move(c + 2, 1);
-    cout << "┐";
+    printf( "┐");
     cursor_move(c + 2, r + 2);
-    cout << "┘";
+    printf( "┘");
     //end_all();
     ///for linux/unix terminal////
     //yellow_background();
@@ -84,18 +84,18 @@ void game_core::print()
         {
             if (*(source + i * c + j))
             {
-                cout << Print_base;
+                printf( Print_base);
                 //cout.flush();
             }
             else
             {
-                cout << " ";
+                printf( " ");
                 //printf(" ");
             }
         }
         //cursor_move(c+3, x - i + 1);
-        //cout << "--------line" << i + 1;
-        //cout << endl;
+        //printf( "--------line" << i + 1;
+        //printf( endl;
     }
     end_all();
     cout.flush();
@@ -223,9 +223,10 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl,Key_dec *Key)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
 {
     static bool run = true;
+    static int time = 0;
     mutex c_lock;
     if (ctrl)
     {
@@ -238,14 +239,17 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl,Key_dec *Key)
                 c_lock.unlock();
                 return;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(200));
+            this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     else
     {
         //Key_dec *Key=new Key_dec();
+        time++;
         while (run)
         {
+            //cursor_move (58,time);
+            //cout<<"Thread"<<time<<"is runing");
             switch (Key->pop())
             {
             case left:
@@ -258,11 +262,12 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl,Key_dec *Key)
                     target->print_model(false);
                 }
                 break;
-
             default:
                 break;
             }
+            this_thread::sleep_for(std::chrono::milliseconds(90));
         }
+        run = true;
     }
 }
 void game_core::Add_model(model *target)
@@ -270,16 +275,16 @@ void game_core::Add_model(model *target)
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    Key_dec Key;
-    thread t1(Move, &x, &y, &signal, target, true,&Key);
-    thread t2(Move, &x, &y, &signal, target, false,&Key);
+    static Key_dec Key;
+    thread t1(Move, &x, &y, &signal, target, true, &Key);
+    thread t2(Move, &x, &y, &signal, target, false, &Key);
     t1.detach();
     t2.detach();
     clean_screen();
     cout.flush();
     print();
     Key.start();
-    for (int i=r; i >= Min_R() + target->height; y++,i--)
+    for (int i = r; i >= Min_R() + target->height; y++, i--)
     {
         cursor_move(x, y);
         target->print_model(false);
@@ -287,6 +292,10 @@ void game_core::Add_model(model *target)
         cursor_move(x, y);
         target->print_model(true);
     }
-    signal=1;
+    signal = 1;
+    t1.~thread();
+    t2.~thread();
+    Key.clean();
     Key.stop();
+    this_thread::sleep_for(std::chrono::milliseconds(200));
 }
