@@ -140,7 +140,7 @@ void model::print_model(bool clean)
     }
     cout.flush();
 }
-//以旋转中心逆时针旋转90度
+//以旋转中心旋转ang度，只能是90的倍数
 void model::changer_neg(int ang)
 {
     int after_x;
