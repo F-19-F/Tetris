@@ -6,7 +6,6 @@ using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
 #include "include/keydec.h"
-int Getkey(model* target,bool* signal,int* x,int* y);
 //删除临时结果
 void game_core::del_base()
 {
@@ -224,86 +223,70 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void game_core::Add_model(model *target, int *signal, int *Press_times)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl,Key_dec *Key)
 {
-    mutex a;
-    bool Lsignal =true;
-    int i = r;
-    int temp=2;
-    int x_location = c / 2;
-    clean_screen();
-    print();
-    cout.flush();
-    std::thread t1 (Getkey,target,&Lsignal,&x_location,&temp);
-    t1.detach();
-    //第二行开始是考虑到了上边界
-    for (; i >= Min_R() + target->height; i--)
+    static bool run = true;
+    mutex c_lock;
+    if (ctrl)
     {
-        clean_screen();
-        print();
-        cout.flush();
-        temp=r - i + 2;
-        cursor_move(x_location, temp);
-        /*if (*signal)
+        while (1)
         {
-        again:
-            switch (*signal)
+            if (*signal == 1)
             {
-            case up:
-                target->changer_neg(90);
-                if (x_location > c - target->get_length() + 2)
-                {
-                    target->changer_neg(-90);
-                }
-                *signal = 1;
-                break;
+                c_lock.lock();
+                run = false;
+                c_lock.unlock();
+                return;
+            }
+            this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+    }
+    else
+    {
+        //Key_dec *Key=new Key_dec();
+        while (run)
+        {
+            switch (Key->pop())
+            {
             case left:
-                *signal = 1;
-                if (x_location > 2)
+                if (*x - 1 > 2)
                 {
-
-                    x_location -= *Press_times;
-                    //this_thread::sleep_for(std::chrono::milliseconds(80));
-                    //*control=1;
-                    if (x_location < 2)
-                    {
-                        x_location = 2;
-                    }
-                    
-                    //cursor_move(x_location, r - i + 2);
-                    //target->print_model();
+                    cursor_move(*x, *y);
+                    target->print_model(true);
+                    *x = *x - 1;
+                    cursor_move(*x, *y);
+                    target->print_model(false);
                 }
                 break;
-            case right:
-                *signal = 1;
-                if (x_location + target->get_length() < c + 2)
-                {
 
-                    x_location += *Press_times;
-                    //this_thread::sleep_for(std::chrono::milliseconds(80));
-                    //*control=1;
-                    if (x_location >= c - target->get_length() + 2)
-                    {
-                        x_location = c - target->get_length() + 2;
-                    }
-                    //cursor_move(x_location, r - i + 2);
-                    //target->print_model();
-                }
             default:
                 break;
             }
-        }*/
-        target->print_model(false);
-        this_thread::sleep_for(std::chrono::milliseconds(200)); //c++特有的休眠方式
+        }
     }
-    print();
-    a.lock();
-    Lsignal=false;
-    a.unlock();
-    t1.~thread();
-    this_thread::sleep_for(std::chrono::milliseconds(200));
 }
-/*void game_core::beauty(int* x,int* y,int* key_sig)
+void game_core::Add_model(model *target)
 {
-    
-}*/
+    int y = 2;
+    int x = c / 2;
+    int signal = 0;
+    Key_dec Key;
+    thread t1(Move, &x, &y, &signal, target, true,&Key);
+    thread t2(Move, &x, &y, &signal, target, false,&Key);
+    t1.detach();
+    t2.detach();
+    clean_screen();
+    cout.flush();
+    print();
+    Key.start();
+    for (int i=r; i >= Min_R() + target->height; y++,i--)
+    {
+        cursor_move(x, y);
+        target->print_model(false);
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+        cursor_move(x, y);
+        target->print_model(true);
+    }
+    signal=1;
+    Key.stop();
+}
