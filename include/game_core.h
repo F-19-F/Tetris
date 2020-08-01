@@ -1,4 +1,5 @@
 #include "model.h"
+#include "keydec.h"
 #define Print_base "▇"
 struct clean_base
 {
@@ -34,7 +35,7 @@ public:
     //返回最小空行
     int Min_R();
     //添加模型
-    void Add_model(model *target);
+    void Add_model(model *target,Key_dec *Key);
     //Add_model的附加函数，主要是为了提高左右方向的反馈速度
     /*void beauty(int* x,int* y,int* key_sig);*/
 };
