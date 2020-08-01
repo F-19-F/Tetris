@@ -5,7 +5,7 @@
 using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
-#include "include/keydec.h"
+//#include "include/keydec.h"
 //删除临时结果
 void game_core::del_base()
 {
@@ -270,20 +270,20 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
         run = true;
     }
 }
-void game_core::Add_model(model *target)
+void game_core::Add_model(model *target,Key_dec *Key)
 {
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    static Key_dec Key;
-    thread t1(Move, &x, &y, &signal, target, true, &Key);
-    thread t2(Move, &x, &y, &signal, target, false, &Key);
+    //static Key_dec Key;
+    thread t1(Move, &x, &y, &signal, target, true, Key);
+    thread t2(Move, &x, &y, &signal, target, false, Key);
     t1.detach();
     t2.detach();
     clean_screen();
     cout.flush();
     print();
-    Key.start();
+    //Key.start();
     for (int i = r; i >= Min_R() + target->height; y++, i--)
     {
         cursor_move(x, y);
@@ -295,7 +295,7 @@ void game_core::Add_model(model *target)
     signal = 1;
     t1.~thread();
     t2.~thread();
-    Key.clean();
-    Key.stop();
+    Key->clean();
+    //Key.stop();
     this_thread::sleep_for(std::chrono::milliseconds(200));
 }
