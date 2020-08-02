@@ -22,11 +22,11 @@ void game_core::del_base()
 //
 void game_core::debug_core()
 {
-    for (int i = 0; i < r; i++)
+    for (int i = 0; i < 1; i++)
     {
         for (int j = 0; j < c; j++)
         {
-            if (rand() % 2)
+            //if (rand() % 2)
                 *(source + i * c + j) = true;
         }
         if (i == 3 || i == 6 || i == 4)
@@ -333,6 +333,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
 //Can_move函数的输入x,y是终端原始坐标
 bool game_core::Can_move(int *x,int *y,model *target)
 {
+    int temp=r-1;
     if (*y+target->height==r+3)
     {
         return false;
@@ -344,15 +345,7 @@ bool game_core::Can_move(int *x,int *y,model *target)
         {
             if (target->temp[i][j])
             {
-                //y+i;//model对应竖坐标
-                //x+j;//model横坐标
-                //检测其下方是否有方块
-                //故只需要检索纵坐标+1后对应的方块是否为空即可
-                //需要检索的竖坐标为y+i+1
-                //而source中坐标与内存数组之间的关系为
-                //坐标(x,y)对应[x+r-3][y-2]
-                //故最终需要检索的内存为[x+j+r-3][y+i-1]
-                if (*(source + (*y+i-1) * c + (*x+j+r-3)))
+                if (*(source + (r+1-(*y+i)) * c + (*x+j-2)))
                 {
                     return false;
                 }
