@@ -5,7 +5,6 @@
 using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
-//#include "include/keydec.h"
 //删除临时结果
 void game_core::del_base()
 {
@@ -50,26 +49,26 @@ void game_core::print()
     for (int i = 0; i < r; i++)
     {
         cursor_move(1, r - i + 1);
-        printf( "|");
+        cout << "|";
         cursor_move(c + 2, r - i + 1);
-        printf( "|");
+        cout << "|";
     }
     //打印横方向的边框
     for (int i = 0; i < c; i++)
     {
         cursor_move(2 + i, 1);
-        printf( "-");
+        cout << "-";
         cursor_move(2 + i, r + 2);
-        printf( "-");
+        cout << "-";
     }
     cursor_move(1, 1);
-    printf( "┌");
+    cout << "┌";
     cursor_move(1, r + 2);
-    printf( "└");
+    cout << "└";
     cursor_move(c + 2, 1);
-    printf( "┐");
+    cout << "┐";
     cursor_move(c + 2, r + 2);
-    printf( "┘");
+    cout << "┘";
     //end_all();
     ///for linux/unix terminal////
     //yellow_background();
@@ -84,18 +83,18 @@ void game_core::print()
         {
             if (*(source + i * c + j))
             {
-                printf( Print_base);
+                cout << (Print_base);
                 //cout.flush();
             }
             else
             {
-                printf( " ");
-                //printf(" ");
+                cout << " ";
+                //cout<<(" ");
             }
         }
         //cursor_move(c+3, x - i + 1);
-        //printf( "--------line" << i + 1;
-        //printf( endl;
+        //cout<<( "--------line" << i + 1;
+        //cout<<( endl;
     }
     end_all();
     cout.flush();
@@ -223,7 +222,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max)
 {
     static bool run = true;
     static int time = 0;
@@ -255,13 +254,40 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
             case left:
                 if (*x - 1 > 2)
                 {
+                    blank();
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
-                    this_thread::sleep_for(std::chrono::milliseconds(5));
+                    this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
+                    end_all();
                     target->print_model(false);
                 }
+                break;
+            case right:
+                if (*x + target->length <= c_max + 1)
+                {
+                    blank();
+                    cursor_move(*x, *y);
+                    target->print_model(true);
+                    *x = *x + 1;
+                    this_thread::sleep_for(std::chrono::milliseconds(20));
+                    cursor_move(*x, *y);
+                    end_all();
+                    target->print_model(false); 
+                }
+            break;
+            case up:
+                cursor_move(*x, *y);
+                target->print_model(true);
+                target->changer_neg(-90);
+                //this_thread::sleep_for(std::chrono::milliseconds(20));
+                if (*x + target->length > c_max + 2)
+                {
+                    target->changer_neg(90);
+                }
+                cursor_move(*x, *y);
+                target->print_model(false);
                 break;
             default:
                 break;
@@ -271,32 +297,36 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key)
         run = true;
     }
 }
-void game_core::Add_model(model *target,Key_dec *Key)
+void game_core::Add_model(model *target, Key_dec *Key)
 {
+    mutex y_lock;
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    //static Key_dec Key;
-    thread t1(Move, &x, &y, &signal, target, true, Key);
-    thread t2(Move, &x, &y, &signal, target, false, Key);
+    thread t1(Move, &x, &y, &signal, target, true, Key, c);
+    thread t2(Move, &x, &y, &signal, target, false, Key, c);
     t1.detach();
     t2.detach();
     clean_screen();
     cout.flush();
+    this_thread::sleep_for(std::chrono::milliseconds(30));
     print();
-    //Key.start();
-    for (int i = r; i >= Min_R() + target->height; y++, i--)
+    for (int i = r; i >= Min_R() + target->height; i--)
     {
         cursor_move(x, y);
         target->print_model(false);
-        this_thread::sleep_for(std::chrono::milliseconds(200));
+        this_thread::sleep_for(std::chrono::milliseconds(500));
+        y_lock.lock();
         cursor_move(x, y);
+        x++;
+        x--;
+        y++;
         target->print_model(true);
+        y_lock.unlock();
     }
     signal = 1;
     t1.~thread();
     t2.~thread();
     Key->clean();
-    //Key.stop();
-    this_thread::sleep_for(std::chrono::milliseconds(200));
+    this_thread::sleep_for(std::chrono::milliseconds(500));
 }
