@@ -89,7 +89,7 @@ void game_core::print()
             else
             {
                 cout << " ";
-                //cout<<(" ");
+                //cout.flush();
             }
         }
         //cursor_move(c+3, x - i + 1);
@@ -252,7 +252,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
             switch (Key->pop())
             {
             case left:
-                if (*x - 1 > 2)
+                if (*x > 2)
                 {
                     blank();
                     cursor_move(*x, *y);
@@ -311,7 +311,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     cout.flush();
     print();
     this_thread::sleep_for(std::chrono::milliseconds(30));
-    for (int i = r; i >= Min_R() + target->height; i--)
+    while (Can_move(&x,&y,target))
     {
         cursor_move(x, y);
         target->print_model(false);
@@ -329,4 +329,35 @@ void game_core::Add_model(model *target, Key_dec *Key)
     t2.~thread();
     Key->clean();
     this_thread::sleep_for(std::chrono::milliseconds(500));
+}
+//Can_move函数的输入x,y是终端原始坐标
+bool game_core::Can_move(int *x,int *y,model *target)
+{
+    if (*y+target->height==r+3)
+    {
+        return false;
+    }
+    //从模块最底层开始检索
+    for (int i=3;i>=0;i--)
+    {
+        for (int j=0;j<4;j++)
+        {
+            if (target->temp[i][j])
+            {
+                //y+i;//model对应竖坐标
+                //x+j;//model横坐标
+                //检测其下方是否有方块
+                //故只需要检索纵坐标+1后对应的方块是否为空即可
+                //需要检索的竖坐标为y+i+1
+                //而source中坐标与内存数组之间的关系为
+                //坐标(x,y)对应[x+r-3][y-2]
+                //故最终需要检索的内存为[x+j+r-3][y+i-1]
+                if (*(source + (*y+i-1) * c + (*x+j+r-3)))
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
