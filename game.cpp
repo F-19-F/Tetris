@@ -14,7 +14,7 @@ int main()
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     model *a;
     Key.start();
-    game_core b(w.ws_row,(int)((w.ws_col*2)/3),1);
+    game_core b(w.ws_row,(int)((w.ws_col)/3),1);
     for (int i=1;i<=5;i++)
     {
         a=new model(i);

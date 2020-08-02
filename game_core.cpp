@@ -309,8 +309,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
     t2.detach();
     clean_screen();
     cout.flush();
-    this_thread::sleep_for(std::chrono::milliseconds(30));
     print();
+    this_thread::sleep_for(std::chrono::milliseconds(30));
     for (int i = r; i >= Min_R() + target->height; i--)
     {
         cursor_move(x, y);
