@@ -22,7 +22,7 @@ void game_core::del_base()
 //
 void game_core::debug_core()
 {
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < c; j++)
         {
@@ -345,7 +345,7 @@ bool game_core::Can_move(int *x,int *y,model *target)
         {
             if (target->temp[i][j])
             {
-                if (*(source + (r+2-(*y+i)) * c + (*x+j-2)))
+                if (*(source + (r+1-(*y+i)) * c + (*x+j-2)))
                 {
                     return false;
                 }
