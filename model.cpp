@@ -122,13 +122,11 @@ void model::print_model(bool clean)
             {
                 if (clean)
                 {
-                    //cout<<" ";
-                    printf(" ");
+                    cout<< " ";
                 }
                 else
                 {
-                    //cout<<"#";
-                    printf("#");
+                    cout<< "#";
                 }
                 
             }
