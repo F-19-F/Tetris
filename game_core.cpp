@@ -26,7 +26,7 @@ void game_core::debug_core()
     {
         for (int j = 0; j < c; j++)
         {
-            //if (rand() % 2)
+            if (rand() % 2)
                 *(source + i * c + j) = true;
         }
         if (i == 3 || i == 6 || i == 4)
@@ -345,7 +345,7 @@ bool game_core::Can_move(int *x,int *y,model *target)
         {
             if (target->temp[i][j])
             {
-                if (*(source + (r+1-(*y+i)) * c + (*x+j-2)))
+                if (*(source + (r+2-(*y+i)) * c + (*x+j-2)))
                 {
                     return false;
                 }
