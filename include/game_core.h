@@ -36,6 +36,5 @@ public:
     int Min_R();
     //添加模型
     void Add_model(model *target,Key_dec *Key);
-    //Add_model的附加函数，主要是为了提高左右方向的反馈速度
-    /*void beauty(int* x,int* y,int* key_sig);*/
+    bool Can_move(int *x,int *y,model *target);
 };
