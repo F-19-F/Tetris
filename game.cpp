@@ -17,13 +17,16 @@ int main()
     Key.start();
     game_core b(w.ws_row,(int)((w.ws_col)/3),1);
     //b.debug_core();
-    //b.print();
+    clean_screen();
+    cout.flush();
+    b.print();
     while (!b.over)
     {
         i=rand() % 5+1;
         a=new model(i);
         b.Add_model(a,&Key);
         delete a;
+        b.print();
     }
     Key.stop();
     cursor_move(w.ws_row,w.ws_col);

@@ -319,9 +319,9 @@ void game_core::Add_model(model *target, Key_dec *Key)
     thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max);
     t1.detach();
     t2.detach();
-    clean_screen();
-    cout.flush();
-    print();
+    //clean_screen();
+    //cout.flush();
+    //print();
     this_thread::sleep_for(std::chrono::milliseconds(30));
     while (Can_move(&x, &y, target))
     {
