@@ -6,21 +6,6 @@ using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
 //删除临时结果
-bool game_core::over()
-{
-    for (int i = 0; i < c; i++)
-    {
-        if (*(source + (r - 2) * c + i))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    return true;
-}
 void game_core::del_base()
 {
     clean_base *target;
@@ -119,6 +104,7 @@ game_core::game_core(int r, int c, int speed)
 {
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
+    over =false;
     source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
@@ -395,6 +381,11 @@ bool game_core::Can_move(int *x, int *y, model *target)
                             }
                         }
                     }
+                    for (int l=0;l<c;l++)
+                        if (*(source+(r-1)*c+l))
+                        {
+                            over=true;
+                        }
                     return false;
                 }
             }
