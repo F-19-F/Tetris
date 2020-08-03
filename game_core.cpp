@@ -274,9 +274,9 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                     this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
                     end_all();
-                    target->print_model(false); 
+                    target->print_model(false);
                 }
-            break;
+                break;
             case up:
                 cursor_move(*x, *y);
                 target->print_model(true);
@@ -311,7 +311,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     cout.flush();
     print();
     this_thread::sleep_for(std::chrono::milliseconds(30));
-    while (Can_move(&x,&y,target))
+    while (Can_move(&x, &y, target))
     {
         cursor_move(x, y);
         target->print_model(false);
@@ -331,22 +331,43 @@ void game_core::Add_model(model *target, Key_dec *Key)
     this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 //Can_move函数的输入x,y是终端原始坐标
-bool game_core::Can_move(int *x,int *y,model *target)
+bool game_core::Can_move(int *x, int *y, model *target)
 {
-    int temp=r-1;
-    if (*y+target->height==r+3)
+    int temp = r - 1;
+    if (*y + target->height == r + 3)
     {
+        for (int k = 3; k >= 0; k--)
+        {
+            for (int m = 0; m < 4; m++)
+            {
+                if (target->temp[k][m])
+                {
+                    *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
+                }
+            }
+        }
         return false;
     }
     //从模块最底层开始检索
-    for (int i=3;i>=0;i--)
+    for (int i = 3; i >= 0; i--)
     {
-        for (int j=0;j<4;j++)
+        for (int j = 0; j < 4; j++)
         {
             if (target->temp[i][j])
             {
-                if (*(source + (r+1-(*y+i)) * c + (*x+j-2)))
+                if (*(source + (r + 1 - (*y + i)) * c + (*x + j - 2)))
                 {
+                    //*(source + (r+1-(*y+i)) * c + (*x+j-2))=false;
+                    for (int k = 3; k >= 0; k--)
+                    {
+                        for (int m = 0; m < 4; m++)
+                        {
+                            if (target->temp[k][m])
+                            {
+                                *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
+                            }
+                        }
+                    }
                     return false;
                 }
             }

@@ -16,6 +16,7 @@ int main()
     Key.start();
     game_core b(w.ws_row,(int)((w.ws_col)/3),1);
     b.debug_core();
+    //b.print();
     for (int i=1;i<=5;i++)
     {
         a=new model(i);
