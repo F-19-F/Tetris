@@ -18,7 +18,7 @@ int main()
     game_core b(w.ws_row,(int)((w.ws_col)/3),1);
     //b.debug_core();
     //b.print();
-    while (!b.over())
+    while (!b.over)
     {
         i=rand() % 5+1;
         a=new model(i);
@@ -26,5 +26,7 @@ int main()
         delete a;
     }
     Key.stop();
+    cursor_move(w.ws_row,w.ws_col);
+    cout<<endl;
     return 0;
 }
