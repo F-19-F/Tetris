@@ -14,6 +14,7 @@ private:
     int r;
     int c;
     int speed;
+    //bool over;
     clean_base *temp;
     //返回需要清除的行的位置
 public:
@@ -37,4 +38,5 @@ public:
     //添加模型
     void Add_model(model *target,Key_dec *Key);
     bool Can_move(int *x,int *y,model *target);
+    bool over();
 };

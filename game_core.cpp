@@ -6,6 +6,21 @@ using namespace std;
 #include "include/game_core.h"
 #include "include/terminal-linux.h"
 //删除临时结果
+bool game_core::over()
+{
+    for (int i = 0; i < c; i++)
+    {
+        if (*(source + (r - 2) * c + i))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
 void game_core::del_base()
 {
     clean_base *target;
@@ -197,7 +212,7 @@ int game_core::clean()
     del_base();
     return sum;
 }
-//返回行标最小的空行
+//返回行标最小的空行--辅助函数
 int game_core::Min_R()
 {
     int i, j;
@@ -222,7 +237,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max)
 {
     static bool run = true;
     static int time = 0;
@@ -289,6 +304,16 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 cursor_move(*x, *y);
                 target->print_model(false);
                 break;
+            case down:
+                cursor_move(*x, *y);
+                target->print_model(true);
+                if ((*y + target->height) < *r_max + 2)
+                {
+                    *y = *y + 2;
+                }
+                cursor_move(*x, *y);
+                target->print_model(false);
+                break;
             default:
                 break;
             }
@@ -303,8 +328,9 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    thread t1(Move, &x, &y, &signal, target, true, Key, c);
-    thread t2(Move, &x, &y, &signal, target, false, Key, c);
+    int r_max = r - Min_R();
+    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max);
+    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max);
     t1.detach();
     t2.detach();
     clean_screen();
@@ -328,6 +354,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     t1.~thread();
     t2.~thread();
     Key->clean();
+    clean();
     this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 //Can_move函数的输入x,y是终端原始坐标

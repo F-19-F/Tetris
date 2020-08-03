@@ -10,17 +10,20 @@ using namespace std;
 int main()
 {
     Key_dec Key;
+    int i;
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     model *a;
     Key.start();
     game_core b(w.ws_row,(int)((w.ws_col)/3),1);
-    b.debug_core();
+    //b.debug_core();
     //b.print();
-    for (int i=1;i<=5;i++)
+    while (!b.over())
     {
+        i=rand() % 5+1;
         a=new model(i);
         b.Add_model(a,&Key);
+        delete a;
     }
     Key.stop();
     return 0;
