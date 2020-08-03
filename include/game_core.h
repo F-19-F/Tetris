@@ -18,6 +18,7 @@ private:
     clean_base *temp;
     //返回需要清除的行的位置
 public:
+    bool over;
     //删除临时结果
     void del_base();
     //调试使用
@@ -38,5 +39,4 @@ public:
     //添加模型
     void Add_model(model *target,Key_dec *Key);
     bool Can_move(int *x,int *y,model *target);
-    bool over();
 };
