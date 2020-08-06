@@ -244,12 +244,9 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
     }
     else
     {
-        //Key_dec *Key=new Key_dec();
         time++;
         while (run)
         {
-            //cursor_move (58,time);
-            //cout<<"Thread"<<time<<"is runing");
             switch (Key->pop())
             {
             case left:
@@ -303,7 +300,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
             default:
                 break;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(90));
+            this_thread::sleep_for(std::chrono::milliseconds(30));
         }
         run = true;
     }
@@ -319,9 +316,6 @@ void game_core::Add_model(model *target, Key_dec *Key)
     thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max);
     t1.detach();
     t2.detach();
-    //clean_screen();
-    //cout.flush();
-    //print();
     this_thread::sleep_for(std::chrono::milliseconds(30));
     while (Can_move(&x, &y, target))
     {
@@ -341,7 +335,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     t2.~thread();
     Key->clean();
     clean();
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 //Can_move函数的输入x,y是终端原始坐标
 bool game_core::Can_move(int *x, int *y, model *target)
