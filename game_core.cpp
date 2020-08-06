@@ -340,7 +340,6 @@ void game_core::Add_model(model *target, Key_dec *Key)
 //Can_move函数的输入x,y是终端原始坐标
 bool game_core::Can_move_down(int *x, int *y, model *target)
 {
-    int temp = r - 1;
     if (*y + target->height == r + 3)
     {
         for (int k = 3; k >= 0; k--)
@@ -371,7 +370,10 @@ bool game_core::Can_move_down(int *x, int *y, model *target)
                         {
                             if (target->temp[k][m])
                             {
-                                *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
+                                if (r+2-(*y+k)<c&&(*x+m-2)<r)//阻止可能的非法写入
+                                {
+                                    *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
+                                }
                             }
                         }
                     }
