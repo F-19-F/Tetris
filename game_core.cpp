@@ -223,7 +223,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max,game_core *core)
 {
     static bool run = true;
     static int time = 0;
@@ -250,7 +250,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
             switch (Key->pop())
             {
             case left:
-                if (*x > 2)
+                if (core->Can_move_left(x,y,target))
                 {
                     blank();
                     cursor_move(*x, *y);
@@ -263,7 +263,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 }
                 break;
             case right:
-                if (*x + target->length <= c_max + 1)
+                if (core->Can_move_right(x,y,target))
                 {
                     blank();
                     cursor_move(*x, *y);
@@ -312,12 +312,12 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int x = c / 2;
     int signal = 0;
     int r_max = r - Min_R();
-    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max);
-    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max);
+    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max,this);
+    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max,this);
     t1.detach();
     t2.detach();
     this_thread::sleep_for(std::chrono::milliseconds(30));
-    while (Can_move(&x, &y, target))
+    while (Can_move_down(&x, &y, target))
     {
         cursor_move(x, y);
         target->print_model(false);
@@ -338,7 +338,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 //Can_move函数的输入x,y是终端原始坐标
-bool game_core::Can_move(int *x, int *y, model *target)
+bool game_core::Can_move_down(int *x, int *y, model *target)
 {
     int temp = r - 1;
     if (*y + target->height == r + 3)
@@ -386,4 +386,52 @@ bool game_core::Can_move(int *x, int *y, model *target)
         }
     }
     return true;
+}
+bool game_core::Can_move_left(int *locat_x,int *locat_y,model *target)
+{
+    //从模型最左边起检索
+    if (*locat_x==2)
+    {
+        return false;
+    }
+    for (int j=0;j<target->length;j++)
+    {
+        for (int i=target->height-1;i>=0;i--)
+        {
+            if (target->temp[i][j])
+            {
+                if (*(source + (r + 1 - (*locat_y + i)) * c + (*locat_x + j - 3)))
+                {
+                    //debug
+                    //*(source + (r + 2 - (*locat_y + i)) * c + (*locat_x + j - 3))=false;
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+bool game_core::Can_move_right(int *locat_x,int *locat_y,model *target)
+{
+   //从模型最右边起检索
+    if (*locat_x+target->length==c+2)
+    {
+        return false;
+    }
+    for (int j=target->length-1;j>=0;j--)
+    {
+        for (int i=target->height-1;i>=0;i--)
+        {
+            if (target->temp[i][j])
+            {
+                if (*(source + (r + 1 - (*locat_y + i)) * c + (*locat_x + j - 1)))
+                {
+                    //debug
+                    //*(source + (r + 2 - (*locat_y + i)) * c + (*locat_x + j - 3))=false;
+                    return false;
+                }
+            }
+        }
+    }
+    return true; 
 }
