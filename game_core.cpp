@@ -370,7 +370,7 @@ bool game_core::Can_move_down(int *x, int *y, model *target)
                         {
                             if (target->temp[k][m])
                             {
-                                if (r+2-(*y+k)<c&&(*x+m-2)<r)//阻止可能的非法写入
+                                if (r+2-(*y+k)<r&&(*x+m-2)<c)//阻止可能的非法写入
                                 {
                                     *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
                                 }
