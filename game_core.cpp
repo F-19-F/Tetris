@@ -239,7 +239,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 c_lock.unlock();
                 return;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(1));
+            this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
     else
