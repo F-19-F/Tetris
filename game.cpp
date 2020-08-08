@@ -3,9 +3,9 @@
 #include <mutex>
 #include <unistd.h>
 #include <sys/ioctl.h>              //linux/unix
-#include "include/terminal-linux.h" //linux/unix
-#include "include/game_core.h"
-#include "include/size.h"
+#include "include/terminal-linux.hpp" //linux/unix
+#include "include/game_core.hpp"
+#include "include/size.hpp"
 using namespace std;
 int main()
 {
