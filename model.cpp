@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
-#include "include/terminal-linux.h"
-#include "include/model.h"
+#include "include/terminal-linux.hpp"
+#include "include/model.hpp"
 #include "memory.h"
 using namespace std;
 //方块模型,mode表示方块类型，1-5将构建预设类型，0代表自主构建

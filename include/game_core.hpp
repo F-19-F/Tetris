@@ -1,5 +1,5 @@
-#include "model.h"
-#include "keydec.h"
+#include "model.hpp"
+#include "keydec.hpp"
 #define Print_base "▇"
 struct clean_base
 {
