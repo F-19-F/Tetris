@@ -14,6 +14,7 @@ int main()
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     model *a;
+    srand((unsigned)time(NULL));
     Key.start();
     game_core b(w.ws_row,(int)((w.ws_col)/3),1);
     //b.debug_core();
@@ -30,6 +31,7 @@ int main()
     }
     Key.stop();
     cursor_move(w.ws_row,w.ws_col);
+    end_all();
     cout<<endl;
     return 0;
 }
