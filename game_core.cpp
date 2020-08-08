@@ -3,8 +3,8 @@
 #include <memory.h>
 #include <mutex>
 using namespace std;
-#include "include/game_core.h"
-#include "include/terminal-linux.h"
+#include "include/game_core.hpp"
+#include "include/terminal-linux.hpp"
 //删除临时结果
 void game_core::del_base()
 {

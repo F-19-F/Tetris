@@ -4,8 +4,8 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
-#include "include/keydec.h"
-#include "include/model.h"
+#include "include/keydec.hpp"
+#include "include/model.hpp"
 using namespace std;
 Key_dec::Key_dec()
 {
