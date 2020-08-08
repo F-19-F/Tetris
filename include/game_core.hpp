@@ -16,6 +16,7 @@ private:
     int speed;
     //bool over;
     clean_base *temp;
+    bool model_written;
     //返回需要清除的行的位置
 public:
     bool over;
@@ -38,6 +39,7 @@ public:
     int Min_R();
     //添加模型
     void Add_model(model *target,Key_dec *Key);
+    void Write_core(int x,int y,model *target);
     bool Can_move_down(int *x,int *y,model *target);
     bool Can_move_left(int *x,int *y,model *target);
     bool Can_move_right(int *x ,int *y,model *target);

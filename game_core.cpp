@@ -104,7 +104,8 @@ game_core::game_core(int r, int c, int speed)
 {
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
-    over =false;
+    over = false;
+    model_written = false;
     source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
@@ -223,7 +224,7 @@ int game_core::Min_R()
     return -1;
 }
 //targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max,game_core *core)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max, game_core *core)
 {
     static bool run = true;
     static int time = 0;
@@ -250,7 +251,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
             switch (Key->pop())
             {
             case left:
-                if (core->Can_move_left(x,y,target))
+                if (core->Can_move_left(x, y, target))
                 {
                     blank();
                     cursor_move(*x, *y);
@@ -263,7 +264,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 }
                 break;
             case right:
-                if (core->Can_move_right(x,y,target))
+                if (core->Can_move_right(x, y, target))
                 {
                     blank();
                     cursor_move(*x, *y);
@@ -290,9 +291,14 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
             case down:
                 cursor_move(*x, *y);
                 target->print_model(true);
-                if ((*y + target->height) < *r_max + 2)
+                //(*y + target->height) < *r_max + 2;
+                if (core->Can_move_down(x, y, target))
                 {
-                    *y = *y + 2;
+                    *y = *y + 1;
+                    if (core->Can_move_down(x, y, target))
+                    {
+                        *y = *y + 1;
+                    }
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
@@ -312,76 +318,74 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int x = c / 2;
     int signal = 0;
     int r_max = r - Min_R();
-    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max,this);
-    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max,this);
+    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max, this);
+    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max, this);
     t1.detach();
     t2.detach();
-    this_thread::sleep_for(std::chrono::milliseconds(30));
-    while (Can_move_down(&x, &y, target))
+    //打印最开始的模型
+    y_lock.lock();
+    cursor_move(x, y);
+    target->print_model(false); 
+    this_thread::sleep_for(std::chrono::milliseconds(500));
+    cursor_move(x, y);
+    target->print_model(true);
+    y_lock.unlock();
+    //最开始模型打印结束,开始正常下落
+    while (1)
     {
-        cursor_move(x, y);
-        target->print_model(false);
-        this_thread::sleep_for(std::chrono::milliseconds(500));
-        y_lock.lock();
-        cursor_move(x, y);
-        x++;
-        x--;
-        y++;
-        target->print_model(true);
-        y_lock.unlock();
+        if (Can_move_down(&x, &y, target))
+        {
+            y_lock.lock();
+            x++;
+            x--;
+            y++;
+            cursor_move(x, y);
+            target->print_model(false);
+            y_lock.unlock();
+            this_thread::sleep_for(std::chrono::milliseconds(500));
+            //避免下落时发生变形导致的打印异常
+            y_lock.lock();
+            cursor_move(x, y);
+            target->print_model(true);
+            y_lock.unlock();
+        }
+        else
+        {
+            Write_core(x,y,target);
+            break;
+        }
     }
     signal = 1;
     t1.~thread();
     t2.~thread();
     Key->clean();
     clean();
+    //检测游戏是否结束
+    for (int l = 0; l < c; l++)
+        if (*(source + (r - 1) * c + l))
+        {
+            over = true;
+        }
     this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 //Can_move函数的输入x,y是终端原始坐标
 bool game_core::Can_move_down(int *x, int *y, model *target)
 {
-    if (*y + target->height == r + 3)
+    //模块往下移一行到达底部时将直接返回false
+    if ((*y + (target->height)) == r +2)
     {
-        for (int k = 3; k >= 0; k--)
-        {
-            for (int m = 0; m < 4; m++)
-            {
-                if (target->temp[k][m])
-                {
-                    *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
-                }
-            }
-        }
         return false;
     }
     //从模块最底层开始检索
-    for (int i = 3; i >= 0; i--)
+    for (int i = target->height - 1; i >= 0; i--)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < target->length; j++)
         {
+            //检测到模块方格所在位置
             if (target->temp[i][j])
             {
-                if (*(source + (r + 1 - (*y + i)) * c + (*x + j - 2)))
+                if (*(source + (r +1 - (*y + i +1)) * c + (*x + j - 2)))
                 {
-                    //*(source + (r+1-(*y+i)) * c + (*x+j-2))=false;
-                    for (int k = 3; k >= 0; k--)
-                    {
-                        for (int m = 0; m < 4; m++)
-                        {
-                            if (target->temp[k][m])
-                            {
-                                if (r+2-(*y+k)<r&&(*x+m-2)<c)//阻止可能的非法写入
-                                {
-                                    *(source + (r + 2 - (*y + k)) * c + (*x + m - 2)) = true;
-                                }
-                            }
-                        }
-                    }
-                    for (int l=0;l<c;l++)
-                        if (*(source+(r-1)*c+l))
-                        {
-                            over=true;
-                        }
                     return false;
                 }
             }
@@ -389,16 +393,16 @@ bool game_core::Can_move_down(int *x, int *y, model *target)
     }
     return true;
 }
-bool game_core::Can_move_left(int *locat_x,int *locat_y,model *target)
+bool game_core::Can_move_left(int *locat_x, int *locat_y, model *target)
 {
     //从模型最左边起检索
-    if (*locat_x==2)
+    if (*locat_x == 2)
     {
         return false;
     }
-    for (int j=0;j<target->length;j++)
+    for (int j = 0; j < target->length; j++)
     {
-        for (int i=target->height-1;i>=0;i--)
+        for (int i = target->height - 1; i >= 0; i--)
         {
             if (target->temp[i][j])
             {
@@ -413,16 +417,16 @@ bool game_core::Can_move_left(int *locat_x,int *locat_y,model *target)
     }
     return true;
 }
-bool game_core::Can_move_right(int *locat_x,int *locat_y,model *target)
+bool game_core::Can_move_right(int *locat_x, int *locat_y, model *target)
 {
-   //从模型最右边起检索
-    if (*locat_x+target->length==c+2)
+    //从模型最右边起检索
+    if (*locat_x + target->length == c + 2)
     {
         return false;
     }
-    for (int j=target->length-1;j>=0;j--)
+    for (int j = target->length - 1; j >= 0; j--)
     {
-        for (int i=target->height-1;i>=0;i--)
+        for (int i = target->height - 1; i >= 0; i--)
         {
             if (target->temp[i][j])
             {
@@ -435,5 +439,19 @@ bool game_core::Can_move_right(int *locat_x,int *locat_y,model *target)
             }
         }
     }
-    return true; 
+    return true;
+}
+void game_core::Write_core(int x, int y, model *target)
+{
+    for (int i = target->height - 1; i >= 0; i--)
+    {
+        for (int j = 0; j < target->length; j++)
+        {
+            if (target->temp[i][j])
+            {
+                *(source + (r + 1 - (y + i)) * c + (x + j - 2)) = true;
+            }
+        }
+    }
+    model_written = true;
 }
