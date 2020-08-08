@@ -105,7 +105,6 @@ game_core::game_core(int r, int c, int speed)
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
     over = false;
-    model_written = false;
     source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
@@ -281,7 +280,8 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 target->print_model(true);
                 target->changer_neg(-90);
                 //this_thread::sleep_for(std::chrono::milliseconds(20));
-                if (*x + target->length > c_max + 2)
+                //如果不符合要求,就撤回更改
+                if (!core->Is_valid(x, y, target))
                 {
                     target->changer_neg(90);
                 }
@@ -325,7 +325,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     //打印最开始的模型
     y_lock.lock();
     cursor_move(x, y);
-    target->print_model(false); 
+    target->print_model(false);
     this_thread::sleep_for(std::chrono::milliseconds(500));
     cursor_move(x, y);
     target->print_model(true);
@@ -351,7 +351,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
         }
         else
         {
-            Write_core(x,y,target);
+            Write_core(x, y, target);
             break;
         }
     }
@@ -372,7 +372,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
 bool game_core::Can_move_down(int *x, int *y, model *target)
 {
     //模块往下移一行到达底部时将直接返回false
-    if ((*y + (target->height)) == r +2)
+    if ((*y + (target->height)) == r + 2)
     {
         return false;
     }
@@ -384,7 +384,7 @@ bool game_core::Can_move_down(int *x, int *y, model *target)
             //检测到模块方格所在位置
             if (target->temp[i][j])
             {
-                if (*(source + (r +1 - (*y + i +1)) * c + (*x + j - 2)))
+                if (*(source + (r + 1 - (*y + i + 1)) * c + (*x + j - 2)))
                 {
                     return false;
                 }
@@ -453,5 +453,32 @@ void game_core::Write_core(int x, int y, model *target)
             }
         }
     }
-    model_written = true;
+}
+bool game_core::Is_valid(int *x, int *y, model *target)
+{
+    //超出右边界不行
+    if (*x + target->length > c + 2)
+    {
+        return false;
+    }
+    //超出下边界不行
+    if (*y + target->height > r + 1)
+    {
+        return false;
+    }
+    for (int j = target->length - 1; j >= 0; j--)
+    {
+        for (int i = target->height - 1; i >= 0; i--)
+        {
+            if (target->temp[i][j])
+            {
+                //检测是否有冲突
+                if (*(source + (r + 1 - (*y + i)) * c + (*x + j - 2)))
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }

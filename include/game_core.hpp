@@ -16,7 +16,6 @@ private:
     int speed;
     //bool over;
     clean_base *temp;
-    bool model_written;
     //返回需要清除的行的位置
 public:
     bool over;
@@ -43,4 +42,5 @@ public:
     bool Can_move_down(int *x,int *y,model *target);
     bool Can_move_left(int *x,int *y,model *target);
     bool Can_move_right(int *x ,int *y,model *target);
+    bool Is_valid(int *x,int *y,model *target);
 };
