@@ -222,8 +222,11 @@ int game_core::Min_R()
     }
     return -1;
 }
-//targer为添加的模型指针，signal时监控按下的按键，Press_times对应按下值的指针，control为扫描键盘的控制，用来重置计数器
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, int c_max, int *r_max, game_core *core)
+//Move函数主管方块正常下落中对按键的反馈，x,y为模块当前坐标，signal为同步信号，target为模型对象,core为游戏core对象，Key为按键输入对象
+//signal为0时线程将正常运行
+//signal为1时将结束控制线程以及Move线程
+//signal为2时表示正在打印，正常下落线程此时应该等待
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core)
 {
     static bool run = true;
     static int time = 0;
@@ -253,6 +256,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 if (core->Can_move_left(x, y, target))
                 {
                     blank();
+                    *signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
@@ -260,12 +264,14 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
+                    *signal=0;
                 }
                 break;
             case right:
                 if (core->Can_move_right(x, y, target))
                 {
                     blank();
+                    *signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
@@ -273,9 +279,11 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
+                    *signal=0;
                 }
                 break;
             case up:
+                *signal=2;
                 cursor_move(*x, *y);
                 target->print_model(true);
                 target->changer_neg(-90);
@@ -287,11 +295,12 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
+                *signal=0;
                 break;
             case down:
+                *signal=2;
                 cursor_move(*x, *y);
                 target->print_model(true);
-                //(*y + target->height) < *r_max + 2;
                 if (core->Can_move_down(x, y, target))
                 {
                     *y = *y + 1;
@@ -302,6 +311,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, i
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
+                *signal=0;
                 break;
             default:
                 break;
@@ -317,9 +327,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    int r_max = r - Min_R();
-    thread t1(Move, &x, &y, &signal, target, true, Key, c, &r_max, this);
-    thread t2(Move, &x, &y, &signal, target, false, Key, c, &r_max, this);
+    thread t1(Move, &x, &y, &signal, target, true, Key, this);
+    thread t2(Move, &x, &y, &signal, target, false, Key, this);
     t1.detach();
     t2.detach();
     //打印最开始的模型
@@ -335,6 +344,11 @@ void game_core::Add_model(model *target, Key_dec *Key)
     {
         if (Can_move_down(&x, &y, target))
         {
+            //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
+            if (signal==2)
+            {
+               this_thread::sleep_for(std::chrono::milliseconds(1)); 
+            }
             y_lock.lock();
             x++;
             x--;
