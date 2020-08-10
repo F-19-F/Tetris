@@ -164,6 +164,7 @@ void game_core::R_delete()
 //执行一次，满行全部删除
 int game_core::clean()
 {
+    int Before_min=Min_R();
     int sum = 0;
     clean_base *temp_fun;
     temp_fun = new clean_base;
@@ -191,6 +192,16 @@ int game_core::clean()
     //避免内存泄漏
     draw_delline();
     del_base();
+    cursor_move(2, r + 1 +1 - Before_min);
+    for (int i=0;i<sum;i++)
+    {
+        for (int j=0;j<c;j++)
+        {
+            cout<<" ";
+        }
+        moveleft(c);
+        movedown(1)
+    }
     return sum;
 }
 //返回行标最小的空行--辅助函数
@@ -414,6 +425,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
         else
         {
             Write_core(x, y, target);
+            print();
             break;
         }
     }
