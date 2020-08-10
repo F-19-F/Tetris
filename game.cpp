@@ -20,6 +20,12 @@ int main()
     //b.debug_core();
     clean_screen();
     cout.flush();
+    /*b.debug_core();
+    b.print();
+    this_thread::sleep_for(std::chrono::milliseconds(500));
+    b.clean();
+    b.print();*/
+    //正常//
     b.print();
     while (!b.over)
     {
