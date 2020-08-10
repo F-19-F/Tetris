@@ -3,7 +3,6 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <mutex>
 #include "include/keydec.hpp"
 #include "include/model.hpp"
 using namespace std;
@@ -66,7 +65,7 @@ int Key_dec::pop()
 }
 void key_proc(bool ctrl, Key_dec *output)
 {
-  mutex c_lock;
+  //mutex c_lock;
   char c;
   static struct termios oldt, newt;
   static bool run = true;
@@ -79,12 +78,12 @@ void key_proc(bool ctrl, Key_dec *output)
       {
         //cout << "end";
         //cout.flush();
-        c_lock.lock();
+        //c_lock.lock();
         run = false;
-        c_lock.unlock();
+        //c_lock.unlock();
         return;
       }
-      this_thread::sleep_for(std::chrono::milliseconds(200));
+      this_thread::sleep_for(std::chrono::milliseconds(20));
     }
   }
   else
@@ -129,9 +128,7 @@ void key_proc(bool ctrl, Key_dec *output)
     }
     system("stty echo"); //系统调用，恢复回显
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    c_lock.lock();
     run=true;
-    c_lock.unlock();
   }
 }
 void Key_dec::start()

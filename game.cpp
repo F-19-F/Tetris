@@ -33,5 +33,8 @@ int main()
     cursor_move(w.ws_row,w.ws_col);
     end_all();
     cout<<endl;
+    cout<<"等待各线程结束";
+    cout.flush();
+    this_thread::sleep_for(std::chrono::milliseconds(500));
     return 0;
 }
