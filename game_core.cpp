@@ -226,20 +226,17 @@ int game_core::Min_R()
 //signal为0时线程将正常运行
 //signal为1时将结束控制线程以及Move线程
 //signal为2时表示正在打印，正常下落线程此时应该等待
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core)
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core,mutex *Lock)
 {
     static bool run = true;
     static int time = 0;
-    mutex c_lock;
     if (ctrl)
     {
         while (1)
         {
             if (*signal == 1)
             {
-                c_lock.lock();
                 run = false;
-                c_lock.unlock();
                 return;
             }
             this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -255,8 +252,9 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
             case left:
                 if (core->Can_move_left(x, y, target))
                 {
+                    Lock->lock();
                     blank();
-                    *signal=2;
+                    //*signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
@@ -264,14 +262,16 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
-                    *signal=0;
+                    //*signal=0;
+                    Lock->unlock();
                 }
                 break;
             case right:
                 if (core->Can_move_right(x, y, target))
                 {
+                    Lock->lock();
                     blank();
-                    *signal=2;
+                    //*signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
@@ -279,11 +279,13 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
-                    *signal=0;
+                    //*signal=0;
+                    Lock->unlock();
                 }
                 break;
             case up:
-                *signal=2;
+                //*signal=2;
+                Lock->lock();
                 cursor_move(*x, *y);
                 target->print_model(true);
                 target->changer_neg(-90);
@@ -295,10 +297,12 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
-                *signal=0;
+                //*signal=0;
+                Lock->unlock();
                 break;
             case down:
-                *signal=2;
+                //*signal=2;
+                Lock->lock();
                 cursor_move(*x, *y);
                 target->print_model(true);
                 if (core->Can_move_down(x, y, target))
@@ -311,7 +315,8 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
-                *signal=0;
+                Lock->unlock();
+                //*signal=0;
                 break;
             default:
                 break;
@@ -327,8 +332,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    thread t1(Move, &x, &y, &signal, target, true, Key, this);
-    thread t2(Move, &x, &y, &signal, target, false, Key, this);
+    thread t1(Move, &x, &y, &signal, target, true, Key, this,&y_lock);
+    thread t2(Move, &x, &y, &signal, target, false, Key, this,&y_lock);
     t1.detach();
     t2.detach();
     //打印最开始的模型
@@ -345,13 +350,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
         if (Can_move_down(&x, &y, target))
         {
             //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
-            if (signal==2)
-            {
-               this_thread::sleep_for(std::chrono::milliseconds(1)); 
-            }
             y_lock.lock();
-            x++;
-            x--;
             y++;
             cursor_move(x, y);
             target->print_model(false);
