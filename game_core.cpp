@@ -71,7 +71,6 @@ void game_core::print()
     cout << "┘";
     //end_all();
     ///for linux/unix terminal////
-    //yellow_background();
     blue_foreground();
     hide_cursor();
     ///for linux/unix terminal////
@@ -84,17 +83,12 @@ void game_core::print()
             if (*(source + i * c + j))
             {
                 cout << (Print_base);
-                //cout.flush();
             }
             else
             {
                 cout << " ";
-                //cout.flush();
             }
         }
-        //cursor_move(c+3, x - i + 1);
-        //cout<<( "--------line" << i + 1;
-        //cout<<( endl;
     }
     end_all();
     cout.flush();
@@ -229,9 +223,9 @@ int game_core::Min_R()
 void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core,mutex *Lock)
 {
     static bool run = true;
-    static int time = 0;
     if (ctrl)
     {
+        //控制线程，方便快速退出Move线程
         while (1)
         {
             if (*signal == 1)
@@ -244,7 +238,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
     }
     else
     {
-        time++;
         while (run)
         {
             switch (Key->pop())
@@ -254,7 +247,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 {
                     Lock->lock();
                     blank();
-                    //*signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
@@ -262,7 +254,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
-                    //*signal=0;
                     Lock->unlock();
                 }
                 break;
@@ -271,7 +262,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 {
                     Lock->lock();
                     blank();
-                    //*signal=2;
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
@@ -279,17 +269,14 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     end_all();
                     target->print_model(false);
-                    //*signal=0;
                     Lock->unlock();
                 }
                 break;
             case up:
-                //*signal=2;
                 Lock->lock();
                 cursor_move(*x, *y);
                 target->print_model(true);
                 target->changer_neg(-90);
-                //this_thread::sleep_for(std::chrono::milliseconds(20));
                 //如果不符合要求,就撤回更改
                 if (!core->Is_valid(x, y, target))
                 {
@@ -297,11 +284,9 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
-                //*signal=0;
                 Lock->unlock();
                 break;
             case down:
-                //*signal=2;
                 Lock->lock();
                 cursor_move(*x, *y);
                 target->print_model(true);
@@ -316,7 +301,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 cursor_move(*x, *y);
                 target->print_model(false);
                 Lock->unlock();
-                //*signal=0;
                 break;
             default:
                 break;
@@ -324,6 +308,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
             this_thread::sleep_for(std::chrono::milliseconds(30));
         }
         run = true;
+        return;
     }
 }
 void game_core::Add_model(model *target, Key_dec *Key)
