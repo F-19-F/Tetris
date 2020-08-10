@@ -16,7 +16,7 @@ int main()
     model *a;
     srand((unsigned)time(NULL));
     Key.start();
-    game_core b(w.ws_row,(int)((w.ws_col)/3),1);
+    game_core b(w.ws_row,(int)((w.ws_col)/3),5);
     //b.debug_core();
     clean_screen();
     cout.flush();
