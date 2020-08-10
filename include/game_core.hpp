@@ -1,5 +1,6 @@
 #include "model.hpp"
 #include "keydec.hpp"
+#define MAX_TIME 1000
 #define Print_base "▇"
 struct clean_base
 {
@@ -36,6 +37,7 @@ public:
     int clean();
     //返回最小空行
     int Min_R();
+    void draw_delline();
     //添加模型
     void Add_model(model *target,Key_dec *Key);
     void Write_core(int x,int y,model *target);
