@@ -22,7 +22,7 @@ void game_core::del_base()
 //
 void game_core::debug_core()
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 7; i++)
     {
         for (int j = 0; j < c; j++)
         {
@@ -189,6 +189,7 @@ int game_core::clean()
     }
     R_delete();
     //避免内存泄漏
+    draw_delline();
     del_base();
     return sum;
 }
@@ -220,7 +221,69 @@ int game_core::Min_R()
 //signal为0时线程将正常运行
 //signal为1时将结束控制线程以及Move线程
 //signal为2时表示正在打印，正常下落线程此时应该等待
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core,mutex *Lock)
+void game_core::draw_delline()
+{
+    clean_base *target;
+    target = temp;
+    target = target->next;
+    int r_temp;
+    if (target==NULL)
+    {
+        return;
+    }
+    for (int j = 0; j < 3; j++)
+    {
+        while (target != NULL)
+        {
+            //重置为0
+            r_temp = target->location;
+            cursor_move(2, r + 1 - r_temp);
+            for (int i = 0; i < c; i++)
+            {
+                //blink();
+                cout << " ";
+                cout.flush();
+            }
+            cout.flush();
+            target = target->next;
+        }
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+       target=temp->next;
+        while (target != NULL)
+        {
+            //重置为0
+            r_temp = target->location;
+            cursor_move(2, r + 1 - r_temp);
+            for (int i = 0; i < c; i++)
+            {
+                //blink();
+                cout <<Print_base;
+                cout.flush();
+            }
+            cout.flush();
+            target = target->next;
+        }
+        target=temp->next;
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+    end_all();
+    target=temp->next;
+    while (target != NULL)
+        {
+            //重置为0
+            r_temp = target->location;
+            cursor_move(2, r + 1 - r_temp);
+            for (int i = 0; i < c; i++)
+            {
+                //blink();
+                cout <<" ";
+                cout.flush();
+            }
+            cout.flush();
+            target = target->next;
+        }
+}
+void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core, mutex *Lock)
 {
     static bool run = true;
     if (ctrl)
@@ -317,15 +380,16 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int y = 2;
     int x = c / 2;
     int signal = 0;
-    thread t1(Move, &x, &y, &signal, target, true, Key, this,&y_lock);
-    thread t2(Move, &x, &y, &signal, target, false, Key, this,&y_lock);
+    int Time_speed = MAX_TIME / speed;
+    thread t1(Move, &x, &y, &signal, target, true, Key, this, &y_lock);
+    thread t2(Move, &x, &y, &signal, target, false, Key, this, &y_lock);
     t1.detach();
     t2.detach();
     //打印最开始的模型
     y_lock.lock();
     cursor_move(x, y);
     target->print_model(false);
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
     cursor_move(x, y);
     target->print_model(true);
     y_lock.unlock();
@@ -340,7 +404,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
             cursor_move(x, y);
             target->print_model(false);
             y_lock.unlock();
-            this_thread::sleep_for(std::chrono::milliseconds(500));
+            this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
             //避免下落时发生变形导致的打印异常
             y_lock.lock();
             cursor_move(x, y);
