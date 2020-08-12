@@ -4,7 +4,11 @@
 #include <mutex>
 using namespace std;
 #include "include/game_core.hpp"
-#include "include/terminal-linux.hpp"
+#ifndef _WIN64
+#include "include/terminal-POSIX.hpp"
+#else
+#include "include/terminal-windows.hpp"
+#endif
 //删除临时结果
 void game_core::del_base()
 {
@@ -62,14 +66,13 @@ void game_core::print()
         cout << "-";
     }
     cursor_move(1, 1);
-    cout << "┌";
+    cout << "┍";
     cursor_move(1, r + 2);
-    cout << "└";
+    cout << "┕";
     cursor_move(c + 2, 1);
-    cout << "┐";
+    cout << "┑";
     cursor_move(c + 2, r + 2);
-    cout << "┘";
-    //end_all();
+    cout << "┙";
     ///for linux/unix terminal////
     blue_foreground();
     hide_cursor();
@@ -83,10 +86,16 @@ void game_core::print()
             if (*(source + i * c + j))
             {
                 cout << (Print_base);
+                #ifdef _WIN64
+                cursor_location++;
+                #endif
             }
             else
             {
                 cout << " ";
+                #ifdef _WIN64
+                cursor_location++;
+                #endif
             }
         }
     }
@@ -193,14 +202,18 @@ int game_core::clean()
     draw_delline();
     del_base();
     cursor_move(2, r + 1 +1 - Before_min);
+    //清除多余行
     for (int i=0;i<sum;i++)
     {
         for (int j=0;j<c;j++)
         {
             cout<<" ";
+            #ifdef _WIN64
+            cursor_location++;
+            #endif
         }
         moveleft(c);
-        movedown(1)
+        movedown(1);
     }
     return sum;
 }
@@ -231,7 +244,6 @@ int game_core::Min_R()
 //Move函数主管方块正常下落中对按键的反馈，x,y为模块当前坐标，signal为同步信号，target为模型对象,core为游戏core对象，Key为按键输入对象
 //signal为0时线程将正常运行
 //signal为1时将结束控制线程以及Move线程
-//signal为2时表示正在打印，正常下落线程此时应该等待
 void game_core::draw_delline()
 {
     clean_base *target;
@@ -253,6 +265,9 @@ void game_core::draw_delline()
             {
                 //blink();
                 cout << " ";
+                #ifdef _WIN64
+                cursor_location++;
+                #endif
                 cout.flush();
             }
             cout.flush();
@@ -269,6 +284,9 @@ void game_core::draw_delline()
             {
                 //blink();
                 cout <<Print_base;
+                #ifdef _WIN64
+                cursor_location++;
+                #endif
                 cout.flush();
             }
             cout.flush();
@@ -277,7 +295,7 @@ void game_core::draw_delline()
         target=temp->next;
         this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    end_all();
+    //end_all();
     target=temp->next;
     while (target != NULL)
         {
@@ -289,6 +307,9 @@ void game_core::draw_delline()
                 //blink();
                 cout <<" ";
                 cout.flush();
+                #ifdef _WIN64
+                cursor_location++;
+                #endif
             }
             cout.flush();
             target = target->next;
@@ -320,13 +341,13 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 if (core->Can_move_left(x, y, target))
                 {
                     Lock->lock();
-                    blank();
+                    //blank();
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
                     this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
-                    end_all();
+                    //end_all();
                     target->print_model(false);
                     Lock->unlock();
                 }
@@ -335,13 +356,13 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 if (core->Can_move_right(x, y, target))
                 {
                     Lock->lock();
-                    blank();
+                    //blank();
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
                     this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
-                    end_all();
+                    //end_all();
                     target->print_model(false);
                     Lock->unlock();
                 }
