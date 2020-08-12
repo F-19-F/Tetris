@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cmath>
-#include "include/terminal-linux.hpp"
+#ifndef _WIN64
+#include "include/terminal-POSIX.hpp"
+#else
+#include "include/terminal-windows.hpp"
+#endif
 #include "include/model.hpp"
 #include "memory.h"
 using namespace std;
@@ -123,10 +127,16 @@ void model::print_model(bool clean)
                 if (clean)
                 {
                     cout<< " ";
+                    #ifdef _WIN64
+                    cursor_location++;
+                    #endif
                 }
                 else
                 {
                     cout<< "#";
+                    #ifdef _WIN64
+                    cursor_location++;
+                    #endif
                 }
                 
             }

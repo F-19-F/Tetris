@@ -1,5 +1,9 @@
+#ifndef _WIN64
 #include <termios.h>
 #include <unistd.h>
+#else
+#include <conio.h>
+#endif
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -63,6 +67,7 @@ int Key_dec::pop()
   delete temp;
   return r;
 }
+#ifndef _WIN64
 void key_proc(bool ctrl, Key_dec *output)
 {
   //mutex c_lock;
@@ -131,6 +136,59 @@ void key_proc(bool ctrl, Key_dec *output)
     run=true;
   }
 }
+#else
+void key_proc(bool ctrl,Key_dec *output)
+{
+  int c;
+  static bool run=true;
+  if (ctrl)
+  {
+    while (1)
+    {
+      //控制按键发现线程
+      if (output->psignal == 0)
+      {
+        run = false;
+        return;
+      }
+      this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+  }
+  else
+  {
+    while (run)
+    {
+      c=getch();
+      if (sp1==(int)c)
+      {
+        c=getch();
+        switch (c)
+        {
+        case up:
+            //cout <<"Up"<<endl;
+            output->push(up);
+            break;
+          case down:
+            //cout<<"Down"<<endl;
+            output->push(down);
+            break;
+          case right:
+            //cout<<"Right"<<endl;
+            output->push(right);
+            break;
+          case left:
+            //cout<<"Left"<<endl;
+            output->push(left);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    run=true;
+  }
+}
+#endif
 void Key_dec::start()
 {
   thread t1(key_proc, true, this);
