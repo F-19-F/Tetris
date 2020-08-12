@@ -1,3 +1,4 @@
+#ifndef _WIN64
 #include <unistd.h>//linux/unix
 #include <sys/ioctl.h>//linux/unix
 #include <thread>
@@ -22,3 +23,4 @@ void Size_detecter(bool* changed)
         std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
     }
 }
+#endif
