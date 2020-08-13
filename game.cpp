@@ -20,11 +20,8 @@ int main()
     ini_size=Getsize();
     srand((unsigned)time(NULL));
     Key.start();
-    #ifndef _WIN64
     game_core b(ini_size.r,(int)((ini_size.c)/3),5);
-    #else
-    game_core b(30,15,5);
-    #endif
+    //game_core b(30,15,5);
     clean_screen();
     cout.flush();
     //正常//
@@ -41,10 +38,8 @@ int main()
         b.print();
     }
     Key.stop();
-    #ifndef _WIN64
     cursor_move(ini_size.r,ini_size.c);
     end_all();
-    #endif
     cout<<endl;
     cout<<"等待各线程结束";
     cout.flush();

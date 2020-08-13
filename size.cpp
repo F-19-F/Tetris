@@ -1,8 +1,9 @@
+#include <thread>
+#include "include/size.hpp"
 #ifndef _WIN64
 #include <unistd.h>//linux/unix
 #include <sys/ioctl.h>//linux/unix
-#include <thread>
-#include "include/size.hpp"
+
 void Size_detecter(bool* changed)
 {
     int ini_hight = 0;
@@ -30,6 +31,17 @@ size Getsize()
     size a;
     a.r=w.ws_row;
     a.c=w.ws_col;
+    return a;
+}
+#else
+#include <windows.h>
+size Getsize()
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    size a;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    a.c = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    a.r = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
     return a;
 }
 #endif
