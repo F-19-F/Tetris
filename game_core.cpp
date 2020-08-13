@@ -437,8 +437,10 @@ void game_core::Add_model(model *target, Key_dec *Key)
         }
         else
         {
+            y_lock.lock();
             Write_core(x, y, target);
             print();
+            y_lock.unlock();
             break;
         }
     }
