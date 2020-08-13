@@ -5,6 +5,7 @@
 #define down 66
 #define right 67
 #define left 68
+#define space 32
 #else
 #define sp1 224
 #define up 72
