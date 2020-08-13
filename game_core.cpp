@@ -340,7 +340,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
-                    this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
                     target->print_model(false);
                     Lock->unlock();
@@ -353,7 +352,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
-                    this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
                     target->print_model(false);
                     Lock->unlock();
@@ -392,7 +390,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
             default:
                 break;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(30));
+            this_thread::sleep_for(std::chrono::milliseconds(15));
         }
         run = true;
         return;
