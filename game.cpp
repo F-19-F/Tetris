@@ -15,15 +15,13 @@ int main()
 {
     Key_dec Key;
     int i;
-    #ifndef _WIN64
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    #endif
     model *a;
+    size ini_size;
+    ini_size=Getsize();
     srand((unsigned)time(NULL));
     Key.start();
     #ifndef _WIN64
-    game_core b(w.ws_row,(int)((w.ws_col)/3),5);
+    game_core b(ini_size.r,(int)((ini_size.c)/3),5);
     #else
     game_core b(30,15,5);
     #endif
@@ -44,7 +42,7 @@ int main()
     }
     Key.stop();
     #ifndef _WIN64
-    cursor_move(w.ws_row,w.ws_col);
+    cursor_move(ini_size.r,ini_size.c);
     end_all();
     #endif
     cout<<endl;
