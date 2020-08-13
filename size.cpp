@@ -1,6 +1,6 @@
 #include <thread>
 #include "include/size.hpp"
-#ifndef _WIN64
+#ifndef _WIN32
 #include <unistd.h>//linux/unix
 #include <sys/ioctl.h>//linux/unix
 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#ifndef _WIN64
+#ifndef _WIN32
 #include "include/terminal-POSIX.hpp"
 #else
 #include "include/terminal-windows.hpp"
@@ -127,14 +127,14 @@ void model::print_model(bool clean)
                 if (clean)
                 {
                     cout<< " ";
-                    #ifdef _WIN64
+                    #ifdef _WIN32
                     cursor_location++;
                     #endif
                 }
                 else
                 {
                     cout<< "#";
-                    #ifdef _WIN64
+                    #ifdef _WIN32
                     cursor_location++;
                     #endif
                 }
