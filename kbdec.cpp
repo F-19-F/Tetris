@@ -130,6 +130,10 @@ void key_proc(bool ctrl, Key_dec *output)
           }
         }
       }
+      else if(c==space)
+      {
+        output->push(space);
+      }
     }
     system("stty echo"); //系统调用，恢复回显
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
