@@ -390,7 +390,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
             default:
                 break;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(15));
+            this_thread::sleep_for(std::chrono::milliseconds(20));
         }
         run = true;
         return;
