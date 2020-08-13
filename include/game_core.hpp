@@ -16,6 +16,7 @@ private:
     int r;
     int c;
     int speed;
+    int score;
     clean_base *temp;
     void del_base();
     void flash();
@@ -27,6 +28,7 @@ public:
     bool over;
     void debug_core();
     void print();
+    int get_score();
     game_core(int r, int c, int speed);
     ~game_core();
     int clean();
