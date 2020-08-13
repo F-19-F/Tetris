@@ -86,16 +86,16 @@ void game_core::print()
             if (*(source + i * c + j))
             {
                 cout << (Print_base);
-                #ifdef _WIN32
+#ifdef _WIN32
                 cursor_location++;
-                #endif
+#endif
             }
             else
             {
                 cout << " ";
-                #ifdef _WIN32
+#ifdef _WIN32
                 cursor_location++;
-                #endif
+#endif
             }
         }
     }
@@ -173,7 +173,7 @@ void game_core::R_delete()
 //执行一次，满行全部删除
 int game_core::clean()
 {
-    int Before_min=Min_R();
+    int Before_min = Min_R();
     int sum = 0;
     clean_base *temp_fun;
     temp_fun = new clean_base;
@@ -201,16 +201,16 @@ int game_core::clean()
     //避免内存泄漏
     draw_delline();
     del_base();
-    cursor_move(2, r + 1 +1 - Before_min);
+    cursor_move(2, r + 1 + 1 - Before_min);
     //清除多余行
-    for (int i=0;i<sum;i++)
+    for (int i = 0; i < sum; i++)
     {
-        for (int j=0;j<c;j++)
+        for (int j = 0; j < c; j++)
         {
-            cout<<" ";
-            #ifdef _WIN32
+            cout << " ";
+#ifdef _WIN32
             cursor_location++;
-            #endif
+#endif
         }
         moveleft(c);
         movedown(1);
@@ -250,7 +250,7 @@ void game_core::draw_delline()
     target = temp;
     target = target->next;
     int r_temp;
-    if (target==NULL)
+    if (target == NULL)
     {
         return;
     }
@@ -264,16 +264,16 @@ void game_core::draw_delline()
             for (int i = 0; i < c; i++)
             {
                 cout << " ";
-                #ifdef _WIN32
+#ifdef _WIN32
                 cursor_location++;
-                #endif
+#endif
                 cout.flush();
             }
             cout.flush();
             target = target->next;
         }
         this_thread::sleep_for(std::chrono::milliseconds(200));
-       target=temp->next;
+        target = temp->next;
         while (target != NULL)
         {
             //重置为0
@@ -281,39 +281,40 @@ void game_core::draw_delline()
             cursor_move(2, r + 1 - r_temp);
             for (int i = 0; i < c; i++)
             {
-                cout <<Print_base;
-                #ifdef _WIN32
+                cout << Print_base;
+#ifdef _WIN32
                 cursor_location++;
-                #endif
+#endif
                 cout.flush();
             }
             cout.flush();
             target = target->next;
         }
-        target=temp->next;
+        target = temp->next;
         this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    target=temp->next;
+    target = temp->next;
     while (target != NULL)
+    {
+        //重置为0
+        r_temp = target->location;
+        cursor_move(2, r + 1 - r_temp);
+        for (int i = 0; i < c; i++)
         {
-            //重置为0
-            r_temp = target->location;
-            cursor_move(2, r + 1 - r_temp);
-            for (int i = 0; i < c; i++)
-            {
-                cout <<" ";
-                cout.flush();
-                #ifdef _WIN32
-                cursor_location++;
-                #endif
-            }
+            cout << " ";
             cout.flush();
-            target = target->next;
+#ifdef _WIN32
+            cursor_location++;
+#endif
         }
+        cout.flush();
+        target = target->next;
+    }
 }
 void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core, mutex *Lock)
 {
     static bool run = true;
+    bool suspend = false;
     if (ctrl)
     {
         //控制线程，方便快速退出Move线程
@@ -331,64 +332,79 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
     {
         while (run)
         {
-            switch (Key->pop())
+            if (suspend)
             {
-            case left:
-                if (core->Can_move_left(x, y, target))
+                if (Key->pop() == space)
                 {
+                    Lock->unlock();
+                    suspend = false;
+                }
+            }
+            else
+            {
+                switch (Key->pop())
+                {
+                case left:
+                    if (core->Can_move_left(x, y, target))
+                    {
+                        Lock->lock();
+                        cursor_move(*x, *y);
+                        target->print_model(true);
+                        *x = *x - 1;
+                        cursor_move(*x, *y);
+                        target->print_model(false);
+                        Lock->unlock();
+                    }
+                    break;
+                case right:
+                    if (core->Can_move_right(x, y, target))
+                    {
+                        Lock->lock();
+                        cursor_move(*x, *y);
+                        target->print_model(true);
+                        *x = *x + 1;
+                        cursor_move(*x, *y);
+                        target->print_model(false);
+                        Lock->unlock();
+                    }
+                    break;
+                case up:
                     Lock->lock();
                     cursor_move(*x, *y);
                     target->print_model(true);
-                    *x = *x - 1;
+                    target->changer_neg(-90);
+                    //如果不符合要求,就撤回更改
+                    if (!core->Is_valid(x, y, target))
+                    {
+                        target->changer_neg(90);
+                    }
                     cursor_move(*x, *y);
                     target->print_model(false);
                     Lock->unlock();
-                }
-                break;
-            case right:
-                if (core->Can_move_right(x, y, target))
-                {
+                    break;
+                case down:
                     Lock->lock();
                     cursor_move(*x, *y);
                     target->print_model(true);
-                    *x = *x + 1;
-                    cursor_move(*x, *y);
-                    target->print_model(false);
-                    Lock->unlock();
-                }
-                break;
-            case up:
-                Lock->lock();
-                cursor_move(*x, *y);
-                target->print_model(true);
-                target->changer_neg(-90);
-                //如果不符合要求,就撤回更改
-                if (!core->Is_valid(x, y, target))
-                {
-                    target->changer_neg(90);
-                }
-                cursor_move(*x, *y);
-                target->print_model(false);
-                Lock->unlock();
-                break;
-            case down:
-                Lock->lock();
-                cursor_move(*x, *y);
-                target->print_model(true);
-                if (core->Can_move_down(x, y, target))
-                {
-                    *y = *y + 1;
                     if (core->Can_move_down(x, y, target))
                     {
                         *y = *y + 1;
+                        if (core->Can_move_down(x, y, target))
+                        {
+                            *y = *y + 1;
+                        }
                     }
+                    cursor_move(*x, *y);
+                    target->print_model(false);
+                    Lock->unlock();
+                    break;
+                case space:
+                    suspend = true;
+                    Lock->lock();
+                    break;
+                default:
+                    break;
                 }
-                cursor_move(*x, *y);
-                target->print_model(false);
-                Lock->unlock();
-                break;
-            default:
-                break;
             }
             this_thread::sleep_for(std::chrono::milliseconds(20));
         }
