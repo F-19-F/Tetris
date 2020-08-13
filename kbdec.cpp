@@ -184,6 +184,10 @@ void key_proc(bool ctrl,Key_dec *output)
             break;
         }
       }
+      else if(c==space)
+      {
+        output->push(space);
+      }
     }
     run=true;
   }
