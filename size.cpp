@@ -23,4 +23,13 @@ void Size_detecter(bool* changed)
         std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
     }
 }
+size Getsize()
+{
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    size a;
+    a.r=w.ws_row;
+    a.c=w.ws_col;
+    return a;
+}
 #endif
