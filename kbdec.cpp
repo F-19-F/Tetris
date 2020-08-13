@@ -1,4 +1,4 @@
-#ifndef _WIN64
+#ifndef _WIN32
 #include <termios.h>
 #include <unistd.h>
 #else
@@ -67,7 +67,7 @@ int Key_dec::pop()
   delete temp;
   return r;
 }
-#ifndef _WIN64
+#ifndef _WIN32
 void key_proc(bool ctrl, Key_dec *output)
 {
   //mutex c_lock;

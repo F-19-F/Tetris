@@ -4,7 +4,7 @@
 #include <mutex>
 using namespace std;
 #include "include/game_core.hpp"
-#ifndef _WIN64
+#ifndef _WIN32
 #include "include/terminal-POSIX.hpp"
 #else
 #include "include/terminal-windows.hpp"
@@ -86,14 +86,14 @@ void game_core::print()
             if (*(source + i * c + j))
             {
                 cout << (Print_base);
-                #ifdef _WIN64
+                #ifdef _WIN32
                 cursor_location++;
                 #endif
             }
             else
             {
                 cout << " ";
-                #ifdef _WIN64
+                #ifdef _WIN32
                 cursor_location++;
                 #endif
             }
@@ -208,7 +208,7 @@ int game_core::clean()
         for (int j=0;j<c;j++)
         {
             cout<<" ";
-            #ifdef _WIN64
+            #ifdef _WIN32
             cursor_location++;
             #endif
         }
@@ -264,7 +264,7 @@ void game_core::draw_delline()
             for (int i = 0; i < c; i++)
             {
                 cout << " ";
-                #ifdef _WIN64
+                #ifdef _WIN32
                 cursor_location++;
                 #endif
                 cout.flush();
@@ -282,7 +282,7 @@ void game_core::draw_delline()
             for (int i = 0; i < c; i++)
             {
                 cout <<Print_base;
-                #ifdef _WIN64
+                #ifdef _WIN32
                 cursor_location++;
                 #endif
                 cout.flush();
@@ -303,7 +303,7 @@ void game_core::draw_delline()
             {
                 cout <<" ";
                 cout.flush();
-                #ifdef _WIN64
+                #ifdef _WIN32
                 cursor_location++;
                 #endif
             }

@@ -1,4 +1,4 @@
-#ifdef _WIN64
+#ifdef _WIN32
 #include "windows.h"
 #include "include/terminal-windows.hpp"
 COORD common;

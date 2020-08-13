@@ -2,7 +2,7 @@
 #include <thread>
 #include <mutex>
 #include <unistd.h>
-#ifndef _WIN64
+#ifndef _WIN32
 #include "include/terminal-POSIX.hpp" //linux/unix
 #else
 #include "include/terminal-windows.hpp"

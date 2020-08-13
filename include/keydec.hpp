@@ -1,4 +1,4 @@
-#ifndef _WIN64
+#ifndef _WIN32
 #define sp1 27
 #define sp2 91
 #define up 65
