@@ -17,22 +17,23 @@ private:
     int c;
     int speed;
     clean_base *temp;
-public:
-    bool over;
     void del_base();
-    void debug_core();
-    void print();
-    game_core(int r, int c ,int speed);
-    ~game_core();
     void flash();
     void R_delete();
-    int clean();
-    int Min_R();
     void draw_delline();
-    void Add_model(model *target,Key_dec *Key);
-    void Write_core(int x,int y,model *target);
-    bool Can_move_down(int *x,int *y,model *target);
-    bool Can_move_left(int *x,int *y,model *target);
-    bool Can_move_right(int *x ,int *y,model *target);
-    bool Is_valid(int *x,int *y,model *target);
+    int Min_R();
+void Write_core(int x, int y, model *target);
+public:
+    bool over;
+    void debug_core();
+    void print();
+    game_core(int r, int c, int speed);
+    ~game_core();
+    int clean();
+    void Add_model(model *target, Key_dec *Key);
+    
+    bool Can_move_down(int *x, int *y, model *target);
+    bool Can_move_left(int *x, int *y, model *target);
+    bool Can_move_right(int *x, int *y, model *target);
+    bool Is_valid(int *x, int *y, model *target);
 };
