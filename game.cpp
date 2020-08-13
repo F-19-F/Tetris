@@ -3,7 +3,6 @@
 #include <mutex>
 #include <unistd.h>
 #ifndef _WIN64
-#include <sys/ioctl.h> //linux/unix
 #include "include/terminal-POSIX.hpp" //linux/unix
 #else
 #include "include/terminal-windows.hpp"
@@ -21,7 +20,6 @@ int main()
     srand((unsigned)time(NULL));
     Key.start();
     game_core b(ini_size.r,(int)((ini_size.c)/3),5);
-    //game_core b(30,15,5);
     clean_screen();
     cout.flush();
     //正常//
