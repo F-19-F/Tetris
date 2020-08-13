@@ -15,22 +15,35 @@ int main()
     Key_dec Key;
     int i;
     model *a;
+    model *temp;
     size ini_size;
     ini_size=Getsize();
     srand((unsigned)time(NULL));
     Key.start();
-    game_core b(ini_size.r,(int)((ini_size.c)/3),5);
+    game_core b(ini_size.r,(int)((ini_size.c)/5),9);
     clean_screen();
     cout.flush();
     //正常//
     b.print();
+    i=rand() % 5+1;
     while (!b.over)
     {
-        i=rand() % 5+1;
+        cursor_move(ini_size.c/5+2,1);
+        cout<<"分数:"<<b.get_score();
+        cout.flush();
         //i=4;
         a=new model(i);
+        i=rand() % 5+1;
+        temp=new model(i);
+        cursor_move(ini_size.c/5+2,10);
+        cout<<"下一个是:";
+        cursor_move(ini_size.c/5+2,11);
+        temp->print_model(false);
         b.Add_model(a,&Key);
+        cursor_move(ini_size.c/5+2,11);
+        temp->print_model(true);
         delete a;
+        delete temp;
         Key.clean();
         //cursor_move(1,1);
         b.print();
@@ -39,7 +52,7 @@ int main()
     cursor_move(ini_size.r,ini_size.c);
     end_all();
     cout<<endl;
-    cout<<"等待各线程结束";
+    cout<<"最终分数"<<b.get_score();
     cout.flush();
     this_thread::sleep_for(std::chrono::milliseconds(500));
     return 0;
