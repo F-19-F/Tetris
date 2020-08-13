@@ -31,7 +31,6 @@ public:
     ~game_core();
     int clean();
     void Add_model(model *target, Key_dec *Key);
-    
     bool Can_move_down(int *x, int *y, model *target);
     bool Can_move_left(int *x, int *y, model *target);
     bool Can_move_right(int *x, int *y, model *target);
