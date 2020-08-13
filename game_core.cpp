@@ -263,7 +263,6 @@ void game_core::draw_delline()
             cursor_move(2, r + 1 - r_temp);
             for (int i = 0; i < c; i++)
             {
-                //blink();
                 cout << " ";
                 #ifdef _WIN64
                 cursor_location++;
@@ -282,7 +281,6 @@ void game_core::draw_delline()
             cursor_move(2, r + 1 - r_temp);
             for (int i = 0; i < c; i++)
             {
-                //blink();
                 cout <<Print_base;
                 #ifdef _WIN64
                 cursor_location++;
@@ -295,7 +293,6 @@ void game_core::draw_delline()
         target=temp->next;
         this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    //end_all();
     target=temp->next;
     while (target != NULL)
         {
@@ -304,7 +301,6 @@ void game_core::draw_delline()
             cursor_move(2, r + 1 - r_temp);
             for (int i = 0; i < c; i++)
             {
-                //blink();
                 cout <<" ";
                 cout.flush();
                 #ifdef _WIN64
@@ -341,13 +337,11 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 if (core->Can_move_left(x, y, target))
                 {
                     Lock->lock();
-                    //blank();
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x - 1;
                     this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
-                    //end_all();
                     target->print_model(false);
                     Lock->unlock();
                 }
@@ -356,13 +350,11 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 if (core->Can_move_right(x, y, target))
                 {
                     Lock->lock();
-                    //blank();
                     cursor_move(*x, *y);
                     target->print_model(true);
                     *x = *x + 1;
                     this_thread::sleep_for(std::chrono::milliseconds(20));
                     cursor_move(*x, *y);
-                    //end_all();
                     target->print_model(false);
                     Lock->unlock();
                 }
