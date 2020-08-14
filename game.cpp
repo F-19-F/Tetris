@@ -52,8 +52,16 @@ int main()
     cursor_move(ini_size.r,ini_size.c);
     end_all();
     cout<<endl;
-    cout<<"最终分数"<<b.get_score();
+    cout<<"最终分数"<<b.get_score()<<endl;
     cout.flush();
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    cout<<"游戏已结束，按任意操作键退出游戏";
+    while (1)
+    {
+        if (Key.pop()!=0)
+        {
+            break;
+        }
+        this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
     return 0;
 }
