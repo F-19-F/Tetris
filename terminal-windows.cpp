@@ -21,6 +21,14 @@ void hide_cursor()
     Cursor.bVisible = false;               //设置属性
     SetConsoleCursorInfo(handle, &Cursor); //使更改后的属性生效
 }
+void dishide_cusor()
+{
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO Cursor;
+    GetConsoleCursorInfo(handle, &Cursor); //获取控制台光标信息
+    Cursor.bVisible = true;               //设置属性
+    SetConsoleCursorInfo(handle, &Cursor); //使更改后的属性生效
+}
 void moveright(int i)
 {
     //COORD common;
