@@ -20,7 +20,7 @@ int main()
     ini_size=Getsize();
     srand((unsigned)time(NULL));
     Key.start();
-    game_core b(ini_size.r-3,(int)((ini_size.c)/5),9);
+    game_core b(ini_size.r-3,(int)((ini_size.c)/5),1,0,9);
     clean_screen();
     cout.flush();
     //正常//
