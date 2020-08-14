@@ -55,6 +55,7 @@ int main()
     cout<<"最终分数"<<b.get_score()<<endl;
     cout.flush();
     cout<<"游戏已结束，按任意操作键退出游戏";
+    cout.flush();
     while (1)
     {
         if (Key.pop()!=0)
