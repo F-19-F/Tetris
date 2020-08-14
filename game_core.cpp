@@ -602,3 +602,7 @@ int game_core::get_score()
 {
     return score;
 }
+int game_core::get_speed()
+{
+    return speed;
+}
