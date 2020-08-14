@@ -135,8 +135,8 @@ void key_proc(bool ctrl, Key_dec *output)
         output->push(space);
       }
     }
-    system("stty echo"); //系统调用，恢复回显
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    system("stty echo >/dev/null"); //系统调用，恢复回显
     changed=false;
     run=true;
     return;
