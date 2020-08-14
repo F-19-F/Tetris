@@ -204,7 +204,7 @@ int game_core::clean()
     //避免内存泄漏
     draw_delline();
     del_base();
-    cursor_move(2 + x_offset, r + 2 - Before_min + x_offset);
+    cursor_move(2 + x_offset, r + 2 - Before_min + y_offset);
     //清除多余行
     for (int i = 0; i < sum; i++)
     {
