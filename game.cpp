@@ -20,7 +20,7 @@ int main()
     ini_size=Getsize();
     srand((unsigned)time(NULL));
     Key.start();
-    game_core b(ini_size.r,(int)((ini_size.c)/5),9);
+    game_core b(ini_size.r-3,(int)((ini_size.c)/5),9);
     clean_screen();
     cout.flush();
     //正常//
@@ -28,19 +28,19 @@ int main()
     i=rand() % 5+1;
     while (!b.over)
     {
-        cursor_move(ini_size.c/5+2,1);
+        cursor_move(ini_size.c/5+3,1);
         cout<<"分数:"<<b.get_score();
         cout.flush();
         //i=4;
         a=new model(i);
         i=rand() % 5+1;
         temp=new model(i);
-        cursor_move(ini_size.c/5+2,10);
+        cursor_move(ini_size.c/5+3,10);
         cout<<"下一个是:";
-        cursor_move(ini_size.c/5+2,11);
+        cursor_move(ini_size.c/5+3,11);
         temp->print_model(false);
         b.Add_model(a,&Key);
-        cursor_move(ini_size.c/5+2,11);
+        cursor_move(ini_size.c/5+3,11);
         temp->print_model(true);
         delete a;
         delete temp;
