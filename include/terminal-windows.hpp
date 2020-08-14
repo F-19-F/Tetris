@@ -1,5 +1,6 @@
 void cursor_move(int x,int y);
 void hide_cursor();
+void dishide_cusor();
 void moveright(int i);
 void moveleft(int i);
 void movedown(int i);
