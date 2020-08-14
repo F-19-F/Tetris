@@ -70,7 +70,6 @@ int Key_dec::pop()
 #ifndef _WIN32
 void key_proc(bool ctrl, Key_dec *output)
 {
-  //mutex c_lock;
   char c;
   static struct termios oldt, newt;
   static bool run = true;
@@ -82,11 +81,7 @@ void key_proc(bool ctrl, Key_dec *output)
       //控制按键发现线程
       if (output->psignal == 0)
       {
-        //cout << "end";
-        //cout.flush();
-        //c_lock.lock();
         run = false;
-        //c_lock.unlock();
         return;
       }
       this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -140,10 +135,12 @@ void key_proc(bool ctrl, Key_dec *output)
         output->push(space);
       }
     }
-    system("stty echo"); //系统调用，恢复回显
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    system("stty echo"); //系统调用，恢复回显
+    //tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     changed=false;
     run=true;
+    return;
   }
 }
 #else
