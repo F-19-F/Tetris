@@ -40,6 +40,7 @@ public:
     void debug_core();
     void print();
     int get_score();
+    int get_speed();
     game_core(int r, int c, int x_offset , int y_offset , int speed);
     ~game_core();
     int clean();

@@ -10,50 +10,68 @@
 #include "include/game_core.hpp"
 #include "include/size.hpp"
 using namespace std;
-int main()
+int First_flag=0;
+void Infor_print(int x,int y,game_core *core,model *next_model)
 {
-    Key_dec Key;
+    static model Last_model=*next_model;
+    if (First_flag!=0)
+    {
+        cursor_move(x,y+7);
+        Last_model.print_model(true);
+    }
+    cursor_move(x,y);
+    cout<<"Score:"<<core->get_score();
+    cout.flush();
+    cursor_move(x,y+3);
+    cout<<"Level:"<<core->get_speed();
+    cout.flush();
+    cursor_move(x,y+6);
+    cout<<"Next:";
+    cout.flush();
+    cursor_move(x,y+7);
+    next_model->print_model(false);
+    Last_model=*next_model;
+    First_flag=1;
+}
+int Startgame(Key_dec *Key)
+{
     int i;
     model *a;
     model *temp;
     size ini_size;
     ini_size=Getsize();
     srand((unsigned)time(NULL));
-    Key.start();
     game_core b(ini_size.r-3,(int)((ini_size.c)/5),1,0,9);
     clean_screen();
     cout.flush();
-    //正常//
     b.print();
     i=rand() % 5+1;
     while (!b.over)
     {
-        cursor_move(ini_size.c/5+3,1);
-        cout<<"分数:"<<b.get_score();
-        cout.flush();
-        //i=4;
         a=new model(i);
         i=rand() % 5+1;
         temp=new model(i);
-        cursor_move(ini_size.c/5+3,10);
-        cout<<"下一个是:";
-        cursor_move(ini_size.c/5+3,11);
-        temp->print_model(false);
-        b.Add_model(a,&Key);
-        cursor_move(ini_size.c/5+3,11);
-        temp->print_model(true);
+        Infor_print(ini_size.c/5+5,3,&b,temp);
+        b.Add_model(a,Key);
         delete a;
         delete temp;
-        Key.clean();
-        //cursor_move(1,1);
+        Key->clean();
         b.print();
     }
-    Key.stop();
     cursor_move(ini_size.r,ini_size.c);
     end_all();
     cout<<endl;
     cout<<"最终分数"<<b.get_score()<<endl;
     cout.flush();
+    First_flag=0;
+    return b.get_score();
+}
+int main()
+{
+    Key_dec Key;
+    Key.start();
+    Startgame(&Key);
+    Key.stop();
     cout<<"游戏已结束，按任意键退出游戏";
     cout.flush();
     while (1)
