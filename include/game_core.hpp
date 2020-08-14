@@ -3,8 +3,14 @@
 #define MAX_TIME 1000
 //#define Print_base "■"
 #define Print_base "#"
-#define x_offset -1
-#define y_offset -1
+//由于Windows的坐标机制不一样，故分出两种初始偏移量
+#ifdef _WIN32
+#define x_ini_offset -1
+#define y_ini_offset -1
+#else
+#define x_ini_offset 0
+#define y_ini_offset 0
+#endif
 struct clean_base
 {
     int location;
@@ -19,19 +25,22 @@ private:
     int c;
     int speed;
     int score;
+    int x_offset;
+    int y_offset;
     clean_base *temp;
     void del_base();
     void flash();
     void R_delete();
     void draw_delline();
     int Min_R();
-void Write_core(int x, int y, model *target);
+    void Write_core(int x, int y, model *target);
+
 public:
     bool over;
     void debug_core();
     void print();
     int get_score();
-    game_core(int r, int c, int speed);
+    game_core(int r, int c, int x_offset , int y_offset , int speed);
     ~game_core();
     int clean();
     void Add_model(model *target, Key_dec *Key);
