@@ -74,6 +74,7 @@ void key_proc(bool ctrl, Key_dec *output)
   char c;
   static struct termios oldt, newt;
   static bool run = true;
+  static bool changed=false;
   if (ctrl)
   {
     while (1)
@@ -93,11 +94,15 @@ void key_proc(bool ctrl, Key_dec *output)
   }
   else
   {
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt; //复制旧终端信息
-    newt.c_lflag &= ~(ICANON);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    system("stty -echo");
+    if (!changed)
+    {
+      tcgetattr(STDIN_FILENO, &oldt);
+      newt = oldt; //复制旧终端信息
+      newt.c_lflag &= ~(ICANON);
+      tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+      system("stty -echo");
+      changed=true;
+    }
     while (run)
     {
       c = getchar();
@@ -137,6 +142,7 @@ void key_proc(bool ctrl, Key_dec *output)
     }
     system("stty echo"); //系统调用，恢复回显
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    changed=false;
     run=true;
   }
 }
