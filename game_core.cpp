@@ -52,26 +52,26 @@ void game_core::print()
     //clean_screen();
     for (int i = 0; i < r; i++)
     {
-        cursor_move(1+x_offset, r - i + 1+y_offset);
+        cursor_move(1 + x_offset, r - i + 1 + y_offset);
         cout << "|";
-        cursor_move(c + 2+x_offset, r - i + 1+y_offset);
+        cursor_move(c + 2 + x_offset, r - i + 1 + y_offset);
         cout << "|";
     }
     //打印横方向的边框
     for (int i = 0; i < c; i++)
     {
-        cursor_move(2 + i+x_offset, 1+y_offset);
+        cursor_move(2 + i + x_offset, 1 + y_offset);
         cout << "-";
-        cursor_move(2 + i+x_offset, r + 2+y_offset);
+        cursor_move(2 + i + x_offset, r + 2 + y_offset);
         cout << "-";
     }
-    cursor_move(1+x_offset, 1+y_offset);
+    cursor_move(1 + x_offset, 1 + y_offset);
     cout << "┍";
-    cursor_move(1+x_offset, r + 2+y_offset);
+    cursor_move(1 + x_offset, r + 2 + y_offset);
     cout << "┕";
-    cursor_move(c + 2+x_offset, 1+y_offset);
+    cursor_move(c + 2 + x_offset, 1 + y_offset);
     cout << "┑";
-    cursor_move(c + 2+x_offset, r + 2+y_offset);
+    cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┙";
     ///for linux/unix terminal////
     blue_foreground();
@@ -80,7 +80,7 @@ void game_core::print()
     cout.flush();
     for (int i = 0; i < Min_R(); i++) //从0行开始到r-1行
     {
-        cursor_move(2+x_offset, r - i + 1+y_offset); //+1是为了给边框空行
+        cursor_move(2 + x_offset, r - i + 1 + y_offset); //+1是为了给边框空行
         for (int j = 0; j < c; j++)
         {
             if (*(source + i * c + j))
@@ -103,12 +103,14 @@ void game_core::print()
     cout.flush();
 }
 //初始化x表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
-game_core::game_core(int r, int c, int speed)
+game_core::game_core(int r, int c, int x_offset, int y_offset, int speed)
 {
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
+    this->x_offset = x_ini_offset + x_offset;
+    this->y_offset = y_ini_offset + y_offset;
     over = false;
-    score=0;
+    score = 0;
     source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
     this->speed = speed;
@@ -202,7 +204,7 @@ int game_core::clean()
     //避免内存泄漏
     draw_delline();
     del_base();
-    cursor_move(2+x_offset, r + 2 - Before_min+x_offset);
+    cursor_move(2 + x_offset, r + 2 - Before_min + x_offset);
     //清除多余行
     for (int i = 0; i < sum; i++)
     {
@@ -261,7 +263,7 @@ void game_core::draw_delline()
         {
             //重置为0
             r_temp = target->location;
-            cursor_move(2+x_offset, r + 1 - r_temp+y_offset);
+            cursor_move(2 + x_offset, r + 1 - r_temp + y_offset);
             for (int i = 0; i < c; i++)
             {
                 cout << " ";
@@ -279,7 +281,7 @@ void game_core::draw_delline()
         {
             //重置为0
             r_temp = target->location;
-            cursor_move(2+x_offset, r + 1 - r_temp+y_offset);
+            cursor_move(2 + x_offset, r + 1 - r_temp + y_offset);
             for (int i = 0; i < c; i++)
             {
                 cout << Print_base;
@@ -299,7 +301,7 @@ void game_core::draw_delline()
     {
         //重置为0
         r_temp = target->location;
-        cursor_move(2+x_offset, r + 1 - r_temp+y_offset);
+        cursor_move(2 + x_offset, r + 1 - r_temp + y_offset);
         for (int i = 0; i < c; i++)
         {
             cout << " ";
@@ -416,8 +418,8 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
 void game_core::Add_model(model *target, Key_dec *Key)
 {
     mutex y_lock;
-    int y = 2+y_offset;
-    int x = c / 2+x_offset;
+    int y = 2 + y_offset;
+    int x = c / 2 + x_offset;
     int signal = 0;
     int Time_speed = MAX_TIME / speed;
     thread t1(Move, &x, &y, &signal, target, true, Key, this, &y_lock);
@@ -463,7 +465,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     t1.~thread();
     t2.~thread();
     Key->clean();
-    score+=clean()*speed*(c-2);
+    score += clean() * speed * (c - 2);
     //检测游戏是否结束
     for (int l = 0; l < c; l++)
         if (*(source + (r - 1) * c + l))
@@ -475,8 +477,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
 //Can_move函数的输入x,y是终端原始坐标
 bool game_core::Can_move_down(int x, int y, model *target)
 {
-    x-=x_offset;
-    y-=y_offset;
+    x -= x_offset;
+    y -= y_offset;
     //模块往下移一行到达底部时将直接返回false
     if ((y + (target->height)) == r + 2)
     {
@@ -501,8 +503,8 @@ bool game_core::Can_move_down(int x, int y, model *target)
 }
 bool game_core::Can_move_left(int x, int y, model *target)
 {
-    x-=x_offset;
-    y-=y_offset;
+    x -= x_offset;
+    y -= y_offset;
     //从模型最左边起检索
     if (x == 2)
     {
@@ -527,8 +529,8 @@ bool game_core::Can_move_left(int x, int y, model *target)
 }
 bool game_core::Can_move_right(int x, int y, model *target)
 {
-    x-=x_offset;
-    y-=y_offset;
+    x -= x_offset;
+    y -= y_offset;
     //从模型最右边起检索
     if (x + target->length == c + 2)
     {
@@ -553,8 +555,8 @@ bool game_core::Can_move_right(int x, int y, model *target)
 }
 void game_core::Write_core(int x, int y, model *target)
 {
-    x-=x_offset;
-    y-=y_offset;
+    x -= x_offset;
+    y -= y_offset;
     for (int i = target->height - 1; i >= 0; i--)
     {
         for (int j = 0; j < target->length; j++)
@@ -568,8 +570,8 @@ void game_core::Write_core(int x, int y, model *target)
 }
 bool game_core::Is_valid(int x, int y, model *target)
 {
-    x-=x_offset;
-    y-=y_offset;
+    x -= x_offset;
+    y -= y_offset;
     //超出右边界不行
     if (x + target->length > c + 2)
     {
