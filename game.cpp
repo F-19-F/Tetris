@@ -54,7 +54,7 @@ int main()
     cout<<endl;
     cout<<"最终分数"<<b.get_score()<<endl;
     cout.flush();
-    cout<<"游戏已结束，按任意操作键退出游戏";
+    cout<<"游戏已结束，按任意键退出游戏";
     cout.flush();
     while (1)
     {
@@ -64,5 +64,7 @@ int main()
         }
         this_thread::sleep_for(std::chrono::milliseconds(20));
     }
+    //运行完后恢复光标显示
+    dishide_cusor();
     return 0;
 }
