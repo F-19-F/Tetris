@@ -134,6 +134,14 @@ void key_proc(bool ctrl, Key_dec *output)
       {
         output->push(space);
       }
+      else
+      {
+        if (!run)
+        {
+          output->push(-1);
+        }
+      }
+      
     }
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     system("stty echo 2>/dev/null"); //系统调用，恢复回显
@@ -193,6 +201,13 @@ void key_proc(bool ctrl,Key_dec *output)
       else if(c==space)
       {
         output->push(space);
+      }
+      else
+      {
+        if (!run)
+        {
+          output->push(-1);
+        }
       }
     }
     run=true;
