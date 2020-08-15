@@ -1,21 +1,11 @@
 #ifdef _WIN32
 #include "windows.h"
 #include "include/WinAPI_control.hpp"
+#include "include/model.hpp"
 COORD common;
 //记录每一次cout导致的光标位移
 int cursor_location=0;
-bool OpenANSIControlChar()
-{
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut == INVALID_HANDLE_VALUE) { return false; }
-
-    DWORD dwMode = 0;
-    if (!GetConsoleMode(hOut, &dwMode)) { return false; }
-
-    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    if (!SetConsoleMode(hOut, dwMode)) { return false; }
-    return true;
-}
+COLORREF ColorTable_Back[16];
 void cursor_move(int x, int y)
 {
     //COORD common;
@@ -75,20 +65,48 @@ void clean_screen()
 {
     system("cls");
 }
-void blue_foreground()
+void Set_Default_color(int r,int g,int b,int f_r,int f_g,int f_b)
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+    int Temp[6][3]={Random_Color_1,Random_Color_2,Random_Color_3,Random_Color_4,Random_Color_5,Random_Color_6};
+    CONSOLE_SCREEN_BUFFER_INFOEX info;
+    info.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+
+    GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+    //Win10上，ColorTable 共有16个元素 (取自wincon.h中对应结构体的定义)
+    //在修改颜色前备份对应颜色
+    for (int i=0;i<16;i++)
+    {
+        ColorTable_Back[i]=info.ColorTable[i];
+    }
+    info.ColorTable[0]=RGB(r,g,b);//0是默认的背景RGB颜色
+    for (int i=0;i<6;i++)
+    {
+        info.ColorTable[i+1]=RGB(Temp[i][0],Temp[i][1],Temp[i][2]);
+    }
+    info.ColorTable[7]=RGB(f_r,f_g,f_b);//7 是默认的文字RGB颜色
+
+    SetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
-void yellow_foreground()
+void color(int c)
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED|FOREGROUND_GREEN);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
+	return;
 }
-void yellow_background()
+void Reset_color()
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),BACKGROUND_GREEN|BACKGROUND_RED);
-}
-void end_all()
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+    //Set_Default_color(12,12,12,204,204,204);//在Win10，背景的RGB默认值是12,12,12 字体的RGB默认值是204,204,204
+    CONSOLE_SCREEN_BUFFER_INFOEX info;
+    info.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+
+    //恢复默认值
+    GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+    for (int i=0;i<8;i++)
+    {
+        info.ColorTable[i]=ColorTable_Back[i];
+    }
+    SetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+
+    color(7);//在Win10,字体默认的color为7
+    return;
 }
 #endif

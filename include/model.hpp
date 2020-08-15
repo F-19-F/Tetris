@@ -1,14 +1,20 @@
 #define PI 3.14
+#define Random_Color_1 249,0,0
+#define Random_Color_2 26,242,242
+#define Random_Color_3 129,131,249
+#define Random_Color_4 26,232,26
+#define Random_Color_5 107,34,141
+#define Random_Color_6 149,120,90
 class model
 {
-    private:
+private:
     //方块抽象为8X8方格上相隔1个方块的点的组合
     bool base[8][8];
     //打印用到的临时变量
     //下面为旋转中心的坐标
     int center_x;
     int center_y;
-    public:
+public:
     bool temp[4][4];
     int length;
     int height;

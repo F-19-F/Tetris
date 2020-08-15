@@ -70,10 +70,8 @@ void game_core::print()
     cout << "┑";
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┙";
-    ///for linux/unix terminal////
-    blue_foreground();
+    //blue_foreground();
     hide_cursor();
-    ///for linux/unix terminal////
     cout.flush();
     for (int i = 0; i < Min_R(); i++) //从0行开始到r-1行
     {
@@ -96,7 +94,6 @@ void game_core::print()
             }
         }
     }
-    end_all();
     cout.flush();
 }
 //初始化x表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
