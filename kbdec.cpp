@@ -44,17 +44,13 @@ int Key_dec::push(int signal)
 int Key_dec::pop()
 {
   int r;
-  //key_base as_return;
   if (first == last)
   {
-    //as_return.signal = 0;
     //队列为空时返回空数据
     return 0;
   }
   key_base *temp = first->next;
   r=temp->signal;
-  //as_return = *temp;
-  //as_return.next = NULL;
   if (first->next == last)
   {
     last = first;
@@ -110,19 +106,15 @@ void key_proc(bool ctrl, Key_dec *output)
           switch (c)
           {
           case up:
-            //cout <<"Up"<<endl;
             output->push(up);
             break;
           case down:
-            //cout<<"Down"<<endl;
             output->push(down);
             break;
           case right:
-            //cout<<"Right"<<endl;
             output->push(right);
             break;
           case left:
-            //cout<<"Left"<<endl;
             output->push(left);
             break;
           default:
@@ -179,19 +171,15 @@ void key_proc(bool ctrl,Key_dec *output)
         switch (c)
         {
         case up:
-            //cout <<"Up"<<endl;
             output->push(up);
             break;
           case down:
-            //cout<<"Down"<<endl;
             output->push(down);
             break;
           case right:
-            //cout<<"Right"<<endl;
             output->push(right);
             break;
           case left:
-            //cout<<"Left"<<endl;
             output->push(left);
             break;
           default:
@@ -220,7 +208,6 @@ void Key_dec::start()
   thread t2(key_proc, false, this);
   t2.detach();
   t1.detach();
-  //cin >> psignal;
 }
 void Key_dec::stop()
 {

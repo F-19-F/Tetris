@@ -47,9 +47,6 @@ void game_core::print()
 {
     //打印边框
     //打印竖直方向的边框
-    //red_foreground();
-    //blue_background();
-    //clean_screen();
     for (int i = 0; i < r; i++)
     {
         cursor_move(1 + x_offset, r - i + 1 + y_offset);

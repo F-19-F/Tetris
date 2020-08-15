@@ -188,9 +188,6 @@ void model::get_temp()
     int c_temp = 0;
     bool get_c_min = false;
     bool get_r_min = false;
-    //计算height和length所用的临时变量
-    /*int get_h_temp;
-    int get_l_temp;*/
     //获取模型中横坐标和纵坐标的最小值
     for (int i = 0; i < 8; i++)
     {
