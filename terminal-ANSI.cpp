@@ -1,7 +1,7 @@
-#ifndef _WIN32
-#include"include/ANSI_control.hpp"
-#include"include/model.hpp"
-#include<iostream>
+#ifdef _WIN32
+#include <iostream>
+#include "include/ANSI_control.hpp"
+#include "include/model.hpp"
 using namespace std;
 int Temp[6][3]={Random_Color_1,Random_Color_2,Random_Color_3,Random_Color_4,Random_Color_5,Random_Color_6};
 void Set_Default_color(int r,int g,int b,int f_r,int f_g,int f_b)
