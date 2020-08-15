@@ -45,8 +45,10 @@ void game_core::debug_core()
 //输出当前表
 void game_core::print()
 {
+    int C_temp = 0;
     //打印边框
     //打印竖直方向的边框
+    color(7);
     for (int i = 0; i < r; i++)
     {
         cursor_move(1 + x_offset, r - i + 1 + y_offset);
@@ -80,10 +82,15 @@ void game_core::print()
         {
             if (*(source + i * c + j))
             {
+                if (C_temp != *(Color + i * c + j))
+                {
+                    color(*(Color + i * c + j));
+                    C_temp = *(Color + i * c + j);
+                }
                 cout << (Print_base);
 #ifdef _WIN32
                 cursor_location++;
-#endif
+#endif     
             }
             else
             {
@@ -105,8 +112,10 @@ game_core::game_core(int r, int c, int x_offset, int y_offset, int speed)
     this->y_offset = y_ini_offset + y_offset;
     over = false;
     score = 0;
-    source = new bool[r * c];                //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
+    source = new bool[r * c]; //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
+    Color = new int[r * c];
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
+    memset(Color, 0, r * c * sizeof(int));
     this->speed = speed;
 }
 game_core::~game_core()
@@ -133,6 +142,7 @@ void game_core::flash()
                     for (int n = 0; n < c; n++)
                     {
                         *(source + r_temp * c + n) = *(source + m * c + n);
+                        *(Color + r_temp * c + n) = *(Color + m * c + n);
                     }
                     r_temp = m;
                 }
@@ -140,6 +150,7 @@ void game_core::flash()
                 for (int n = 0; n < c; n++)
                 {
                     *(source + (r - 1) * c + n) = false;
+                    *(Color + (r - 1) * c + n) = 0;
                 }
                 //行循环更改
                 empty_made++;
@@ -558,6 +569,7 @@ void game_core::Write_core(int x, int y, model *target)
             if (target->temp[i][j])
             {
                 *(source + (r + 1 - (y + i)) * c + (x + j - 2)) = true;
+                *(Color + (r + 1 - (y + i)) * c + (x + j - 2))=target->get_color();
             }
         }
     }
