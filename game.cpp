@@ -55,10 +55,11 @@ int Startgame(Key_dec *Key)
         delete a;
         delete temp;
         Key->clean();
+        color(i);
         b.print();
     }
     cursor_move(ini_size.r,ini_size.c);
-    end_all();
+    Reset_color();
     cout<<endl;
     cout<<"最终分数"<<b.get_score()<<endl;
     cout.flush();
@@ -68,6 +69,7 @@ int Startgame(Key_dec *Key)
 int main()
 {
     Key_dec Key;
+    Set_Default_color(BF_Default_Color_RGB);
     Key.start();
     Startgame(&Key);
     Key.stop();
