@@ -7,6 +7,8 @@ void movedown(int i);
 void moveup(int i);
 void clean_screen();
 void blue_foreground();
+void yellow_foreground();
+void yellow_background();
 void end_all();
 //请确保在调用cursormove后任意的输出都记录下来
 extern int cursor_location;
