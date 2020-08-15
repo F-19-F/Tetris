@@ -12,12 +12,14 @@ using namespace std;
 int First_flag=0;
 void Infor_print(int x,int y,game_core *core,model *next_model)
 {
+    
     static model Last_model=*next_model;
     if (First_flag!=0)
     {
         cursor_move(x,y+7);
         Last_model.print_model(true);
     }
+    color(7);
     cursor_move(x,y);
     cout<<"Score:"<<core->get_score();
     cout.flush();
@@ -55,7 +57,6 @@ int Startgame(Key_dec *Key)
         delete a;
         delete temp;
         Key->clean();
-        color(i);
         b.print();
     }
     cursor_move(ini_size.r,ini_size.c);
