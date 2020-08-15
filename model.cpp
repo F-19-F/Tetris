@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
 #ifndef _WIN32
-#include "include/terminal-POSIX.hpp"
+#include "include/ANSI_control.hpp"
 #else
-#include "include/terminal-windows.hpp"
+#include "include/WinAPI_control.hpp"
 #endif
 #include "include/model.hpp"
 #include "memory.h"

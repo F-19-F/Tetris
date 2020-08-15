@@ -1,9 +1,21 @@
 #ifdef _WIN32
 #include "windows.h"
-#include "include/terminal-windows.hpp"
+#include "include/WinAPI_control.hpp"
 COORD common;
 //记录每一次cout导致的光标位移
 int cursor_location=0;
+bool OpenANSIControlChar()
+{
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE) { return false; }
+
+    DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode)) { return false; }
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(hOut, dwMode)) { return false; }
+    return true;
+}
 void cursor_move(int x, int y)
 {
     //COORD common;
