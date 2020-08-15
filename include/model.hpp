@@ -14,6 +14,7 @@ private:
     //下面为旋转中心的坐标
     int center_x;
     int center_y;
+    int Color;
 public:
     bool temp[4][4];
     int length;
@@ -28,4 +29,5 @@ public:
     void changer_neg(int ang);
     //将原始数据翻译成打印数据
     void get_temp();
+    int get_color();
 };

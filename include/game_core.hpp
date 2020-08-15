@@ -3,7 +3,7 @@
 #define MAX_TIME 1000
 //#define Print_base "■"
 #define Print_base "#"
-#define BF_Default_Color_RGB 158,173,134,0,0,0
+#define BF_Default_Color_RGB 0,0,0,158,173,134
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
 #define x_ini_offset -1
@@ -22,6 +22,7 @@ class game_core
     //权限设置为private保护游戏核心数据安全
 private:
     bool *source;
+    int *Color;
     int r;
     int c;
     int speed;
