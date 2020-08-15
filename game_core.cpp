@@ -5,9 +5,9 @@
 using namespace std;
 #include "include/game_core.hpp"
 #ifndef _WIN32
-#include "include/terminal-POSIX.hpp"
+#include "include/ANSI_control.hpp"
 #else
-#include "include/terminal-windows.hpp"
+#include "include/WinAPI_control.hpp"
 #endif
 //删除临时结果
 void game_core::del_base()
