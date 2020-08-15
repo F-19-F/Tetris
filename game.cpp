@@ -1,11 +1,10 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-#include <unistd.h>
 #ifndef _WIN32
-#include "include/terminal-POSIX.hpp" //linux/unix
+#include "include/ANSI_control.hpp" //linux/unix
 #else
-#include "include/terminal-windows.hpp"
+#include "include/WinAPI_control.hpp"
 #endif
 #include "include/game_core.hpp"
 #include "include/size.hpp"
@@ -41,7 +40,7 @@ int Startgame(Key_dec *Key)
     size ini_size;
     ini_size=Getsize();
     srand((unsigned)time(NULL));
-    game_core b(ini_size.r-3,(int)((ini_size.c)/5),1,0,9);
+    game_core b(ini_size.r-3,(int)((ini_size.c)/5),1,0,10);
     clean_screen();
     cout.flush();
     b.print();
