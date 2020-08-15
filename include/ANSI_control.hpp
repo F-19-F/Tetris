@@ -1,19 +1,3 @@
-#define black_foreground() cout<<"\033[30m"
-#define red_foreground() cout<<"\033[31m"
-#define green_foreground() cout<<"\033[32m"
-#define yellow_foreground() cout<<"\033[33m"
-#define blue_foreground() cout<<"\033[34m"
-#define purple_foreground() cout<<"\033[35m"
-#define dark_green_foreground() cout<<"\033[36m"
-#define white_foreground() cout<<"\033[37m"
-#define black_background() cout<<"\033[40m"
-#define red_background() cout<<"\033[41m"
-#define green_background() cout<<"\033[42m"
-#define yellow_background() cout<<"\033[43m"
-#define blue_background() cout<<"\033[44m"
-#define purple_background() cout<<"\033[45m"
-#define dark_green_background() cout<<"\033[46m"
-#define white_background() cout<<"\033[47m"
 #define end_all() cout<<"\033[0m"
 //高亮度
 #define high_light() cout<<"\033[1m"
@@ -47,4 +31,7 @@
 #define moveright(y) cout<<"\033["<<(y)<<"C"
 // 定位光标
 #define cursor_move(x,y) cout<<"\033["<<(y)<<";"<<(x)<<"H"
+void Set_Default_color(int r,int g,int b,int f_r,int f_g,int f_b);
+void color(int i);
+void Reset_color();
 //It seems that ANSI works not as well as winapi.
