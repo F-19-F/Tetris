@@ -22,7 +22,7 @@ void color(int i)
     for (int j=0;j<3;j++)
     {
         cout<<Temp[i-1][j];
-        if(i<2)
+        if(j<2)
         {
             cout<<";";
         }
