@@ -14,8 +14,9 @@ void Set_Default_color(int r,int g,int b,int f_r,int f_g,int f_b)
 }
 void color(int i)
 {
-    if (i>7)
+    if (i==7)
     {
+        cout<<"\033[38;2;"<<158<<";"<<173<<";"<<134<<"m";
         return;
     }
     cout<<"\033[38;2;";
