@@ -6,8 +6,8 @@ using namespace std;
 #include "include/game_core.hpp"
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
+bool compat_mode=true;
 #else
-bool compat_mode=false;
 #include "include/WinAPI_control.hpp"
 #endif
 //删除临时结果
