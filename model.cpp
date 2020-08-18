@@ -60,6 +60,25 @@ model::model(int mode)
         center_y = 3;
         Color=5;
         break;
+    case 6:
+        base[1][3] = true; //  ####
+        base[3][3] = true; //  ####
+        base[5][3] = true; //  ############
+        base[1][1] = true; //  ############
+        center_x = 3;
+        center_y = 3;
+        Color=5;
+        break;
+    case 7:
+        base[5][2] = true; //     #######
+        base[3][2] = true; //     #######
+        base[3][4] = true; // ######
+        base[1][4] = true; // ######
+        center_x = 3;
+        center_y = 3;
+        Color=2;
+        break;
+    break;
     default:
         break;
     }
