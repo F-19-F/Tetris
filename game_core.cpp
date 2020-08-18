@@ -7,6 +7,7 @@ using namespace std;
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
 #else
+bool compat_mode=false;
 #include "include/WinAPI_control.hpp"
 #endif
 //删除临时结果
