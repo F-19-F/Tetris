@@ -46,11 +46,11 @@ int Startgame(Key_dec *Key)
     clean_screen();
     cout.flush();
     b.print();
-    i=rand() % 5+1;
+    i=rand() % 7+1;
     while (!b.over)
     {
         a=new model(i);
-        i=rand() % 5+1;
+        i=rand() % 7+1;
         temp=new model(i);
         Infor_print(ini_size.c/5+5,3,&b,temp);
         b.Add_model(a,Key);
