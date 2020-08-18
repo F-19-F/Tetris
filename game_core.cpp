@@ -7,6 +7,11 @@ using namespace std;
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
 bool compat_mode=true;
+void SetColorCompat(bool opt)
+{
+    compat_mode=opt;
+    return;
+}
 #else
 #include "include/WinAPI_control.hpp"
 #endif

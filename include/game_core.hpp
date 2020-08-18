@@ -53,3 +53,4 @@ public:
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
 };
+void SetColorCompat(bool opt);
