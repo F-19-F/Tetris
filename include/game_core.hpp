@@ -11,6 +11,7 @@
 #else
 #define x_ini_offset 0
 #define y_ini_offset 0
+bool compat_mode=false;
 #endif
 struct clean_base
 {
