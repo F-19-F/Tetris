@@ -1,4 +1,3 @@
-#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
 void cursor_move(int x,int y);
 void hide_cursor();
 void dishide_cusor();
