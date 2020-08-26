@@ -1,7 +1,7 @@
 void Size_detecter(bool* changed);
-struct size
+struct Size
 {
     int r;
     int c;
 };
-size Getsize();
+Size Getsize();
