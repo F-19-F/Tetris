@@ -24,21 +24,21 @@ void Size_detecter(bool* changed)
         std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
     }
 }
-size Getsize()
+Size Getsize()
 {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    size a;
+    Size a;
     a.r=w.ws_row;
     a.c=w.ws_col;
     return a;
 }
 #else
 #include <windows.h>
-size Getsize()
+Size Getsize()
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    size a;
+    Size a;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     a.c = csbi.srWindow.Right - csbi.srWindow.Left + 1;
     a.r = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
