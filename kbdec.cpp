@@ -77,16 +77,24 @@ void key_proc(bool ctrl, Key_dec *output)
           switch (c)
           {
           case up:
+            Queue_lock.lock();
             output->push(up);
+            Queue_lock.unlock();
             break;
           case down:
+            Queue_lock.lock();
             output->push(down);
+            Queue_lock.unlock();
             break;
           case right:
+            Queue_lock.lock();
             output->push(right);
+            Queue_lock.unlock();
             break;
           case left:
+            Queue_lock.lock();
             output->push(left);
+            Queue_lock.unlock();
             break;
           default:
             break;
