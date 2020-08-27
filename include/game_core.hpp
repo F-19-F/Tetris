@@ -1,8 +1,6 @@
 #include "model.hpp"
 #include "keydec.hpp"
 #define MAX_TIME 1000
-//#define Print_base "■"
-#define Print_base "#"
 #define BF_Default_Color_RGB 0,0,0,158,173,134
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32

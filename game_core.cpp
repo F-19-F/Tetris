@@ -58,26 +58,26 @@ void game_core::print()
     for (int i = 0; i < r; i++)
     {
         cursor_move(1 + x_offset, r - i + 1 + y_offset);
-        cout << "|";
+        cout << "│";
         cursor_move(c + 2 + x_offset, r - i + 1 + y_offset);
-        cout << "|";
+        cout << "│";
     }
     //打印横方向的边框
     for (int i = 0; i < c; i++)
     {
         cursor_move(2 + i + x_offset, 1 + y_offset);
-        cout << "-";
+        cout << "─";
         cursor_move(2 + i + x_offset, r + 2 + y_offset);
-        cout << "-";
+        cout << "─";
     }
     cursor_move(1 + x_offset, 1 + y_offset);
-    cout << "┍";
+    cout << "┌";
     cursor_move(1 + x_offset, r + 2 + y_offset);
-    cout << "┕";
+    cout << "└";
     cursor_move(c + 2 + x_offset, 1 + y_offset);
-    cout << "┑";
+    cout << "┐";
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
-    cout << "┙";
+    cout << "┘";
     //blue_foreground();
     hide_cursor();
     cout.flush();

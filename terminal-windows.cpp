@@ -6,6 +6,22 @@ COORD common;
 //记录每一次cout导致的光标位移
 int cursor_location=0;
 COLORREF ColorTable_Back[16];
+CONSOLE_FONT_INFOEX cfi_bak;
+void Win_Required()
+{
+    system("chcp 65001");
+    CONSOLE_FONT_INFOEX cfi;
+    cfi.cbSize=sizeof(CONSOLE_FONT_INFOEX);
+    GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE),false,&cfi);
+    cfi_bak=cfi;
+    wcscpy(cfi.FaceName, L"Lucida Console");
+    SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
+}
+void Reset_Win_Required()
+{
+    //恢复字体
+    SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi_bak);
+}
 void cursor_move(int x, int y)
 {
     //COORD common;
