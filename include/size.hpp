@@ -1,4 +1,4 @@
-void Size_detecter(bool* changed);
+void Size_detecter(bool *changed);
 struct Size
 {
     int r;

@@ -22,7 +22,7 @@ model::model(int mode)
         base[5][2] = true; //  ####
         center_x = 3;
         center_y = 2;
-        Color=1;
+        Color = 1;
         break;
     case 2:
         base[1][2] = true; //  ######
@@ -31,7 +31,7 @@ model::model(int mode)
         base[5][4] = true; //      ######
         center_x = 3;
         center_y = 3;
-        Color=2;
+        Color = 2;
         break;
     case 3:
         base[0][0] = true; //  ########
@@ -40,7 +40,7 @@ model::model(int mode)
         base[2][2] = true; //  ########
         center_x = 1;
         center_y = 1;
-        Color=3;
+        Color = 3;
         break;
     case 4:
         base[3][0] = true; //  ##
@@ -49,7 +49,7 @@ model::model(int mode)
         base[3][6] = true; //  ##
         center_x = 3;
         center_y = 3;
-        Color=4;
+        Color = 4;
         break;
     case 5:
         base[1][3] = true; //          ####
@@ -58,7 +58,7 @@ model::model(int mode)
         base[5][1] = true; //  ############
         center_x = 3;
         center_y = 3;
-        Color=5;
+        Color = 5;
         break;
     case 6:
         base[1][3] = true; //  ####
@@ -67,7 +67,7 @@ model::model(int mode)
         base[1][1] = true; //  ############
         center_x = 3;
         center_y = 3;
-        Color=5;
+        Color = 5;
         break;
     case 7:
         base[5][2] = true; //     #######
@@ -76,9 +76,9 @@ model::model(int mode)
         base[1][4] = true; // ######
         center_x = 3;
         center_y = 3;
-        Color=2;
+        Color = 2;
         break;
-    break;
+        break;
     default:
         break;
     }
@@ -96,7 +96,7 @@ void model::print_row(int mode)
             {
                 if (base[j][i])
                 {
-                    cout <<Print_base;
+                    cout << Print_base;
                 }
                 else
                 {
@@ -130,40 +130,38 @@ void model::print_row(int mode)
             }
             cout << endl;
         }
-        cout<<" ";
+        cout << " ";
         for (int i = 0; i < 4; i++)
         {
             cout << i;
         }
         cout << endl;
     }
-    
 }
 //输出model形状,clean判定是否清除,true将清除(输出空格)
 void model::print_model(bool clean)
 {
     color(Color);
-    for (int i=0;i<height;i++)
+    for (int i = 0; i < height; i++)
     {
-        for (int j=0;j<length;j++)
+        for (int j = 0; j < length; j++)
         {
             if (temp[i][j])
             {
                 if (clean)
                 {
-                    cout<< " ";
-                    #ifdef _WIN32
+                    cout << " ";
+#ifdef _WIN32
                     cursor_location++;
-                    #endif
+#endif
                 }
                 else
                 {
-                    cout<< Print_base;
-                    #ifdef _WIN32
+                    cout << Print_base;
+#ifdef _WIN32
                     cursor_location++;
-                    #endif
+#endif
                 }
-                
             }
             else
             {
@@ -252,8 +250,8 @@ void model::get_temp()
         c_temp = 0;
         r_temp++;
     }
-    height=0;
-    length=0;
+    height = 0;
+    length = 0;
     //此处开始计算length以及height
     for (int i = 0; i < 4; i++)
     {
@@ -261,23 +259,23 @@ void model::get_temp()
         {
             if (temp[i][j])
             {
-                if (i>height)
+                if (i > height)
                 {
-                    height=i;
+                    height = i;
                 }
             }
             if (temp[j][i])
             {
-                if (i>length)
+                if (i > length)
                 {
-                    length=i;
+                    length = i;
                 }
             }
         }
     }
     //循环只是得到数组中的最大值，实际得加一
-    length+=1;
-    height+=1;
+    length += 1;
+    height += 1;
 }
 int model::get_color()
 {

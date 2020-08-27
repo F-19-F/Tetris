@@ -1,10 +1,10 @@
 #define PI 3.14
-#define Random_Color_1 249,0,0
-#define Random_Color_2 26,242,242
-#define Random_Color_3 129,131,249
-#define Random_Color_4 26,232,26
-#define Random_Color_5 107,34,141
-#define Random_Color_6 149,120,90
+#define Random_Color_1 249, 0, 0
+#define Random_Color_2 26, 242, 242
+#define Random_Color_3 129, 131, 249
+#define Random_Color_4 26, 232, 26
+#define Random_Color_5 107, 34, 141
+#define Random_Color_6 149, 120, 90
 #define Print_base "■"
 class model
 {
@@ -16,6 +16,7 @@ private:
     int center_x;
     int center_y;
     int Color;
+
 public:
     bool temp[4][4];
     int length;
