@@ -7,10 +7,12 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <mutex>
 #include "include/keydec.hpp"
 #include "include/model.hpp"
 using namespace std;
 queue<int> base;
+mutex Queue_lock;
 Key_dec::Key_dec()
 {
   psignal = 1;
@@ -139,16 +141,24 @@ void key_proc(bool ctrl, Key_dec *output)
         switch (c)
         {
         case up:
+          Queue_lock.lock();
           output->push(up);
+          Queue_lock.unlock();
           break;
         case down:
+          Queue_lock.lock();
           output->push(down);
+          Queue_lock.unlock();
           break;
         case right:
+          Queue_lock.lock();
           output->push(right);
+          Queue_lock.unlock();
           break;
         case left:
+          Queue_lock.lock();
           output->push(left);
+          Queue_lock.unlock();
           break;
         default:
           break;
@@ -186,5 +196,16 @@ void Key_dec::clean()
   while (!base.empty())
   {
     base.pop();
+  }
+}
+void Key_dec::MutexLock(bool lock)
+{
+  if (lock)
+  {
+    Queue_lock.lock();
+  }
+  else
+  {
+    Queue_lock.unlock();
   }
 }
