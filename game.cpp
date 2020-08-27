@@ -1,6 +1,5 @@
 #include <iostream>
 #include <thread>
-#include <mutex>
 #ifndef _WIN32
 #include "include/ANSI_control.hpp" //linux/unix
 #else
