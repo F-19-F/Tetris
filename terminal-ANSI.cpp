@@ -50,7 +50,7 @@ void color(int i)
             cout << "\033[33m";
             return;
         }
-        cout<<"\033["<<(30+i)<<"m";
+        cout << "\033[" << (30 + i) << "m";
     }
     cout.flush();
 }

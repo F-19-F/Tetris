@@ -1,10 +1,10 @@
 #include <thread>
 #include "include/size.hpp"
 #ifndef _WIN32
-#include <unistd.h>//linux/unix
-#include <sys/ioctl.h>//linux/unix
+#include <unistd.h>    //linux/unix
+#include <sys/ioctl.h> //linux/unix
 
-void Size_detecter(bool* changed)
+void Size_detecter(bool *changed)
 {
     int ini_hight = 0;
     int ini_long = 0;
@@ -21,7 +21,7 @@ void Size_detecter(bool* changed)
             ini_hight = w.ws_row;
             ini_long = w.ws_col;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 Size Getsize()
@@ -29,8 +29,8 @@ Size Getsize()
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     Size a;
-    a.r=w.ws_row;
-    a.c=w.ws_col;
+    a.r = w.ws_row;
+    a.c = w.ws_col;
     return a;
 }
 #else
