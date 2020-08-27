@@ -14,7 +14,6 @@
 #define right 77
 #define space 32
 #endif
-#include <queue>
 //定义一个按键缓冲区，getkey得到的按键值存储在其中，方块下落时从中取出数据来响应
 class Key_dec
 {
