@@ -8,6 +8,7 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <queue>
 #include "include/keydec.hpp"
 #include "include/model.hpp"
 using namespace std;
