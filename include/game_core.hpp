@@ -1,7 +1,7 @@
 #include "model.hpp"
 #include "keydec.hpp"
 #define MAX_TIME 1000
-#define BF_Default_Color_RGB 0,0,0,158,173,134
+#define BF_Default_Color_RGB 0, 0, 0, 158, 173, 134
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
 #define x_ini_offset -1
@@ -42,7 +42,7 @@ public:
     void print();
     int get_score();
     int get_speed();
-    game_core(int r, int c, int x_offset , int y_offset , int speed);
+    game_core(int r, int c, int x_offset, int y_offset, int speed);
     ~game_core();
     int clean();
     void Add_model(model *target, Key_dec *Key);

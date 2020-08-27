@@ -419,11 +419,11 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     }
                     else
                     {
-                        *signal=0;
+                        *signal = 0;
                     }
                     cursor_move(*x, *y);
                     target->print_model(false);
-                    
+
                     Lock->unlock();
                     break;
                 case down:
