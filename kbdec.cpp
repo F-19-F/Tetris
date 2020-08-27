@@ -175,7 +175,9 @@ void key_proc(bool ctrl, Key_dec *output)
       }
       else if (c == space)
       {
+        Queue_lock.lock();
         output->push(space);
+        Queue_lock.unlock();
       }
       else
       {
