@@ -6,10 +6,10 @@ using namespace std;
 #include "include/game_core.hpp"
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
-bool compat_mode=true;
+bool compat_mode = true;
 void SetColorCompat(bool opt)
 {
-    compat_mode=opt;
+    compat_mode = opt;
     return;
 }
 #else
@@ -96,7 +96,7 @@ void game_core::print()
                 cout << (Print_base);
 #ifdef _WIN32
                 cursor_location++;
-#endif     
+#endif
             }
             else
             {
@@ -325,6 +325,7 @@ void game_core::draw_delline()
         target = target->next;
     }
 }
+//signal为线程间同步变量，为-1时则按键响应线程结束，为0时代表需要一个下降的delay，为1时则正常运行
 void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core, mutex *Lock)
 {
     static bool run = true;
@@ -334,7 +335,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
         //控制线程，方便快速退出Move线程
         while (1)
         {
-            if (*signal == 1)
+            if (*signal == -1)
             {
                 run = false;
                 return;
@@ -362,11 +363,19 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     if (core->Can_move_left(*x, *y, target))
                     {
                         Lock->lock();
+                        //如果下落线程已经结束，则移动全部取消
+                        if (!run)
+                        {
+                            Lock->unlock();
+                            run = true;
+                            return;
+                        }
                         cursor_move(*x, *y);
                         target->print_model(true);
                         *x = *x - 1;
                         cursor_move(*x, *y);
                         target->print_model(false);
+                        *signal = 0;
                         Lock->unlock();
                     }
                     break;
@@ -374,30 +383,58 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     if (core->Can_move_right(*x, *y, target))
                     {
                         Lock->lock();
+                        //如果下落线程已经结束，则移动全部取消
+                        if (!run)
+                        {
+                            Lock->unlock();
+                            run = true;
+                            return;
+                        }
                         cursor_move(*x, *y);
                         target->print_model(true);
                         *x = *x + 1;
                         cursor_move(*x, *y);
                         target->print_model(false);
+                        *signal = 0;
                         Lock->unlock();
                     }
                     break;
                 case up:
                     Lock->lock();
+                    //如果下落线程已经结束，则移动全部取消
+                    if (!run)
+                    {
+                        Lock->unlock();
+                        run = true;
+                        return;
+                    }
                     cursor_move(*x, *y);
                     target->print_model(true);
                     target->changer_neg(-90);
-                    //如果不符合要求,就撤回更改
+                    //如果不符合要求,就撤回更改，同时不发送relay请求
                     if (!core->Is_valid(*x, *y, target))
                     {
                         target->changer_neg(90);
+                        *signal = 1;
+                    }
+                    else
+                    {
+                        *signal=0;
                     }
                     cursor_move(*x, *y);
                     target->print_model(false);
+                    
                     Lock->unlock();
                     break;
                 case down:
                     Lock->lock();
+                    //如果下落线程已经结束，则移动全部取消
+                    if (!run)
+                    {
+                        Lock->unlock();
+                        run = true;
+                        return;
+                    }
                     cursor_move(*x, *y);
                     target->print_model(true);
                     if (core->Can_move_down(*x, *y, target))
@@ -420,7 +457,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     break;
                 }
             }
-            this_thread::sleep_for(std::chrono::milliseconds(15));
+            this_thread::sleep_for(std::chrono::milliseconds(20));
         }
         run = true;
         return;
@@ -431,7 +468,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     mutex y_lock;
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
-    int signal = 0;
+    int signal = 1;
     int Time_speed = MAX_TIME / speed;
     thread t1(Move, &x, &y, &signal, target, true, Key, this, &y_lock);
     thread t2(Move, &x, &y, &signal, target, false, Key, this, &y_lock);
@@ -448,6 +485,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     //最开始模型打印结束,开始正常下落
     while (1)
     {
+    Dead_Loop:
         if (Can_move_down(x, y, target))
         {
             //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
@@ -466,13 +504,29 @@ void game_core::Add_model(model *target, Key_dec *Key)
         else
         {
             y_lock.lock();
+            if (signal == 0) //写入delay,在检测到delay请求时则延缓写入，并且在delay阶段允许左右移动
+            {
+                signal = 1;
+                y_lock.unlock();
+                this_thread::sleep_for(std::chrono::milliseconds(20));
+                y_lock.lock();
+                //如果delay阶段的移动使得方块能继续下降，则继续下降
+                if (Can_move_down(x, y, target))
+                {
+                    //消除delay阶段所打印的方块
+                    cursor_move(x, y);
+                    target->print_model(true);
+                    y_lock.unlock();
+                    goto Dead_Loop;
+                }
+            }
             Write_core(x, y, target);
             print();
+            signal = -1;
             y_lock.unlock();
             break;
         }
     }
-    signal = 1;
     t1.~thread();
     t2.~thread();
     Key->clean();
@@ -575,7 +629,7 @@ void game_core::Write_core(int x, int y, model *target)
             if (target->temp[i][j])
             {
                 *(source + (r + 1 - (y + i)) * c + (x + j - 2)) = true;
-                *(Color + (r + 1 - (y + i)) * c + (x + j - 2))=target->get_color();
+                *(Color + (r + 1 - (y + i)) * c + (x + j - 2)) = target->get_color();
             }
         }
     }

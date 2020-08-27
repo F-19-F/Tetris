@@ -14,22 +14,13 @@
 #define right 77
 #define space 32
 #endif
-//定义一个按键缓冲区，getkey得到的按键值存储在其中，方块下落时从中取出数据来响应
-struct key_base
-{
-    int signal;
-    key_base *next;
-};
+#include <queue>
+//定义一个按键缓冲区，getkey得到的按键值存储在其中，方块下落时从中取出数据来响应
 class Key_dec
 {
-private:
-    key_base *first;
-    key_base *last;
-
 public:
-    int psignal;
     Key_dec();
-    ~Key_dec();
+    int psignal;
     void start();
     void stop();
     int push(int signal);
