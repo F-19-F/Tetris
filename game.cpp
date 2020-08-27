@@ -71,13 +71,16 @@ int main()
 {
 	//windows需要转换编码，以解决显示问题
 #ifdef _WIN32
-	system("chcp 65001");
+	Win_Required();
 #endif
 	Key_dec Key;
 	Set_Default_color(BF_Default_Color_RGB);
 	Key.start();
 	Startgame(&Key);
 	Key.stop();
+#ifdef _WIN32
+	Reset_Win_Required();
+#endif
 	cout << "游戏已结束，按任意键退出游戏";
 	cout.flush();
 	while (1)
