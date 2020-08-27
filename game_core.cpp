@@ -428,7 +428,6 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     }
                     cursor_move(*x, *y);
                     target->print_model(false);
-
                     Lock->unlock();
                     break;
                 case down:
@@ -464,7 +463,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                 }
             }
             Key->MutexLock(false);
-            this_thread::sleep_for(std::chrono::milliseconds(10));
+            this_thread::sleep_for(std::chrono::milliseconds(20));
         }
         run = true;
         return;
