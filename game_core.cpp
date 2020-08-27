@@ -338,6 +338,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
             if (*signal == -1)
             {
                 run = false;
+                *signal=1;
                 return;
             }
             this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -347,6 +348,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
     {
         while (run)
         {
+            Key->MutexLock(true);
             if (suspend)
             {
                 if (Key->pop() == space)
@@ -367,6 +369,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                         if (!run)
                         {
                             Lock->unlock();
+                            Key->MutexLock(false);
                             run = true;
                             return;
                         }
@@ -387,6 +390,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                         if (!run)
                         {
                             Lock->unlock();
+                            Key->MutexLock(false);
                             run = true;
                             return;
                         }
@@ -405,6 +409,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     if (!run)
                     {
                         Lock->unlock();
+                        Key->MutexLock(false);
                         run = true;
                         return;
                     }
@@ -432,6 +437,7 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     if (!run)
                     {
                         Lock->unlock();
+                        Key->MutexLock(false);
                         run = true;
                         return;
                     }
@@ -457,7 +463,8 @@ void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, g
                     break;
                 }
             }
-            this_thread::sleep_for(std::chrono::milliseconds(20));
+            Key->MutexLock(false);
+            this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         run = true;
         return;
@@ -508,7 +515,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
             {
                 signal = 1;
                 y_lock.unlock();
-                this_thread::sleep_for(std::chrono::milliseconds(20));
+                this_thread::sleep_for(std::chrono::milliseconds(30));
                 y_lock.lock();
                 //如果delay阶段的移动使得方块能继续下降，则继续下降
                 if (Can_move_down(x, y, target))
@@ -521,8 +528,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
                 }
             }
             Write_core(x, y, target);
-            print();
             signal = -1;
+            print();
             y_lock.unlock();
             break;
         }
