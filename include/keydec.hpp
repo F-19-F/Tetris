@@ -26,4 +26,5 @@ public:
     int push(int signal);
     int pop();
     void clean();
+    void MutexLock(bool lock);
 };
