@@ -10,57 +10,26 @@
 #include "include/keydec.hpp"
 #include "include/model.hpp"
 using namespace std;
+queue<int> base;
 Key_dec::Key_dec()
 {
-  first = last = new key_base;
-  first->next = NULL;
-  psignal=1;
-}
-Key_dec::~Key_dec()
-{
-  key_base *temp, *next_temp;
-  temp = first;
-  while (temp)
-  {
-    next_temp = temp->next;
-    delete temp;
-    temp = next_temp;
-  }
+  psignal = 1;
 }
 int Key_dec::push(int signal)
 {
-  key_base *temp = new key_base;
-  if (!temp)
-  {
-    //内存分配错误
-    return -1;
-  }
-  temp->signal = signal;
-  temp->next = NULL;
-  last->next = temp;
-  last = temp;
+  base.push(signal);
   return 0;
 }
 int Key_dec::pop()
 {
   int r;
-  if (first == last)
+  if (base.empty())
   {
-    //队列为空时返回空数据
+    //队列为空时返回0
     return 0;
   }
-  key_base *temp = first->next;
-  r=temp->signal;
-  if (first->next == last)
-  {
-    last = first;
-    first->next = NULL;
-  }
-  else
-  {
-    first->next = temp->next;
-  }
-  delete temp;
+  r = base.front();
+  base.pop();
   return r;
 }
 #ifndef _WIN32
@@ -69,7 +38,7 @@ void key_proc(bool ctrl, Key_dec *output)
   char c;
   static struct termios oldt, newt;
   static bool run = true;
-  static bool changed=false;
+  static bool changed = false;
   if (ctrl)
   {
     while (1)
@@ -92,7 +61,7 @@ void key_proc(bool ctrl, Key_dec *output)
       newt.c_lflag &= ~(ICANON);
       tcsetattr(STDIN_FILENO, TCSANOW, &newt);
       system("stty -echo");
-      changed=true;
+      changed = true;
     }
     while (run)
     {
@@ -122,7 +91,7 @@ void key_proc(bool ctrl, Key_dec *output)
           }
         }
       }
-      else if(c==space)
+      else if (c == space)
       {
         output->push(space);
       }
@@ -133,20 +102,19 @@ void key_proc(bool ctrl, Key_dec *output)
           output->push(-1);
         }
       }
-      
     }
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     system("stty echo 2>/dev/null"); //系统调用，恢复回显
-    changed=false;
-    run=true;
+    changed = false;
+    run = true;
     return;
   }
 }
 #else
-void key_proc(bool ctrl,Key_dec *output)
+void key_proc(bool ctrl, Key_dec *output)
 {
   int c;
-  static bool run=true;
+  static bool run = true;
   if (ctrl)
   {
     while (1)
@@ -164,29 +132,29 @@ void key_proc(bool ctrl,Key_dec *output)
   {
     while (run)
     {
-      c=getch();
-      if (sp1==(int)c)
+      c = getch();
+      if (sp1 == (int)c)
       {
-        c=getch();
+        c = getch();
         switch (c)
         {
         case up:
-            output->push(up);
-            break;
-          case down:
-            output->push(down);
-            break;
-          case right:
-            output->push(right);
-            break;
-          case left:
-            output->push(left);
-            break;
-          default:
-            break;
+          output->push(up);
+          break;
+        case down:
+          output->push(down);
+          break;
+        case right:
+          output->push(right);
+          break;
+        case left:
+          output->push(left);
+          break;
+        default:
+          break;
         }
       }
-      else if(c==space)
+      else if (c == space)
       {
         output->push(space);
       }
@@ -198,7 +166,7 @@ void key_proc(bool ctrl,Key_dec *output)
         }
       }
     }
-    run=true;
+    run = true;
   }
 }
 #endif
@@ -211,9 +179,12 @@ void Key_dec::start()
 }
 void Key_dec::stop()
 {
-  psignal=0;
+  psignal = 0;
 }
 void Key_dec::clean()
 {
-  while (pop());
+  while (!base.empty())
+  {
+    base.pop();
+  }
 }
