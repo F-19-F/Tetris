@@ -96,11 +96,11 @@ void model::print_row(int mode)
             {
                 if (base[j][i])
                 {
-                    cout << "#";
+                    cout <<Print_base;
                 }
                 else
                 {
-                    cout << " ";
+                    cout << Print_base;
                 }
             }
             cout << endl;
@@ -121,7 +121,7 @@ void model::print_row(int mode)
             {
                 if (temp[i][j])
                 {
-                    cout << "#";
+                    cout << Print_base;
                 }
                 else
                 {
@@ -158,7 +158,7 @@ void model::print_model(bool clean)
                 }
                 else
                 {
-                    cout<< "#";
+                    cout<< Print_base;
                     #ifdef _WIN32
                     cursor_location++;
                     #endif

@@ -1,3 +1,5 @@
+void Win_Required();
+void Reset_Win_Required();
 void cursor_move(int x,int y);
 void hide_cursor();
 void dishide_cusor();
