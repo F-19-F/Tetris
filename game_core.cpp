@@ -477,12 +477,12 @@ void game_core::Add_model(model *target, Key_dec *Key)
     int x = c / 2 + x_offset;
     int signal = 1;
     int Time_speed = MAX_TIME / speed;
+    y_lock.lock();
     thread t1(Move, &x, &y, &signal, target, true, Key, this, &y_lock);
     thread t2(Move, &x, &y, &signal, target, false, Key, this, &y_lock);
     t1.detach();
     t2.detach();
     //打印最开始的模型
-    y_lock.lock();
     cursor_move(x, y);
     target->print_model(false);
     this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
