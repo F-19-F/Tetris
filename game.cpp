@@ -8,7 +8,105 @@
 #include "include/game_core.hpp"
 #include "include/size.hpp"
 using namespace std;
-int First_flag = 0;
+int First_flag = 0;//用于游戏和信息显示通信
+int Menu(int x, int y, Key_dec *Key)
+{
+	clean_screen();
+	int Cur_Location_Y = y + 7;
+#ifdef _WIN32
+	cursor_move(x, y);
+	cout << " _____    _        _";
+	movedown(1);
+	cout << "|_   _|__| |_ _ __(_)___";
+	movedown(1);
+	cout << "  | |/ _ \\ __| '__| / __|";
+	movedown(1);
+	cout << "  | |  __/ |_| |  | \\__ \\";
+	movedown(1);
+	cout << "  |_|\\___|\\__|_|  |_|___/";
+	movedown(1);
+#else
+	cursor_move(x, y);
+	save_cursor();
+	cout << " _____    _        _";
+	restore_cursor();
+	movedown(1);
+	cout << "|_   _|__| |_ _ __(_)___";
+	restore_cursor();
+	movedown(1);
+	cout << "  | |/ _ \\ __| '__| / __|";
+	restore_cursor();
+	movedown(1);
+	cout << "  | |  __/ |_| |  | \\__ \\";
+	restore_cursor();
+	movedown(1);
+	cout << "  |_|\\___|\\__|_|  |_|___/";
+	restore_cursor();
+	movedown(1);
+#endif
+	cursor_move(x + 8, y + 7);
+	cout << "开始游戏";
+	cursor_move(x + 8, y + 9);
+	cout << "游戏设置";
+	cursor_move(x + 8, y + 11);
+	cout << "玩法介绍";
+	cursor_move(x + 8, y + 13);
+	cout << "关于游戏";
+	cursor_move(x + 8, y + 15);
+	cout << "退出游戏";
+	cursor_move(x + 5, Cur_Location_Y);
+	cout << "-->";
+	cursor_move(x + 16, Cur_Location_Y);
+	cout << "<--";
+	while (1)
+	{
+		Key->MutexLock(true);
+		switch (Key->pop())
+		{
+		case up:
+			cursor_move(x + 5, Cur_Location_Y);
+			cout << "   ";
+			cursor_move(x + 16, Cur_Location_Y);
+			cout << "   ";
+			if (Cur_Location_Y == y + 7)
+			{
+				Cur_Location_Y = y + 15;
+			}
+			else
+			{
+				Cur_Location_Y -= 2;
+			}
+			cursor_move(x + 5, Cur_Location_Y);
+			cout << "-->";
+			cursor_move(x + 16, Cur_Location_Y);
+			cout << "<--";
+			break;
+		case down:
+			cursor_move(x + 5, Cur_Location_Y);
+			cout << "   ";
+			cursor_move(x + 16, Cur_Location_Y);
+			cout << "   ";
+			if (Cur_Location_Y == y + 15)
+			{
+				Cur_Location_Y = y + 7;
+			}
+			else
+			{
+				Cur_Location_Y += 2;
+			}
+			cursor_move(x + 5, Cur_Location_Y);
+			cout << "-->";
+			cursor_move(x + 16, Cur_Location_Y);
+			cout << "<--";
+			break;
+		case space:
+			Key->MutexLock(false);
+			return ((Cur_Location_Y - y - 7) / 2);
+		}
+		Key->MutexLock(false);
+		this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+}
 void Infor_print(int x, int y, game_core *core, model *next_model)
 {
 
@@ -59,10 +157,7 @@ int Startgame(Key_dec *Key)
 		b.print();
 	}
 	cursor_move(ini_size.r, ini_size.c);
-	Reset_color();
-	cout << endl;
-	cout << "最终分数" << b.get_score() << endl;
-	cout.flush();
+	//Reset_color();
 	First_flag = 0;
 	return b.get_score();
 }
@@ -72,17 +167,33 @@ int main()
 #ifdef _WIN32
 	Win_Required();
 #endif
-	Key_dec Key;
+	hide_cursor();
 	Set_Default_color(BF_Default_Color_RGB);
+	Key_dec Key;
+	int Opt=0;
 	Key.start();
-	Startgame(&Key);
+	while ((Opt=Menu(1,1,&Key))!=4)
+	{
+		switch (Opt)
+		{
+		case 0:
+			Startgame(&Key);
+			break;
+		default:
+			break;
+		}
+	}
+	
 #ifdef _WIN32
 	Reset_Win_Required();
 #endif
+	//重置终端颜色
+	Reset_color();
+	clean_screen();
 	cout << "游戏已结束，按任意键退出游戏";
 	cout.flush();
-	//运行完后恢复光标显示
 	Key.stop();
+	//运行完后恢复光标显示
 	dishide_cusor();
 	return 0;
 }
