@@ -14,6 +14,7 @@
 using namespace std;
 queue<int> base;
 mutex Queue_lock;
+mutex Run_lock;
 Key_dec::Key_dec()
 {
   psignal = 1;
@@ -122,85 +123,76 @@ void key_proc(bool ctrl, Key_dec *output)
   }
 }
 #else
-void key_proc(bool ctrl, Key_dec *output)
+void key_proc(mutex *ctrl, Key_dec *output)
 {
   int c;
-  static bool run = true;
-  if (ctrl)
+  while (ctrl->try_lock())
   {
-    while (1)
-    {
-      //控制按键发现线程
-      if (output->psignal == 0)
-      {
-        run = false;
-        return;
-      }
-      this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
-  }
-  else
-  {
-    while (run)
+    ctrl->unlock();
+    c = getch();
+    if (sp1 == (int)c)
     {
       c = getch();
-      if (sp1 == (int)c)
+      switch (c)
       {
-        c = getch();
-        switch (c)
-        {
-        case up:
-          Queue_lock.lock();
-          output->push(up);
-          Queue_lock.unlock();
-          break;
-        case down:
-          Queue_lock.lock();
-          output->push(down);
-          Queue_lock.unlock();
-          break;
-        case right:
-          Queue_lock.lock();
-          output->push(right);
-          Queue_lock.unlock();
-          break;
-        case left:
-          Queue_lock.lock();
-          output->push(left);
-          Queue_lock.unlock();
-          break;
-        default:
-          break;
-        }
-      }
-      else if (c == space)
-      {
+      case up:
         Queue_lock.lock();
-        output->push(space);
+        output->push(up);
         Queue_lock.unlock();
+        break;
+      case down:
+        Queue_lock.lock();
+        output->push(down);
+        Queue_lock.unlock();
+        break;
+      case right:
+        Queue_lock.lock();
+        output->push(right);
+        Queue_lock.unlock();
+        break;
+      case left:
+        Queue_lock.lock();
+        output->push(left);
+        Queue_lock.unlock();
+        break;
+      default:
+        break;
+      }
+    }
+    else if (c == space)
+    {
+      Queue_lock.lock();
+      output->push(space);
+      Queue_lock.unlock();
+    }
+    else
+    {
+      if (!ctrl->try_lock())
+      {
+        output->psignal=-1;
       }
       else
       {
-        if (!run)
-        {
-          output->push(-1);
-        }
+        ctrl->unlock();
       }
     }
-    run = true;
   }
+  output->psignal=-1;
 }
 #endif
 void Key_dec::start()
 {
-  thread t1(key_proc, true, this);
-  thread t2(key_proc, false, this);
-  t2.detach();
+  thread t1(key_proc, &Run_lock, this);
   t1.detach();
 }
 void Key_dec::stop()
 {
-  psignal = 0;
+  Run_lock.lock();
+  while (psignal!=-1)
+  {
+    this_thread::sleep_for(std::chrono::milliseconds(20));
+  }
+  Run_lock.unlock();
 }
 void Key_dec::clean()
 {
