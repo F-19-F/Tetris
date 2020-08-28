@@ -37,90 +37,79 @@ int Key_dec::pop()
   return r;
 }
 #ifndef _WIN32
-void key_proc(bool ctrl, Key_dec *output)
+void key_proc(mutex *ctrl, Key_dec *output)
 {
   char c;
   static struct termios oldt, newt;
-  static bool run = true;
   static bool changed = false;
-  if (ctrl)
+  if (!changed)
   {
-    while (1)
-    {
-      //控制按键发现线程
-      if (output->psignal == 0)
-      {
-        run = false;
-        return;
-      }
-      this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt; //复制旧终端信息
+    newt.c_lflag &= ~(ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    system("stty -echo");
+    changed = true;
   }
-  else
+  while (ctrl->try_lock())
   {
-    if (!changed)
-    {
-      tcgetattr(STDIN_FILENO, &oldt);
-      newt = oldt; //复制旧终端信息
-      newt.c_lflag &= ~(ICANON);
-      tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-      system("stty -echo");
-      changed = true;
-    }
-    while (run)
+    ctrl->unlock();
+    c = getchar();
+    if ((int)c == sp1)
     {
       c = getchar();
-      if ((int)c == sp1)
+      if ((int)c == sp2)
       {
         c = getchar();
-        if ((int)c == sp2)
+        switch (c)
         {
-          c = getchar();
-          switch (c)
-          {
-          case up:
-            Queue_lock.lock();
-            output->push(up);
-            Queue_lock.unlock();
-            break;
-          case down:
-            Queue_lock.lock();
-            output->push(down);
-            Queue_lock.unlock();
-            break;
-          case right:
-            Queue_lock.lock();
-            output->push(right);
-            Queue_lock.unlock();
-            break;
-          case left:
-            Queue_lock.lock();
-            output->push(left);
-            Queue_lock.unlock();
-            break;
-          default:
-            break;
-          }
+        case up:
+          Queue_lock.lock();
+          output->push(up);
+          Queue_lock.unlock();
+          break;
+        case down:
+          Queue_lock.lock();
+          output->push(down);
+          Queue_lock.unlock();
+          break;
+        case right:
+          Queue_lock.lock();
+          output->push(right);
+          Queue_lock.unlock();
+          break;
+        case left:
+          Queue_lock.lock();
+          output->push(left);
+          Queue_lock.unlock();
+          break;
+        default:
+          break;
         }
       }
-      else if (c == space)
+    }
+    else if (c == space)
+    {
+      output->push(space);
+    }
+    else
+    {
+      if (!ctrl->try_lock())
       {
-        output->push(space);
+        output->psignal = -1;
+        return;
       }
       else
       {
-        if (!run)
-        {
-          output->push(-1);
-        }
+        ctrl->unlock();
       }
     }
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    system("stty echo 2>/dev/null"); //系统调用，恢复回显
-    changed = false;
-    run = true;
-    return;
   }
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+  system("stty echo 2>/dev/null"); //系统调用，恢复回显
+  changed = false;
+  output->psignal = -1;
+  return;
 }
 #else
 void key_proc(mutex *ctrl, Key_dec *output)
@@ -169,7 +158,8 @@ void key_proc(mutex *ctrl, Key_dec *output)
     {
       if (!ctrl->try_lock())
       {
-        output->psignal=-1;
+        output->psignal = -1;
+        return;
       }
       else
       {
@@ -177,7 +167,8 @@ void key_proc(mutex *ctrl, Key_dec *output)
       }
     }
   }
-  output->psignal=-1;
+  output->psignal = -1;
+  return;
 }
 #endif
 void Key_dec::start()
@@ -188,7 +179,7 @@ void Key_dec::start()
 void Key_dec::stop()
 {
   Run_lock.lock();
-  while (psignal!=-1)
+  while (psignal != -1)
   {
     this_thread::sleep_for(std::chrono::milliseconds(20));
   }
