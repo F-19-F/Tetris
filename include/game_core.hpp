@@ -38,7 +38,6 @@ private:
 
 public:
     bool over;
-    void debug_core();
     void print();
     int get_score();
     int get_speed();
