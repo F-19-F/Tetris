@@ -27,22 +27,21 @@ int Setting(int x, int y, Key_dec *Key)
 	movedown(1);
 #else
 	cursor_move(x, y);
-	save_cursor();
 	cout << " _____    _        _";
-	restore_cursor();
+	moveleft(20);
 	movedown(1);
 	cout << "|_   _|__| |_ _ __(_)___";
-	restore_cursor();
-	movedown(2);
+	moveleft(24);
+	movedown(1);
 	cout << "  | |/ _ \\ __| '__| / __|";
-	restore_cursor();
-	movedown(3);
+	moveleft(25);
+	movedown(1);
 	cout << "  | |  __/ |_| |  | \\__ \\";
-	restore_cursor();
-	movedown(4);
+	moveleft(25);
+	movedown(1);
 	cout << "  |_|\\___|\\__|_|  |_|___/";
-	restore_cursor();
-	movedown(5);
+	moveleft(25);
+	movedown(1);
 #endif
 	return 0;
 }
@@ -65,22 +64,21 @@ int Menu(int x, int y, Key_dec *Key)
 	movedown(1);
 #else
 	cursor_move(x, y);
-	save_cursor();
 	cout << " _____    _        _";
-	restore_cursor();
+	moveleft(20);
 	movedown(1);
 	cout << "|_   _|__| |_ _ __(_)___";
-	restore_cursor();
-	movedown(2);
+	moveleft(24);
+	movedown(1);
 	cout << "  | |/ _ \\ __| '__| / __|";
-	restore_cursor();
-	movedown(3);
+	moveleft(25);
+	movedown(1);
 	cout << "  | |  __/ |_| |  | \\__ \\";
-	restore_cursor();
-	movedown(4);
+	moveleft(25);
+	movedown(1);
 	cout << "  |_|\\___|\\__|_|  |_|___/";
-	restore_cursor();
-	movedown(5);
+	moveleft(25);
+	movedown(1);
 #endif
 	cursor_move(x + 8, y + 7);
 	cout << "开始游戏";
