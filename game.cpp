@@ -27,8 +27,8 @@ int Over(int x,int y,int Score,Key_dec *Key)
 	cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
 	movedown(1);
 	cout<<"                      你的分数:"<<Score;
-	movedown(1);
-	cout<<"按空格键退出当前界面";
+	movedown(5);
+	cout<<"                 按空格键退出当前界面";
 	while (Key->pop()!=space)
 	{
 		this_thread::sleep_for(std::chrono::milliseconds(10));
