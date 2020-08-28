@@ -326,161 +326,159 @@ void game_core::draw_delline()
     }
 }
 //signal为线程间同步变量，为-1时则按键响应线程结束，为0时代表需要一个下降的delay，为1时则正常运行
-void Move(int *x, int *y, int *signal, model *target, bool ctrl, Key_dec *Key, game_core *core, mutex *Lock)
+void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, game_core *core, mutex *Lock)
 {
-    static bool run = true;
     bool suspend = false;
-    if (ctrl)
+    while (ctrl->try_lock())
     {
-        //控制线程，方便快速退出Move线程
-        while (1)
+        ctrl->unlock();
+        Key->MutexLock(true);
+        if (suspend)
         {
-            if (*signal == -1)
+            if (Key->pop() == space)
             {
-                run = false;
-                *signal=1;
-                return;
+                Lock->unlock();
+                suspend = false;
             }
-            this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-    }
-    else
-    {
-        while (run)
+        else
         {
-            Key->MutexLock(true);
-            if (suspend)
+            switch (Key->pop())
             {
-                if (Key->pop() == space)
+            case left:
+                if (core->Can_move_left(*x, *y, target))
                 {
-                    Lock->unlock();
-                    suspend = false;
-                }
-            }
-            else
-            {
-                switch (Key->pop())
-                {
-                case left:
-                    if (core->Can_move_left(*x, *y, target))
-                    {
-                        Lock->lock();
-                        //如果下落线程已经结束，则移动全部取消
-                        if (!run)
-                        {
-                            Lock->unlock();
-                            Key->MutexLock(false);
-                            run = true;
-                            return;
-                        }
-                        cursor_move(*x, *y);
-                        target->print_model(true);
-                        *x = *x - 1;
-                        cursor_move(*x, *y);
-                        target->print_model(false);
-                        *signal = 0;
-                        Lock->unlock();
-                    }
-                    break;
-                case right:
-                    if (core->Can_move_right(*x, *y, target))
-                    {
-                        Lock->lock();
-                        //如果下落线程已经结束，则移动全部取消
-                        if (!run)
-                        {
-                            Lock->unlock();
-                            Key->MutexLock(false);
-                            run = true;
-                            return;
-                        }
-                        cursor_move(*x, *y);
-                        target->print_model(true);
-                        *x = *x + 1;
-                        cursor_move(*x, *y);
-                        target->print_model(false);
-                        *signal = 0;
-                        Lock->unlock();
-                    }
-                    break;
-                case up:
                     Lock->lock();
                     //如果下落线程已经结束，则移动全部取消
-                    if (!run)
+                    if (!ctrl->try_lock())
                     {
                         Lock->unlock();
                         Key->MutexLock(false);
-                        run = true;
+                        *signal = 2;
                         return;
-                    }
-                    cursor_move(*x, *y);
-                    target->print_model(true);
-                    target->changer_neg(-90);
-                    //如果不符合要求,就撤回更改，同时不发送relay请求
-                    if (!core->Is_valid(*x, *y, target))
-                    {
-                        target->changer_neg(90);
-                        *signal = 1;
                     }
                     else
                     {
-                        *signal = 0;
-                    }
-                    cursor_move(*x, *y);
-                    target->print_model(false);
-                    Lock->unlock();
-                    break;
-                case down:
-                    Lock->lock();
-                    //如果下落线程已经结束，则移动全部取消
-                    if (!run)
-                    {
-                        Lock->unlock();
-                        Key->MutexLock(false);
-                        run = true;
-                        return;
+                        ctrl->unlock();
                     }
                     cursor_move(*x, *y);
                     target->print_model(true);
+                    *x = *x - 1;
+                    cursor_move(*x, *y);
+                    target->print_model(false);
+                    *signal = 0;
+                    Lock->unlock();
+                }
+                break;
+            case right:
+                if (core->Can_move_right(*x, *y, target))
+                {
+                    Lock->lock();
+                    //如果下落线程已经结束，则移动全部取消
+                    if (!ctrl->try_lock())
+                    {
+                        Lock->unlock();
+                        Key->MutexLock(false);
+                        *signal = 2;
+                        return;
+                    }
+                    else
+                    {
+                        ctrl->unlock();
+                    }
+                    cursor_move(*x, *y);
+                    target->print_model(true);
+                    *x = *x + 1;
+                    cursor_move(*x, *y);
+                    target->print_model(false);
+                    *signal = 0;
+                    Lock->unlock();
+                }
+                break;
+            case up:
+                Lock->lock();
+                //如果下落线程已经结束，则移动全部取消
+                if (!ctrl->try_lock())
+                {
+                    Lock->unlock();
+                    Key->MutexLock(false);
+                    *signal = 2;
+                    return;
+                }
+                else
+                {
+                    ctrl->unlock();
+                }
+                cursor_move(*x, *y);
+                target->print_model(true);
+                target->changer_neg(-90);
+                //如果不符合要求,就撤回更改，同时不发送relay请求
+                if (!core->Is_valid(*x, *y, target))
+                {
+                    target->changer_neg(90);
+                    *signal = 1;
+                }
+                else
+                {
+                    *signal = 0;
+                }
+                cursor_move(*x, *y);
+                target->print_model(false);
+                Lock->unlock();
+                break;
+            case down:
+                Lock->lock();
+                //如果下落线程已经结束，则移动全部取消
+                if (!ctrl->try_lock())
+                {
+                    Lock->unlock();
+                    Key->MutexLock(false);
+                    *signal = 2;
+                    return;
+                }
+                else
+                {
+                    ctrl->unlock();
+                }
+                cursor_move(*x, *y);
+                target->print_model(true);
+                if (core->Can_move_down(*x, *y, target))
+                {
+                    *y = *y + 1;
                     if (core->Can_move_down(*x, *y, target))
                     {
                         *y = *y + 1;
-                        if (core->Can_move_down(*x, *y, target))
-                        {
-                            *y = *y + 1;
-                        }
                     }
-                    cursor_move(*x, *y);
-                    target->print_model(false);
-                    Lock->unlock();
-                    break;
-                case space:
-                    suspend = true;
-                    Lock->lock();
-                    break;
-                default:
-                    break;
                 }
+                cursor_move(*x, *y);
+                target->print_model(false);
+                Lock->unlock();
+                break;
+            case space:
+                suspend = true;
+                Lock->lock();
+                break;
+            default:
+                break;
             }
-            Key->MutexLock(false);
-            this_thread::sleep_for(std::chrono::milliseconds(20));
         }
-        run = true;
-        return;
+        Key->MutexLock(false);
+        this_thread::sleep_for(std::chrono::milliseconds(20));
     }
+    *signal = 2; //告诉主线程，此线程已结束，无需再等待
+    return;
 }
 void game_core::Add_model(model *target, Key_dec *Key)
 {
     mutex y_lock;
+    mutex Run_Lock;
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
-    thread t1(Move, &x, &y, &signal, target, true, Key, this, &y_lock);
-    thread t2(Move, &x, &y, &signal, target, false, Key, this, &y_lock);
+    thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock);
     t1.detach();
-    t2.detach();
     //打印最开始的模型
     cursor_move(x, y);
     target->print_model(false);
@@ -533,8 +531,8 @@ void game_core::Add_model(model *target, Key_dec *Key)
             break;
         }
     }
+    Run_Lock.lock();
     t1.~thread();
-    t2.~thread();
     Key->clean();
     score += clean() * speed * (c - 2);
     //检测游戏是否结束
@@ -543,6 +541,11 @@ void game_core::Add_model(model *target, Key_dec *Key)
         {
             over = true;
         }
+    while (signal != 2)
+    {
+        this_thread::sleep_for(std::chrono::milliseconds(30));
+    }
+    Run_Lock.unlock();
     this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 //Can_move函数的输入x,y是终端原始坐标
