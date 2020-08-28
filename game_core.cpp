@@ -29,25 +29,6 @@ void game_core::del_base()
     }
     temp = NULL;
 }
-//
-void game_core::debug_core()
-{
-    for (int i = 0; i < 7; i++)
-    {
-        for (int j = 0; j < c; j++)
-        {
-            if (rand() % 2)
-                *(source + i * c + j) = true;
-        }
-        if (i == 3 || i == 6 || i == 4)
-        {
-            for (int j = 0; j < c; j++)
-            {
-                *(source + i * c + j) = true;
-            }
-        }
-    }
-}
 //输出当前表
 void game_core::print()
 {
@@ -255,9 +236,6 @@ int game_core::Min_R()
     }
     return -1;
 }
-//Move函数主管方块正常下落中对按键的反馈，x,y为模块当前坐标，signal为同步信号，target为模型对象,core为游戏core对象，Key为按键输入对象
-//signal为0时线程将正常运行
-//signal为1时将结束控制线程以及Move线程
 void game_core::draw_delline()
 {
     clean_base *target;
