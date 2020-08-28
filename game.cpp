@@ -10,8 +10,10 @@
 using namespace std;
 int First_flag = 0;//用于游戏和信息显示通信
 int Game_Level=1;
+Size _Gsize;
 int Setting(int x, int y, Key_dec *Key)
 {
+	hide_cursor();
 	clean_screen();
 	#ifdef _WIN32
 	cursor_move(x, y);
@@ -47,6 +49,7 @@ int Setting(int x, int y, Key_dec *Key)
 }
 int Menu(int x, int y, Key_dec *Key)
 {
+	hide_cursor();
 	color(7);
 	clean_screen();
 	int Cur_Location_Y = y + 7;
@@ -149,7 +152,7 @@ int Menu(int x, int y, Key_dec *Key)
 }
 void Infor_print(int x, int y, game_core *core, model *next_model)
 {
-
+	hide_cursor();
 	static model Last_model = *next_model;
 	if (First_flag != 0)
 	{
@@ -171,7 +174,7 @@ void Infor_print(int x, int y, game_core *core, model *next_model)
 	Last_model = *next_model;
 	First_flag = 1;
 }
-int Startgame(Key_dec *Key)
+int Startgame(int x , int y,Size Gsize,Key_dec *Key)
 {
 	int i;
 	model *a;
@@ -179,17 +182,18 @@ int Startgame(Key_dec *Key)
 	Size ini_size;
 	ini_size = Getsize();
 	srand((unsigned)time(NULL));
-	game_core b(ini_size.r - 3, (int)((ini_size.c) / 5), 1, 0, 10);
+	game_core b(Gsize.r, Gsize.c, x, y, 10);
 	clean_screen();
 	cout.flush();
 	b.print();
 	i = rand() % 7 + 1;
 	while (!b.over)
 	{
+		hide_cursor();
 		a = new model(i);
 		i = rand() % 7 + 1;
 		temp = new model(i);
-		Infor_print(ini_size.c / 5 + 5, 3, &b, temp);
+		Infor_print(x + Gsize.c + 5,y + 3, &b, temp);
 		b.Add_model(a, Key);
 		delete a;
 		delete temp;
@@ -197,7 +201,6 @@ int Startgame(Key_dec *Key)
 		b.print();
 	}
 	cursor_move(ini_size.r, ini_size.c);
-	//Reset_color();
 	First_flag = 0;
 	return b.get_score();
 }
@@ -209,18 +212,21 @@ int main()
 #endif
 	hide_cursor();
 	Set_Default_color(BF_Default_Color_RGB);
+	Size Win_size=Getsize();//获取窗口大小
+	_Gsize.r=27;
+	_Gsize.c=18;
 	Key_dec Key;
 	int Opt=0;
 	Key.start();
-	while ((Opt=Menu(1,1,&Key))!=4)
+	while ((Opt=Menu(Win_size.c/2-12,Win_size.r/5,&Key))!=4)//Logo居中
 	{
 		switch (Opt)
 		{
 		case 0:
-			Startgame(&Key);
+			Startgame(Win_size.c/2-22,0,_Gsize,&Key);
 			break;
 		case 1:
-			Setting(1,1,&Key);
+			Setting(Win_size.c/2-12,Win_size.r/5,&Key);
 			break;
 		default:
 			break;
