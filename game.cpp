@@ -140,7 +140,11 @@ int Menu(int x, int y, Key_dec *Key)
 		case space:
 			Key->MutexLock(false);
 			return ((Cur_Location_Y - y - 7) / 2);
+			break;
+		default:
+			break;
 		}
+		cout.flush();
 		Key->MutexLock(false);
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
