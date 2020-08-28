@@ -346,9 +346,9 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             switch (Key->pop())
             {
             case left:
+                Lock->lock();
                 if (core->Can_move_left(*x, *y, target))
                 {
-                    Lock->lock();
                     //如果下落线程已经结束，则移动全部取消
                     if (!ctrl->try_lock())
                     {
@@ -369,11 +369,15 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                     *signal = 0;
                     Lock->unlock();
                 }
+                else
+                {
+                    Lock->unlock();
+                }
                 break;
             case right:
+                Lock->lock();
                 if (core->Can_move_right(*x, *y, target))
                 {
-                    Lock->lock();
                     //如果下落线程已经结束，则移动全部取消
                     if (!ctrl->try_lock())
                     {
@@ -392,6 +396,10 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                     cursor_move(*x, *y);
                     target->print_model(false);
                     *signal = 0;
+                    Lock->unlock();
+                }
+                else
+                {
                     Lock->unlock();
                 }
                 break;
