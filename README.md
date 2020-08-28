@@ -9,7 +9,7 @@ On Linux/Unix :
 ```
 make Tetris
 ```
-On Windows : you should install mingw to build (not ready now)
+On Windows : you should install mingw(POSIX) to build
 
 ```
 mingw32-make Tetris
