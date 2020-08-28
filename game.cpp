@@ -71,16 +71,16 @@ int Menu(int x, int y, Key_dec *Key)
 	movedown(1);
 	cout << "|_   _|__| |_ _ __(_)___";
 	restore_cursor();
-	movedown(1);
+	movedown(2);
 	cout << "  | |/ _ \\ __| '__| / __|";
 	restore_cursor();
-	movedown(1);
+	movedown(3);
 	cout << "  | |  __/ |_| |  | \\__ \\";
 	restore_cursor();
-	movedown(1);
+	movedown(4);
 	cout << "  |_|\\___|\\__|_|  |_|___/";
 	restore_cursor();
-	movedown(1);
+	movedown(5);
 #endif
 	cursor_move(x + 8, y + 7);
 	cout << "开始游戏";
