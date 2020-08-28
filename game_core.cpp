@@ -455,8 +455,18 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 Lock->unlock();
                 break;
             case space:
-                suspend = true;
                 Lock->lock();
+                if (!ctrl->try_lock())
+                {
+                    Lock->unlock();
+                    Key->MutexLock(false);
+                    *signal = 2;
+                    return;
+                }
+                {
+                    ctrl->unlock();
+                }
+                suspend = true;
                 break;
             default:
                 break;
