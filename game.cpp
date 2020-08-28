@@ -9,8 +9,46 @@
 #include "include/size.hpp"
 using namespace std;
 int First_flag = 0;//用于游戏和信息显示通信
+int Game_Level=1;
+int Setting(int x, int y, Key_dec *Key)
+{
+	clean_screen();
+	#ifdef _WIN32
+	cursor_move(x, y);
+	cout << " _____    _        _";
+	movedown(1);
+	cout << "|_   _|__| |_ _ __(_)___";
+	movedown(1);
+	cout << "  | |/ _ \\ __| '__| / __|";
+	movedown(1);
+	cout << "  | |  __/ |_| |  | \\__ \\";
+	movedown(1);
+	cout << "  |_|\\___|\\__|_|  |_|___/";
+	movedown(1);
+#else
+	cursor_move(x, y);
+	save_cursor();
+	cout << " _____    _        _";
+	restore_cursor();
+	movedown(1);
+	cout << "|_   _|__| |_ _ __(_)___";
+	restore_cursor();
+	movedown(1);
+	cout << "  | |/ _ \\ __| '__| / __|";
+	restore_cursor();
+	movedown(1);
+	cout << "  | |  __/ |_| |  | \\__ \\";
+	restore_cursor();
+	movedown(1);
+	cout << "  |_|\\___|\\__|_|  |_|___/";
+	restore_cursor();
+	movedown(1);
+#endif
+	return 0;
+}
 int Menu(int x, int y, Key_dec *Key)
 {
+	color(7);
 	clean_screen();
 	int Cur_Location_Y = y + 7;
 #ifdef _WIN32
@@ -178,6 +216,9 @@ int main()
 		{
 		case 0:
 			Startgame(&Key);
+			break;
+		case 1:
+			Setting(1,1,&Key);
 			break;
 		default:
 			break;
