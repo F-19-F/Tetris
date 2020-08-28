@@ -11,6 +11,30 @@ using namespace std;
 int First_flag = 0;//用于游戏和信息显示通信
 int Game_Level=1;
 Size _Gsize;
+int Over(int x,int y,int Score,Key_dec *Key)
+{
+	color(1);
+	clean_screen();
+	cursor_move(x,y);
+	cout<<"  ____                         ___";
+	movedown(1);
+	cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
+	movedown(1);
+	cout<<"| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
+	movedown(1);
+	cout<<"| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
+	movedown(1);
+	cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
+	movedown(1);
+	cout<<"                      你的分数:"<<Score;
+	movedown(1);
+	cout<<"按空格键退出当前界面";
+	while (Key->pop()!=space)
+	{
+		this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	return 0;
+}
 int Setting(int x, int y, Key_dec *Key)
 {
 	hide_cursor();
@@ -223,7 +247,7 @@ int main()
 		switch (Opt)
 		{
 		case 0:
-			Startgame(Win_size.c/2-22,0,_Gsize,&Key);
+			Over (Win_size.c/2-25,Win_size.r/2-4,Startgame(Win_size.c/2-22,0,_Gsize,&Key),&Key);
 			break;
 		case 1:
 			Setting(Win_size.c/2-12,Win_size.r/5,&Key);
