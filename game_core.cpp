@@ -79,7 +79,7 @@ void game_core::print()
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┘";
     //blue_foreground();
-    hide_cursor();
+    //hide_cursor();
     cout.flush();
     for (int i = 0; i < Min_R(); i++) //从0行开始到r-1行
     {
