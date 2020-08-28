@@ -76,21 +76,13 @@ int main()
 	Set_Default_color(BF_Default_Color_RGB);
 	Key.start();
 	Startgame(&Key);
-	Key.stop();
 #ifdef _WIN32
 	Reset_Win_Required();
 #endif
 	cout << "游戏已结束，按任意键退出游戏";
 	cout.flush();
-	while (1)
-	{
-		if (Key.pop() != 0)
-		{
-			break;
-		}
-		this_thread::sleep_for(std::chrono::milliseconds(20));
-	}
 	//运行完后恢复光标显示
+	Key.stop();
 	dishide_cusor();
 	return 0;
 }
