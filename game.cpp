@@ -51,6 +51,7 @@ int Over(int x,int y,int Score,Key_dec *Key)
 	movedown(10);
 	cout<<"                 按空格键退出当前界面";
 	#endif
+	cout.flush();
 	while (Key->pop()!=space)
 	{
 		this_thread::sleep_for(std::chrono::milliseconds(10));
