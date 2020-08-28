@@ -16,6 +16,7 @@ int Over(int x,int y,int Score,Key_dec *Key)
 	color(1);
 	clean_screen();
 	cursor_move(x,y);
+	#ifdef _WIN32
 	cout<<"  ____                         ___";
 	movedown(1);
 	cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
@@ -29,6 +30,27 @@ int Over(int x,int y,int Score,Key_dec *Key)
 	cout<<"                      你的分数:"<<Score;
 	movedown(5);
 	cout<<"                 按空格键退出当前界面";
+	#else
+	cout<<"  ____                         ___";
+	cursor_move(x,y);
+	movedown(1);
+	cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
+	cursor_move(x,y);
+	movedown(2);
+	cout<<"| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
+	cursor_move(x,y);
+	movedown(3);
+	cout<<"| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
+	cursor_move(x,y);
+	movedown(4);
+	cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
+	cursor_move(x,y);
+	movedown(5);
+	cout<<"                      你的分数:"<<Score;
+	cursor_move(x,y);
+	movedown(10);
+	cout<<"                 按空格键退出当前界面";
+	#endif
 	while (Key->pop()!=space)
 	{
 		this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -54,20 +76,20 @@ int Setting(int x, int y, Key_dec *Key)
 #else
 	cursor_move(x, y);
 	cout << " _____    _        _";
-	moveleft(20);
+	cursor_move(x, y);
 	movedown(1);
 	cout << "|_   _|__| |_ _ __(_)___";
-	moveleft(24);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(2);
 	cout << "  | |/ _ \\ __| '__| / __|";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(3);
 	cout << "  | |  __/ |_| |  | \\__ \\";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(4);
 	cout << "  |_|\\___|\\__|_|  |_|___/";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(5);
 #endif
 	return 0;
 }
@@ -92,20 +114,20 @@ int Menu(int x, int y, Key_dec *Key)
 #else
 	cursor_move(x, y);
 	cout << " _____    _        _";
-	moveleft(20);
+	cursor_move(x, y);
 	movedown(1);
 	cout << "|_   _|__| |_ _ __(_)___";
-	moveleft(24);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(2);
 	cout << "  | |/ _ \\ __| '__| / __|";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(3);
 	cout << "  | |  __/ |_| |  | \\__ \\";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(4);
 	cout << "  |_|\\___|\\__|_|  |_|___/";
-	moveleft(25);
-	movedown(1);
+	cursor_move(x, y);
+	movedown(5);
 #endif
 	cursor_move(x + 8, y + 7);
 	cout << "开始游戏";
