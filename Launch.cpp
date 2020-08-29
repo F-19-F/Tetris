@@ -5,8 +5,8 @@
 #else
 #include "include/WinAPI_control.hpp"
 #endif
-#include "include/game_core.hpp"
-#include "include/size.hpp"
+#include "include/Tetris_Core.hpp"
+#include "include/Size.hpp"
 using namespace std;
 int First_flag = 0;//用于游戏和信息显示通信
 int Game_Level=1;
@@ -197,7 +197,7 @@ int Menu(int x, int y, Key_dec *Key)
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
-void Infor_print(int x, int y, game_core *core, model *next_model)
+void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
 {
 	hide_cursor();
 	static model Last_model = *next_model;
@@ -229,10 +229,10 @@ int Startgame(int x , int y,Size Gsize,Key_dec *Key)
 	Size ini_size;
 	ini_size = Getsize();
 	srand((unsigned)time(NULL));
-	game_core b(Gsize.r, Gsize.c, x, y, 10);
+	Tetris_Core b(Gsize.r, Gsize.c, x, y, 10);
 	clean_screen();
 	cout.flush();
-	b.print();
+	b.Core_Print();
 	i = rand() % 7 + 1;
 	while (!b.over)
 	{
@@ -245,7 +245,7 @@ int Startgame(int x , int y,Size Gsize,Key_dec *Key)
 		delete a;
 		delete temp;
 		Key->clean();
-		b.print();
+		b.Core_Print();
 	}
 	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;

@@ -1,7 +1,7 @@
 #ifdef _WIN32
 #include "windows.h"
 #include "include/WinAPI_control.hpp"
-#include "include/model.hpp"
+#include "include/Model.hpp"
 COORD common;
 //记录每一次cout导致的光标位移
 int cursor_location = 0;

@@ -1,7 +1,7 @@
 #ifndef _WIN32
 #include <iostream>
 #include "include/ANSI_control.hpp"
-#include "include/game_core.hpp"
+#include "include/Tetris_Core.hpp"
 using namespace std;
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
 {
