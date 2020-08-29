@@ -10,6 +10,7 @@
 #define x_ini_offset 0
 #define y_ini_offset 0
 extern bool compat_mode;
+void SetColorCompat(bool opt);
 #endif
 struct clean_base
 {
@@ -50,4 +51,3 @@ public:
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
 };
-void SetColorCompat(bool opt);
