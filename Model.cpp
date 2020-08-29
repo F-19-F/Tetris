@@ -78,7 +78,6 @@ model::model(int mode)
         center_y = 3;
         Color = 2;
         break;
-        break;
     default:
         break;
     }
