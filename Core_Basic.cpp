@@ -1,9 +1,9 @@
 #include <iostream>
-#include "include/game_core.hpp"
+#include "include/Tetris_Core.hpp"
 #include <memory.h>
 using namespace std;
 //初始化r表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
-game_core::game_core(int r, int c, int x_offset, int y_offset, int speed)
+Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed)
 {
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
@@ -17,12 +17,12 @@ game_core::game_core(int r, int c, int x_offset, int y_offset, int speed)
     memset(Color, 0, r * c * sizeof(int));
     this->speed = speed;
 }
-game_core::~game_core()
+Tetris_Core::~Tetris_Core()
 {
     delete[] source;
 }
-//删除表中现有空行---辅助函数
-void game_core::flash()
+//通过压缩空行两边的实现隐藏空行---辅助函数
+void Tetris_Core::Hide_Empty_Line()
 {
     int r_temp;
     int empty_made = 0;
@@ -59,7 +59,7 @@ void game_core::flash()
     }
 }
 //删除临时结果--辅助函数
-void game_core::del_base()
+void Tetris_Core::Clean_base_cache()
 {
     clean_base *target;
     target = this->temp;
@@ -73,7 +73,7 @@ void game_core::del_base()
     temp = NULL;
 }
 //返回行标最小的空行--辅助函数
-int game_core::Min_R()
+int Tetris_Core::Min_R()
 {
     int i, j;
     for (i = 0; i < r; i++)
@@ -97,7 +97,7 @@ int game_core::Min_R()
     return -1;
 }
 //删除clean所返回的需要删除的行--辅助函数
-void game_core::R_delete()
+void Tetris_Core::R_delete()
 {
     clean_base *target;
     target = temp;
@@ -113,10 +113,9 @@ void game_core::R_delete()
         }
         target = target->next;
     }
-    flash();
 }
 //Can_move函数的输入x,y是终端原始坐标
-bool game_core::Can_move_down(int x, int y, model *target)
+bool Tetris_Core::Can_move_down(int x, int y, model *target)
 {
     x -= x_offset;
     y -= y_offset;
@@ -142,7 +141,7 @@ bool game_core::Can_move_down(int x, int y, model *target)
     }
     return true;
 }
-bool game_core::Can_move_left(int x, int y, model *target)
+bool Tetris_Core::Can_move_left(int x, int y, model *target)
 {
     x -= x_offset;
     y -= y_offset;
@@ -166,7 +165,7 @@ bool game_core::Can_move_left(int x, int y, model *target)
     }
     return true;
 }
-bool game_core::Can_move_right(int x, int y, model *target)
+bool Tetris_Core::Can_move_right(int x, int y, model *target)
 {
     x -= x_offset;
     y -= y_offset;
@@ -191,7 +190,7 @@ bool game_core::Can_move_right(int x, int y, model *target)
     return true;
 }
 //判断当前模型的位置是否符合规范，用于判断模型是否能旋转
-bool game_core::Is_valid(int x, int y, model *target)
+bool Tetris_Core::Is_valid(int x, int y, model *target)
 {
     x -= x_offset;
     y -= y_offset;
@@ -222,7 +221,7 @@ bool game_core::Is_valid(int x, int y, model *target)
     return true;
 }
 //将当前模型写入核心
-void game_core::Write_core(int x, int y, model *target)
+void Tetris_Core::Write_core(int x, int y, model *target)
 {
     x -= x_offset;
     y -= y_offset;
@@ -239,11 +238,11 @@ void game_core::Write_core(int x, int y, model *target)
     }
 }
 //接口函数，外界能从这里得到游戏信息
-int game_core::get_score()
+int Tetris_Core::get_score()
 {
     return score;
 }
-int game_core::get_speed()
+int Tetris_Core::get_speed()
 {
     return speed;
 }

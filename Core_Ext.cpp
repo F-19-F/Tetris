@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <mutex>
 using namespace std;
-#include "include/game_core.hpp"
+#include "include/Tetris_Core.hpp"
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
 bool compat_mode = true;
@@ -16,7 +16,7 @@ void SetColorCompat(bool opt)
 #include "include/WinAPI_control.hpp"
 #endif
 //输出当前表
-void game_core::print()
+void Tetris_Core::Core_Print()
 {
     int C_temp = 0;
     //打印边框
@@ -75,7 +75,7 @@ void game_core::print()
     cout.flush();
 }
 //执行一次，满行全部删除
-int game_core::clean()
+int Tetris_Core::Full_Line_Clean()
 {
     int Before_min = Min_R();
     int sum = 0;
@@ -102,8 +102,9 @@ int game_core::clean()
         }
     }
     R_delete();
-    draw_delline();
-    del_base(); //避免内存泄漏
+    Hide_Empty_Line();
+    Del_SE();
+    Clean_base_cache(); //避免内存泄漏
     cursor_move(2 + x_offset, r + 2 - Before_min + y_offset);
     //清除多余行
     for (int i = 0; i < sum; i++)
@@ -121,7 +122,7 @@ int game_core::clean()
     return sum;
 }
 //消除时的动画
-void game_core::draw_delline()
+void Tetris_Core::Del_SE()
 {
     clean_base *target;
     target = temp;
@@ -189,7 +190,7 @@ void game_core::draw_delline()
     }
 }
 //signal为线程间同步变量，为-1时则按键响应线程结束，为0时代表需要一个下降的delay，为1时则正常运行
-void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, game_core *core, mutex *Lock)
+void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock)
 {
     bool suspend = false;
     while (ctrl->try_lock())
@@ -349,7 +350,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
     *signal = 2; //告诉主线程，此线程已结束，无需再等待
     return;
 }
-void game_core::Add_model(model *target, Key_dec *Key)
+void Tetris_Core::Add_model(model *target, Key_dec *Key)
 {
     mutex y_lock;
     mutex Run_Lock;
@@ -407,7 +408,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
             }
             Write_core(x, y, target);
             signal = -1;
-            print();
+            Core_Print();
             y_lock.unlock();
             break;
         }
@@ -415,7 +416,7 @@ void game_core::Add_model(model *target, Key_dec *Key)
     Run_Lock.lock();
     t1.~thread();
     Key->clean();
-    score += clean() * speed * (c - 2);
+    score += Full_Line_Clean() * speed * (c - 2);
     //检测游戏是否结束
     for (int l = 0; l < c; l++)
         if (*(source + (r - 1) * c + l))
