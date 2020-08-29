@@ -1,5 +1,5 @@
 #include <thread>
-#include "include/size.hpp"
+#include "include/Size.hpp"
 #ifndef _WIN32
 #include <unistd.h>    //linux/unix
 #include <sys/ioctl.h> //linux/unix

@@ -9,8 +9,8 @@
 #include <chrono>
 #include <mutex>
 #include <queue>
-#include "include/keydec.hpp"
-#include "include/model.hpp"
+#include "include/Keydec.hpp"
+#include "include/Model.hpp"
 using namespace std;
 queue<int> base;
 mutex Queue_lock;
