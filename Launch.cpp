@@ -126,6 +126,7 @@ int Setting(int x, int y, Key_dec *Key)
 		}
 		cursor_move(x + 11, y + 8);
 		cout << Game_Level<<" ";
+		cout.flush();
 	}
 
 	return 0;
