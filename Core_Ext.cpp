@@ -193,6 +193,7 @@ void Tetris_Core::Del_SE()
 void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock)
 {
     bool suspend = false;
+    int Model_Line = 0;
     while (ctrl->try_lock())
     {
         ctrl->unlock();
@@ -316,10 +317,25 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 target->print_model(true);
                 if (core->Can_move_down(*x, *y, target))
                 {
-                    *y = *y + 1;
-                    if (core->Can_move_down(*x, *y, target))
+                    if (!target->All_Model())
+                    {
+                        target->Part_to_temp(target->Current_Print_Line + 1);
+                    }
+                    else
                     {
                         *y = *y + 1;
+                    }
+                    if (core->Can_move_down(*x, *y, target))
+                    {
+
+                        if (!target->All_Model())
+                        {
+                            target->Part_to_temp(target->Current_Print_Line + 1);
+                        }
+                        else
+                        {
+                            *y = *y + 1;
+                        }
                     }
                 }
                 cursor_move(*x, *y);
@@ -354,7 +370,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
 {
     mutex y_lock;
     mutex Run_Lock;
-    int y = 1 + y_offset;
+    int y = 2 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
     int Time_speed = MAX_TIME / speed;
@@ -369,7 +385,14 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         {
             //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
             y_lock.lock();
-            y++;
+            if (target->All_Model())
+            {
+                y++;
+            }
+            else
+            {
+                target->Part_to_temp(target->Current_Print_Line + 1);
+            }
             cursor_move(x, y);
             target->print_model(false);
             y_lock.unlock();
@@ -418,8 +441,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         }
     while (signal != 2)
     {
-        this_thread::sleep_for(std::chrono::milliseconds(30));
+        this_thread::sleep_for(std::chrono::milliseconds(5));
     }
     Run_Lock.unlock();
-    //this_thread::sleep_for(std::chrono::milliseconds(100));
 }
