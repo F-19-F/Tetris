@@ -125,7 +125,7 @@ bool Tetris_Core::Can_move_down(int x, int y, model *target)
         return false;
     }
     //从模块最底层开始检索
-    for (int i = target->height - 1; i >= 0; i--)
+    for (int i = target->Current_Print_Line - 1; i >= 0; i--)
     {
         for (int j = 0; j < target->length; j++)
         {

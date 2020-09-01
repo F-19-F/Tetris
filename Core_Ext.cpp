@@ -444,4 +444,8 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         this_thread::sleep_for(std::chrono::milliseconds(5));
     }
     Run_Lock.unlock();
+    if (over)
+    {
+        this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
+    }
 }
