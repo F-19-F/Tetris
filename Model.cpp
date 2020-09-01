@@ -208,7 +208,13 @@ void model::changer_neg(int ang)
 {
     int after_x;
     int after_y;
+    int Cur_Line_Bak=Current_Print_Line;
+    bool Full_Line=false;
     bool changed_map[8][8];
+    if (Current_Print_Line==height)
+    {
+        Full_Line=true;
+    }
     memset(changed_map, 0, 64 * sizeof(bool));
     for (int i = 0; i < 8; i++)
     {
@@ -230,6 +236,10 @@ void model::changer_neg(int ang)
         }
     }
     get_temp();
+    if (!Full_Line)
+    {
+        Part_to_temp(Cur_Line_Bak);
+    }
 }
 void model::get_temp()
 {
