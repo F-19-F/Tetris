@@ -354,21 +354,14 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
 {
     mutex y_lock;
     mutex Run_Lock;
-    int y = 2 + y_offset;
+    int y = 1 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
     thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock);
     t1.detach();
-    //打印最开始的模型
-    cursor_move(x, y);
-    target->print_model(false);
-    this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
-    cursor_move(x, y);
-    target->print_model(true);
     y_lock.unlock();
-    //最开始模型打印结束,开始正常下落
     while (1)
     {
     Dead_Loop:
@@ -428,5 +421,5 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         this_thread::sleep_for(std::chrono::milliseconds(30));
     }
     Run_Lock.unlock();
-    this_thread::sleep_for(std::chrono::milliseconds(100));
+    //this_thread::sleep_for(std::chrono::milliseconds(100));
 }

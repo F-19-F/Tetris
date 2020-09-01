@@ -39,6 +39,7 @@
 	cursor_move(x, y);                     \
 	movedown(5);
 #endif
+#define MAX_LEVEL 30
 using namespace std;
 int First_flag = 0; //用于游戏和信息显示通信
 int Game_Level = 1;
@@ -95,6 +96,38 @@ int Setting(int x, int y, Key_dec *Key)
 	hide_cursor();
 	clean_screen();
 	Title;
+	int Cur_Location_Y = y + 8;
+	cursor_move(x + 8, y + 7);
+	cout << "游戏难度";
+	cursor_move(x + 11, y + 8);
+	cout << Game_Level<<" ";
+	cursor_move(x + 8, y + 8);
+	cout << "<";
+	cursor_move(x + 15, y + 8);
+	cout << ">";
+	while (1)
+	{
+		switch (Key->pop())
+		{
+		case left:
+			if (Game_Level != 1)
+			{
+				Game_Level--;
+			}
+			break;
+		case right:
+			if (Game_Level !=MAX_LEVEL)
+			{
+				Game_Level++;
+			}
+			break;
+		case space:
+			return 0;
+		}
+		cursor_move(x + 11, y + 8);
+		cout << Game_Level<<" ";
+	}
+
 	return 0;
 }
 int Menu(int x, int y, Key_dec *Key)
@@ -203,7 +236,7 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	Size ini_size;
 	ini_size = Getsize();
 	srand((unsigned)time(NULL));
-	Tetris_Core b(Gsize.r, Gsize.c, x, y, 10);
+	Tetris_Core b(Gsize.r, Gsize.c, x, y, Game_Level);
 	clean_screen();
 	cout.flush();
 	b.Core_Print();
