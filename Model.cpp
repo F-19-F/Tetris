@@ -82,6 +82,7 @@ model::model(int mode)
         break;
     }
     get_temp();
+    Current_Print_Line=0;
 }
 //输出原始数据，以便调试--for debug
 void model::print_row(int mode)
@@ -171,6 +172,36 @@ void model::print_model(bool clean)
         moveleft(length);
     }
     cout.flush();
+}
+void model::Part_to_temp(int n)
+{
+    int r_temp=0;
+    Current_Print_Line=n;
+    get_temp();
+    if (n>=height)
+    {
+        return;
+    }
+    //移动下面的行到上面来
+    for (int i = height - n; i <= height-1; i++)
+    {
+        for (int j=0; j < length ;j++)
+        {
+            if (temp[r_temp][j]!=temp[i][j])
+            {
+                temp[r_temp][j]=temp[i][j];
+            }
+        }
+        r_temp++;
+    }
+    //清除多余行
+    for (int i = n; i < height; i++)
+    {
+        for (int j = 0; j < length; j++)
+        {
+            temp[i][j] = false;
+        }
+    }
 }
 //以旋转中心旋转ang度，只能是90的倍数
 void model::changer_neg(int ang)
@@ -279,4 +310,15 @@ void model::get_temp()
 int model::get_color()
 {
     return Color;
+}
+bool model::All_Model()
+{
+    if (Current_Print_Line<height)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
