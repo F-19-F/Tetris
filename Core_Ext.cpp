@@ -345,7 +345,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             }
         }
         Key->MutexLock(false);
-        this_thread::sleep_for(std::chrono::milliseconds(20));
+        this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     *signal = 2; //告诉主线程，此线程已结束，无需再等待
     return;
@@ -409,11 +409,11 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             Write_core(x, y, target);
             signal = -1;
             Core_Print();
-            y_lock.unlock();
             break;
         }
     }
     Run_Lock.lock();
+    y_lock.unlock();
     t1.~thread();
     Key->clean();
     score += Full_Line_Clean() * speed * (c - 2);
