@@ -7,52 +7,84 @@
 #endif
 #include "include/Tetris_Core.hpp"
 #include "include/Size.hpp"
+#ifdef _WIN32
+#define Title                              \
+	cursor_move(x, y);                     \
+	cout << " _____    _        _";        \
+	movedown(1);                           \
+	cout << "|_   _|__| |_ _ __(_)___";    \
+	movedown(1);                           \
+	cout << "  | |/ _ \\ __| '__| / __|";  \
+	movedown(1);                           \
+	cout << "  | |  __/ |_| |  | \\__ \\"; \
+	movedown(1);                           \
+	cout << "  |_|\\___|\\__|_|  |_|___/"; \
+	movedown(1);
+#else
+#define Title                              \
+	cursor_move(x, y);                     \
+	cout << " _____    _        _";        \
+	cursor_move(x, y);                     \
+	movedown(1);                           \
+	cout << "|_   _|__| |_ _ __(_)___";    \
+	cursor_move(x, y);                     \
+	movedown(2);                           \
+	cout << "  | |/ _ \\ __| '__| / __|";  \
+	cursor_move(x, y);                     \
+	movedown(3);                           \
+	cout << "  | |  __/ |_| |  | \\__ \\"; \
+	cursor_move(x, y);                     \
+	movedown(4);                           \
+	cout << "  |_|\\___|\\__|_|  |_|___/"; \
+	cursor_move(x, y);                     \
+	movedown(5);
+#endif
 using namespace std;
-int First_flag = 0;//用于游戏和信息显示通信
-int Game_Level=1;
+int First_flag = 0; //用于游戏和信息显示通信
+int Game_Level = 1;
 Size _Gsize;
-int Over(int x,int y,int Score,Key_dec *Key)
+int Over(int x, int y, int Score, Key_dec *Key)
 {
 	color(1);
 	clean_screen();
-	cursor_move(x,y);
-	#ifdef _WIN32
-	cout<<"  ____                         ___";
+	cursor_move(x, y);
+#ifdef _WIN32
+	cout << "  ____                         ___";
 	movedown(1);
-	cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
+	cout << " / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
 	movedown(1);
-	cout<<"| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
+	cout << "| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
 	movedown(1);
-	cout<<"| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
+	cout << "| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
 	movedown(1);
-	cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
+	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
 	movedown(1);
-	cout<<"                      你的分数:"<<Score;
+	cout << "                      你的分数:" << Score;
 	movedown(5);
-	cout<<"                 按空格键退出当前界面";
-	#else
-	cout<<"  ____                         ___";
-	cursor_move(x,y);
+	cout << "                 按空格键退出当前界面";
+#else
+	cout << "  ____                         ___";
+	cursor_move(x, y);
 	movedown(1);
-	cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
-	cursor_move(x,y);
+	cout << " / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
+	cursor_move(x, y);
 	movedown(2);
-	cout<<"| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
-	cursor_move(x,y);
+	cout << "| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
+	cursor_move(x, y);
 	movedown(3);
-	cout<<"| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
-	cursor_move(x,y);
+	cout << "| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
+	cursor_move(x, y);
 	movedown(4);
-	cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
-	cursor_move(x,y);
+	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
+	cursor_move(x, y);
 	movedown(5);
-	cout<<"                      你的分数:"<<Score;
-	cursor_move(x,y);
+	cout << "                      你的分数:" << Score;
+	cursor_move(x, y);
 	movedown(10);
-	cout<<"                 按空格键退出当前界面";
-	#endif
+	cout << "                 按空格键退出当前界面";
+#endif
 	cout.flush();
-	while (Key->pop()!=space)
+	while (Key->pop() != space)
 	{
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
@@ -62,36 +94,7 @@ int Setting(int x, int y, Key_dec *Key)
 {
 	hide_cursor();
 	clean_screen();
-	#ifdef _WIN32
-	cursor_move(x, y);
-	cout << " _____    _        _";
-	movedown(1);
-	cout << "|_   _|__| |_ _ __(_)___";
-	movedown(1);
-	cout << "  | |/ _ \\ __| '__| / __|";
-	movedown(1);
-	cout << "  | |  __/ |_| |  | \\__ \\";
-	movedown(1);
-	cout << "  |_|\\___|\\__|_|  |_|___/";
-	movedown(1);
-#else
-	cursor_move(x, y);
-	cout << " _____    _        _";
-	cursor_move(x, y);
-	movedown(1);
-	cout << "|_   _|__| |_ _ __(_)___";
-	cursor_move(x, y);
-	movedown(2);
-	cout << "  | |/ _ \\ __| '__| / __|";
-	cursor_move(x, y);
-	movedown(3);
-	cout << "  | |  __/ |_| |  | \\__ \\";
-	cursor_move(x, y);
-	movedown(4);
-	cout << "  |_|\\___|\\__|_|  |_|___/";
-	cursor_move(x, y);
-	movedown(5);
-#endif
+	Title;
 	return 0;
 }
 int Menu(int x, int y, Key_dec *Key)
@@ -100,36 +103,7 @@ int Menu(int x, int y, Key_dec *Key)
 	color(7);
 	clean_screen();
 	int Cur_Location_Y = y + 7;
-#ifdef _WIN32
-	cursor_move(x, y);
-	cout << " _____    _        _";
-	movedown(1);
-	cout << "|_   _|__| |_ _ __(_)___";
-	movedown(1);
-	cout << "  | |/ _ \\ __| '__| / __|";
-	movedown(1);
-	cout << "  | |  __/ |_| |  | \\__ \\";
-	movedown(1);
-	cout << "  |_|\\___|\\__|_|  |_|___/";
-	movedown(1);
-#else
-	cursor_move(x, y);
-	cout << " _____    _        _";
-	cursor_move(x, y);
-	movedown(1);
-	cout << "|_   _|__| |_ _ __(_)___";
-	cursor_move(x, y);
-	movedown(2);
-	cout << "  | |/ _ \\ __| '__| / __|";
-	cursor_move(x, y);
-	movedown(3);
-	cout << "  | |  __/ |_| |  | \\__ \\";
-	cursor_move(x, y);
-	movedown(4);
-	cout << "  |_|\\___|\\__|_|  |_|___/";
-	cursor_move(x, y);
-	movedown(5);
-#endif
+	Title;
 	cursor_move(x + 8, y + 7);
 	cout << "开始游戏";
 	cursor_move(x + 8, y + 9);
@@ -221,7 +195,7 @@ void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
 	Last_model = *next_model;
 	First_flag = 1;
 }
-int Startgame(int x , int y,Size Gsize,Key_dec *Key)
+int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 {
 	int i;
 	model *a;
@@ -240,7 +214,7 @@ int Startgame(int x , int y,Size Gsize,Key_dec *Key)
 		a = new model(i);
 		i = rand() % 7 + 1;
 		temp = new model(i);
-		Infor_print(x + Gsize.c + 5,y + 3, &b, temp);
+		Infor_print(x + Gsize.c + 5, y + 3, &b, temp);
 		b.Add_model(a, Key);
 		delete a;
 		delete temp;
@@ -259,27 +233,27 @@ int main()
 #endif
 	hide_cursor();
 	Set_Default_color(BF_Default_Color_RGB);
-	Size Win_size=Getsize();//获取窗口大小
-	_Gsize.r=27;
-	_Gsize.c=18;
+	Size Win_size = Getsize(); //获取窗口大小
+	_Gsize.r = 27;
+	_Gsize.c = 18;
 	Key_dec Key;
-	int Opt=0;
+	int Opt = 0;
 	Key.start();
-	while ((Opt=Menu(Win_size.c/2-12,Win_size.r/5,&Key))!=4)//Logo居中
+	while ((Opt = Menu(Win_size.c / 2 - 12, Win_size.r / 5, &Key)) != 4) //Logo居中
 	{
 		switch (Opt)
 		{
 		case 0:
-			Over (Win_size.c/2-25,Win_size.r/2-4,Startgame(Win_size.c/2-22,0,_Gsize,&Key),&Key);
+			Over(Win_size.c / 2 - 25, Win_size.r / 2 - 4, Startgame(Win_size.c / 2 - 22, 0, _Gsize, &Key), &Key);
 			break;
 		case 1:
-			Setting(Win_size.c/2-12,Win_size.r/5,&Key);
+			Setting(Win_size.c / 2 - 12, Win_size.r / 5, &Key);
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 #ifdef _WIN32
 	Reset_Win_Required();
 #endif
