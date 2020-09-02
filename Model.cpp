@@ -208,10 +208,10 @@ void model::changer_neg(int ang)
 {
     int after_x;
     int after_y;
-    int Cur_Line_Bak=Current_Print_Line;
+    int Cur_Line_Bak=Current_Print_Line;//用来解决起初下落未完全时变换形状带来的直接落出来的问题
     bool Full_Line=false;
     bool changed_map[8][8];
-    if (Current_Print_Line==height)
+    if (Current_Print_Line>=height)
     {
         Full_Line=true;
     }
@@ -239,6 +239,10 @@ void model::changer_neg(int ang)
     if (!Full_Line)
     {
         Part_to_temp(Cur_Line_Bak);
+    }
+    else
+    {
+        Current_Print_Line=height;
     }
 }
 void model::get_temp()
