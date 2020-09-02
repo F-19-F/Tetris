@@ -340,6 +340,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
+                *signal=1;
                 Lock->unlock();
                 break;
             case space:
@@ -410,6 +411,8 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             {
                 signal = 1;
                 y_lock.unlock();
+                cursor_move(x,y);
+                target->print_model(false);
                 this_thread::sleep_for(std::chrono::milliseconds(30));
                 y_lock.lock();
                 //如果delay阶段的移动使得方块能继续下降，则继续下降
