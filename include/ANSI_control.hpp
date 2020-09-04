@@ -1,3 +1,5 @@
+#ifndef _ANSI_C
+#define _ANSI_C
 #define end_all() cout << "\033[0m"
 //高亮度
 #define high_light() cout << "\033[1m"
@@ -34,4 +36,5 @@
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b);
 void color(int i);
 void Reset_color();
+#endif
 //It seems that ANSI works not as well as winapi.

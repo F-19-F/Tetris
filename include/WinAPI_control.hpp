@@ -1,3 +1,5 @@
+#ifndef _WIN_C
+#define _WIN_C
 void Win_Required();
 void Reset_Win_Required();
 void cursor_move(int x, int y);
@@ -13,3 +15,4 @@ void color(int c);
 void Reset_color();
 //请确保在调用cursormove后任意的输出都记录下来
 extern int cursor_location;
+#endif
