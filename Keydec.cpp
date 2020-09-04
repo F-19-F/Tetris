@@ -189,10 +189,12 @@ void Key_dec::stop()
 }
 void Key_dec::clean()
 {
+  Queue_lock.lock();
   while (!base.empty())
   {
     base.pop();
   }
+  Queue_lock.unlock();
 }
 void Key_dec::MutexLock(bool lock)
 {
