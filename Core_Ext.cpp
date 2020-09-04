@@ -193,14 +193,16 @@ void Tetris_Core::Del_SE()
 void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock)
 {
     bool suspend = false;
-    int Model_Line = 0;
+    int Key_Got;
     while (ctrl->try_lock())
     {
         ctrl->unlock();
         Key->MutexLock(true);
+        Key_Got=Key->pop();
+        Key->MutexLock(false);
         if (suspend)
         {
-            if (Key->pop() == space)
+            if (Key_Got==space)
             {
                 Lock->unlock();
                 suspend = false;
@@ -208,7 +210,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
         }
         else
         {
-            switch (Key->pop())
+            switch (Key_Got)
             {
             case left:
                 Lock->lock();
@@ -361,7 +363,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 break;
             }
         }
-        Key->MutexLock(false);
         this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     *signal = 2; //告诉主线程，此线程已结束，无需再等待
@@ -427,6 +428,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                 }
             }
             Run_Lock.lock();
+            Key->clean();
             y_lock.unlock();
             Write_core(x, y, target);
             while (signal != 2)
@@ -439,7 +441,6 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         }
     }
     t1.~thread();
-    Key->clean();
     if ((Score_In = Full_Line_Clean()) != 0)
     {
         score += Score_In * speed * (c - 2);
