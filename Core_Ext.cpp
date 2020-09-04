@@ -189,7 +189,7 @@ void Tetris_Core::Del_SE()
         target = target->next;
     }
 }
-//signal为线程间同步变量，为-1时则按键响应线程结束，为0时代表需要一个下降的delay，为1时则正常运行
+//signal为线程间同步变量，为0时代表需要一个下降的delay，为1时则正常运行,为2时代表线程已结束
 void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock)
 {
     bool suspend = false;
@@ -340,7 +340,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 }
                 cursor_move(*x, *y);
                 target->print_model(false);
-                *signal=1;
+                *signal = 1;
                 Lock->unlock();
                 break;
             case space:
@@ -374,6 +374,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
+    int Score_In = 0;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
     thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock);
@@ -411,7 +412,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             {
                 signal = 1;
                 y_lock.unlock();
-                cursor_move(x,y);
+                cursor_move(x, y);
                 target->print_model(false);
                 this_thread::sleep_for(std::chrono::milliseconds(30));
                 y_lock.lock();
@@ -425,25 +426,29 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                     goto Dead_Loop;
                 }
             }
+            Run_Lock.lock();
+            y_lock.unlock();
             Write_core(x, y, target);
-            signal = -1;
+            while (signal != 2)
+            {
+                this_thread::sleep_for(std::chrono::milliseconds(5));
+            }
+            Run_Lock.unlock();
             Core_Print();
             break;
         }
     }
-    Run_Lock.lock();
-    y_lock.unlock();
     t1.~thread();
     Key->clean();
-    score += Full_Line_Clean() * speed * (c - 2);
-    //检测游戏是否结束
-    if (y==2 + y_offset)
+    if ((Score_In = Full_Line_Clean()) != 0)
     {
-        over=true;
+        score += Score_In * speed * (c - 2);
+        Core_Print();
     }
-    while (signal != 2)
+    //检测游戏是否结束
+    if (y == 2 + y_offset)
     {
-        this_thread::sleep_for(std::chrono::milliseconds(5));
+        over = true;
     }
     Run_Lock.unlock();
     if (over)
