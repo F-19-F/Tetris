@@ -1,3 +1,5 @@
+#ifndef _MODEL
+#define _MODEL
 #define PI 3.14
 #define Random_Color_1 249, 0, 0
 #define Random_Color_2 26, 242, 242
@@ -36,3 +38,4 @@ public:
     void get_temp();
     int get_color();
 };
+#endif

@@ -1,6 +1,9 @@
+#ifndef _TCORE
+#define _TCORE
 #include "Model.hpp"
 #include "Keydec.hpp"
 #define MAX_TIME 500
+#define MAX_LEVEL 30
 #define BF_Default_Color_RGB 0, 0, 0, 158, 173, 134
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
@@ -50,3 +53,4 @@ public:
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
 };
+#endif
