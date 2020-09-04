@@ -220,7 +220,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                     if (!ctrl->try_lock())
                     {
                         Lock->unlock();
-                        Key->MutexLock(false);
                         *signal = 2;
                         return;
                     }
@@ -249,7 +248,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                     if (!ctrl->try_lock())
                     {
                         Lock->unlock();
-                        Key->MutexLock(false);
                         *signal = 2;
                         return;
                     }
@@ -276,7 +274,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 if (!ctrl->try_lock())
                 {
                     Lock->unlock();
-                    Key->MutexLock(false);
                     *signal = 2;
                     return;
                 }
@@ -307,7 +304,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 if (!ctrl->try_lock())
                 {
                     Lock->unlock();
-                    Key->MutexLock(false);
                     *signal = 2;
                     return;
                 }
@@ -350,7 +346,6 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 if (!ctrl->try_lock())
                 {
                     Lock->unlock();
-                    Key->MutexLock(false);
                     *signal = 2;
                     return;
                 }
@@ -412,9 +407,9 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             if (signal == 0) //写入delay,在检测到delay请求时则延缓写入，并且在delay阶段允许左右移动
             {
                 signal = 1;
-                y_lock.unlock();
                 cursor_move(x, y);
                 target->print_model(false);
+                y_lock.unlock();
                 this_thread::sleep_for(std::chrono::milliseconds(30));
                 y_lock.lock();
                 //如果delay阶段的移动使得方块能继续下降，则继续下降
