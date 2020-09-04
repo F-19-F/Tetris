@@ -220,7 +220,6 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 		delete a;
 		delete temp;
 		Key->clean();
-		b.Core_Print();
 	}
 	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;

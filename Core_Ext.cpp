@@ -375,7 +375,6 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     int x = c / 2 + x_offset;
     int signal = 1;
     int Time_speed = MAX_TIME / speed;
-    int Score_INC=0;
     y_lock.lock();
     thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock);
     t1.detach();
@@ -436,7 +435,6 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     y_lock.unlock();
     t1.~thread();
     Key->clean();
-    Score_INC=Full_Line_Clean();
     score += Full_Line_Clean() * speed * (c - 2);
     //检测游戏是否结束
     if (y==2 + y_offset)
