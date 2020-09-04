@@ -1,3 +1,5 @@
+#ifndef _KEY
+#define _KEY
 #ifndef _WIN32
 #define sp1 27
 #define sp2 91
@@ -27,3 +29,4 @@ public:
     void clean();
     void MutexLock(bool lock);
 };
+#endif
