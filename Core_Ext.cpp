@@ -437,11 +437,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     t1.~thread();
     Key->clean();
     Score_INC=Full_Line_Clean();
-    if (Score_INC!=0)
-    {
-        score += Score_INC * speed * (c - 2);
-        Core_Print();
-    }
+    score += Full_Line_Clean() * speed * (c - 2);
     //检测游戏是否结束
     if (y==2 + y_offset)
     {
