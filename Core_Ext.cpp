@@ -15,6 +15,25 @@ void SetColorCompat(bool opt)
 #else
 #include "include/WinAPI_control.hpp"
 #endif
+#define Print_Current cursor_move(x, y);\
+                target->print_model(false);
+#define Clean_Current cursor_move(x, y);\
+                target->print_model(true);
+#define Print_Current_P cursor_move(*x, *y);\
+                target->print_model(false);
+#define Clean_Current_P cursor_move(*x, *y);\
+                target->print_model(true);
+#define Can_I_Run          \
+    if (!ctrl->try_lock()) \
+    {                      \
+        Lock->unlock();    \
+        *signal = 2;       \
+        return;            \
+    }                      \
+    else                   \
+    {                      \
+        ctrl->unlock();    \
+    }
 //输出当前表
 void Tetris_Core::Core_Print()
 {
@@ -198,11 +217,11 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
     {
         ctrl->unlock();
         Key->MutexLock(true);
-        Key_Got=Key->pop();
+        Key_Got = Key->pop();
         Key->MutexLock(false);
         if (suspend)
         {
-            if (Key_Got==space)
+            if (Key_Got == space)
             {
                 Lock->unlock();
                 suspend = false;
@@ -217,21 +236,10 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 if (core->Can_move_left(*x, *y, target))
                 {
                     //如果下落线程已经结束，则移动全部取消
-                    if (!ctrl->try_lock())
-                    {
-                        Lock->unlock();
-                        *signal = 2;
-                        return;
-                    }
-                    else
-                    {
-                        ctrl->unlock();
-                    }
-                    cursor_move(*x, *y);
-                    target->print_model(true);
+                    Can_I_Run;
+                    Clean_Current_P;
                     *x = *x - 1;
-                    cursor_move(*x, *y);
-                    target->print_model(false);
+                    Print_Current_P;
                     *signal = 0;
                     Lock->unlock();
                 }
@@ -244,22 +252,10 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 Lock->lock();
                 if (core->Can_move_right(*x, *y, target))
                 {
-                    //如果下落线程已经结束，则移动全部取消
-                    if (!ctrl->try_lock())
-                    {
-                        Lock->unlock();
-                        *signal = 2;
-                        return;
-                    }
-                    else
-                    {
-                        ctrl->unlock();
-                    }
-                    cursor_move(*x, *y);
-                    target->print_model(true);
+                    Can_I_Run;
+                    Clean_Current_P;
                     *x = *x + 1;
-                    cursor_move(*x, *y);
-                    target->print_model(false);
+                    Print_Current_P;
                     *signal = 0;
                     Lock->unlock();
                 }
@@ -271,18 +267,8 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             case up:
                 Lock->lock();
                 //如果下落线程已经结束，则移动全部取消
-                if (!ctrl->try_lock())
-                {
-                    Lock->unlock();
-                    *signal = 2;
-                    return;
-                }
-                else
-                {
-                    ctrl->unlock();
-                }
-                cursor_move(*x, *y);
-                target->print_model(true);
+                Can_I_Run;
+                Clean_Current_P;
                 target->changer_neg(-90);
                 //如果不符合要求,就撤回更改，同时不发送relay请求
                 if (!core->Is_valid(*x, *y, target))
@@ -294,25 +280,14 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 {
                     *signal = 0;
                 }
-                cursor_move(*x, *y);
-                target->print_model(false);
+                Print_Current_P;
                 Lock->unlock();
                 break;
             case down:
                 Lock->lock();
                 //如果下落线程已经结束，则移动全部取消
-                if (!ctrl->try_lock())
-                {
-                    Lock->unlock();
-                    *signal = 2;
-                    return;
-                }
-                else
-                {
-                    ctrl->unlock();
-                }
-                cursor_move(*x, *y);
-                target->print_model(true);
+                Can_I_Run;
+                Clean_Current_P;
                 if (core->Can_move_down(*x, *y, target))
                 {
                     if (!target->All_Model())
@@ -336,22 +311,13 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                         }
                     }
                 }
-                cursor_move(*x, *y);
-                target->print_model(false);
+                Print_Current_P;
                 *signal = 1;
                 Lock->unlock();
                 break;
             case space:
                 Lock->lock();
-                if (!ctrl->try_lock())
-                {
-                    Lock->unlock();
-                    *signal = 2;
-                    return;
-                }
-                {
-                    ctrl->unlock();
-                }
+                Can_I_Run;
                 suspend = true;
                 break;
             default:
@@ -391,14 +357,12 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             {
                 target->Part_to_temp(target->Current_Print_Line + 1);
             }
-            cursor_move(x, y);
-            target->print_model(false);
+            Print_Current;
             y_lock.unlock();
             this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
             //避免下落时发生变形导致的打印异常
             y_lock.lock();
-            cursor_move(x, y);
-            target->print_model(true);
+            Clean_Current;
             y_lock.unlock();
         }
         else
@@ -407,8 +371,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
             if (signal == 0) //写入delay,在检测到delay请求时则延缓写入，并且在delay阶段允许左右移动
             {
                 signal = 1;
-                cursor_move(x, y);
-                target->print_model(false);
+                Print_Current;
                 y_lock.unlock();
                 this_thread::sleep_for(std::chrono::milliseconds(30));
                 y_lock.lock();
@@ -416,8 +379,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                 if (Can_move_down(x, y, target))
                 {
                     //消除delay阶段所打印的方块
-                    cursor_move(x, y);
-                    target->print_model(true);
+                    Clean_Current;
                     y_lock.unlock();
                     goto Dead_Loop;
                 }
