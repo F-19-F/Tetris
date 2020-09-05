@@ -385,6 +385,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                 }
             }
             Run_Lock.lock();
+            Print_Current;
             Key->clean();
             y_lock.unlock();
             Write_core(x, y, target);
@@ -393,15 +394,15 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                 this_thread::sleep_for(std::chrono::milliseconds(5));
             }
             Run_Lock.unlock();
-            Core_Print();
             break;
         }
     }
     t1.~thread();
     if ((Score_In = Full_Line_Clean()) != 0)
     {
-        score += Score_In * speed * (c - 2);
         Core_Print();
+        score += Score_In * speed * (c - 2);
+        
     }
     //检测游戏是否结束
     if (y == 2 + y_offset)
