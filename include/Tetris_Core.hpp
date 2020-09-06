@@ -28,7 +28,8 @@ private:
     int r;
     int c;
     int speed;
-    int score;
+    long score;
+    int Died_Line;
     int x_offset;
     int y_offset;
     clean_base *temp;
