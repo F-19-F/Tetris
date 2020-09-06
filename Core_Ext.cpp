@@ -401,6 +401,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     if ((Score_In = Full_Line_Clean()) != 0)
     {
         Core_Print();
+        Died_Line+=Score_In;
         score += Score_In * speed * (c - 2);
         
     }
