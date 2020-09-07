@@ -15,14 +15,18 @@ void SetColorCompat(bool opt)
 #else
 #include "include/WinAPI_control.hpp"
 #endif
-#define Print_Current cursor_move(x, y);\
-                target->print_model(false);
-#define Clean_Current cursor_move(x, y);\
-                target->print_model(true);
-#define Print_Current_P cursor_move(*x, *y);\
-                target->print_model(false);
-#define Clean_Current_P cursor_move(*x, *y);\
-                target->print_model(true);
+#define Print_Current  \
+    cursor_move(x, y); \
+    target->print_model(false);
+#define Clean_Current  \
+    cursor_move(x, y); \
+    target->print_model(true);
+#define Print_Current_P  \
+    cursor_move(*x, *y); \
+    target->print_model(false);
+#define Clean_Current_P  \
+    cursor_move(*x, *y); \
+    target->print_model(true);
 #define Can_I_Run          \
     if (!ctrl->try_lock()) \
     {                      \
@@ -401,9 +405,16 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     if ((Score_In = Full_Line_Clean()) != 0)
     {
         Core_Print();
-        Died_Line+=Score_In;
         score += Score_In * speed * (c - 2);
-        
+        if (Auto_Increase)
+        {
+            while (Score_In--)
+            {
+                Died_Line++;
+                if (!((Died_Line)%10)&&speed<MAX_LEVEL)
+                speed++;
+            }
+        }
     }
     //检测游戏是否结束
     if (y == 2 + y_offset)

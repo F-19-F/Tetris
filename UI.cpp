@@ -204,7 +204,7 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	Size ini_size;
 	ini_size = Getsize();
 	srand((unsigned)time(NULL));
-	Tetris_Core b(Gsize.r, Gsize.c, x, y, Game_Level);
+	Tetris_Core b(Gsize.r, Gsize.c, x, y, Game_Level,true);
 	clean_screen();
 	cout.flush();
 	b.Core_Print();
