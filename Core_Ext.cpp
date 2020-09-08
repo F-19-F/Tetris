@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <memory.h>
 #include <mutex>
@@ -41,7 +42,7 @@ void SetColorCompat(bool opt)
 //输出当前表
 void Tetris_Core::Core_Print()
 {
-    int C_temp = 0;
+    char C_temp = 0;
     //打印边框
     //打印竖直方向的边框
     color(7);
@@ -78,7 +79,7 @@ void Tetris_Core::Core_Print()
             {
                 if (C_temp != *(Color + i * c + j))
                 {
-                    color(*(Color + i * c + j));
+                    color((int)*(Color + i * c + j));
                     C_temp = *(Color + i * c + j);
                 }
                 cout << (Print_base);
@@ -426,4 +427,75 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     {
         this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
     }
+}
+//以字节为单位直接写入数据，file为ostream对象
+void Direct_Hex(std::ostream& file, long address ,int Length)
+{
+    char *bytes=new char [Length];
+    for (int i=0;i<Hex_Max;i++)
+    {
+        bytes[Length-1-i]=(address >> (8*i)) & 0xFF;
+    }
+    //将数据写入
+    file.write((char*)bytes, Length);
+}
+bool Tetris_Core::Save_To_file()
+{
+    //int temp_num;
+    //int Sum;
+    bool* temp=source;
+    char* Color_temp=Color;
+    long bool_table_address;
+    long color_table_address; 
+    fstream Bak ("dd", ios::out | ios::binary |ios::in);
+    //移动读取指针到当前文件的末尾，以获取文件的大小信息
+    Bak.seekg(0,ios::end);
+    //存储文件大小参数
+    int File_Length=Bak.tellg();
+    //将文件写指针移动至文件末尾
+    Bak.seekp(0, ios::end);
+    //将Tetris_Core对象写入文件，但现在存储的文件中指针的部分只存储了指针的地址
+    Bak.write((char *) this,sizeof(*this));
+    //将source中的数据以字节为单位存入文件，可以节约空间,以后会推出
+    /*for (int Out_Point=r*c;Out_Point>0;Out_Point-=8)
+    {
+        temp_num=8;
+        Sum=0;
+        while (--temp_num)
+        {
+            if (*temp)
+            {
+                ;
+            }
+        }
+        
+    }*/
+    //保存动态分配的内容
+    bool_table_address=Bak.tellp();
+    for (int i=0;i<r*c;i++)
+    {
+        Bak.write((char *) temp,sizeof(*temp));
+        temp++;
+    }
+    color_table_address=Bak.tellp();
+    for (int i=0;i<r*c;i++)
+    {
+        Bak.write((char *)Color_temp,sizeof(*Color_temp));
+        Color_temp++;
+    }
+    
+    //在当前文件末尾写入Core部分的地址以及对应大小,3个字节保存地址，2个字节保存大小
+    Direct_Hex(Bak,File_Length,3);
+    Direct_Hex(Bak,sizeof(*this),2);
+    //写入bool_table的地址和大小
+    Direct_Hex(Bak,bool_table_address,3);
+    Direct_Hex(Bak,sizeof(bool)*r*c,2);
+    //写入color_table的地址和大小
+    Direct_Hex(Bak,color_table_address,3);
+    Direct_Hex(Bak,sizeof(char)*r*c,2);
+    //写入特殊文件尾
+    Direct_Hex(Bak,Special_Tail,2);
+    cout<<"Write"<<hex<<"0x"<<hex<<File_Length<<"at the end of file";
+    Bak.close();
+    return true;
 }
