@@ -14,9 +14,9 @@ Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , b
     score = 0;
     Died_Line=0;
     source = new bool[r * c]; //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数
-    Color = new int[r * c];
+    Color = new char[r * c];
     memset(source, 0, r * c * sizeof(bool)); //将方块全部填充为0
-    memset(Color, 0, r * c * sizeof(int));
+    memset(Color, 0, r * c * sizeof(char));
     this->speed = speed;
 }
 Tetris_Core::~Tetris_Core()
