@@ -2,6 +2,9 @@
 #define _TCORE
 #include "Model.hpp"
 #include "Keydec.hpp"
+//将游戏保存到文件中用到的宏
+#define Hex_Max 3
+#define Special_Tail 0xFF19
 #define MAX_TIME 500
 #define MAX_LEVEL 30
 #define BF_Default_Color_RGB 0, 0, 0, 158, 173, 134
@@ -24,7 +27,7 @@ class Tetris_Core
 {
 private:
     bool *source;
-    int *Color;
+    char *Color;
     int r;
     int c;
     int speed;
@@ -54,5 +57,6 @@ public:
     bool Can_move_left(int x, int y, model *target);
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
+    bool Save_To_file();
 };
 #endif

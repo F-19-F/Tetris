@@ -223,5 +223,7 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	}
 	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;
+	b.Save_To_file();
+	this_thread::sleep_for(std::chrono::milliseconds(1000));
 	return b.get_score();
 }
