@@ -22,6 +22,7 @@ Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , b
 Tetris_Core::~Tetris_Core()
 {
     delete[] source;
+    delete[] Color;
 }
 //通过压缩空行两边的实现隐藏空行---辅助函数
 void Tetris_Core::Hide_Empty_Line()
