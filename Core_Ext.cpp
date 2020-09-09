@@ -437,10 +437,14 @@ bool Is_Cofig_file(char* path)
 {
     char Temp[2];
     fstream t(path, ios::out | ios::binary | ios::in);
-    t.seekg(0,ios::end);
+    if (!t)
+    {
+        return false;
+    }
+    t.seekg(-2,ios::end);
     t.read(Temp,2);
     t.close();
-    if (Temp[0]==0xFF&&Temp[1]==0x19)
+    if ((Temp[0]==0x0F)&&(Temp[1]==0x19))
     {
         return true;
     }
@@ -464,16 +468,21 @@ bool Tetris_Core::Save_To_file(char *path)
     char *address_temp;
     long address=0;
     fstream Bak(path, ios::out | ios::binary | ios::in);
+    if (!Bak)
+    {
+        //cout<<"Fail to open file!"<<endl;
+        return false;
+    }
     //移动读取指针到当前文件的末尾，以获取文件的大小信息
     Bak.seekg(0, ios::end);
     //存储文件大小参数
     int File_Length = Bak.tellg();
-    //将文件写指针移动至文件末尾
+    //将文件读指针移动至文件倒数两个字节
     Bak.seekg(-2,ios::end);
     address_temp=new char[2];
     Bak.read(address_temp,2);
     //如果在尾部寻找到特殊字节，则认为是标准的游戏数据文件，将替换原有数据
-    if (address_temp[0]==0xFF,address_temp[1]==0x19)
+    if ((address_temp[0]==0x0F)&&(address_temp[1]==0x19))
     {
         Bak.seekg(-5,ios::end);
         delete address_temp;
@@ -487,6 +496,8 @@ bool Tetris_Core::Save_To_file(char *path)
     else
     {
         //否则移动至文件末尾
+        //cout<<"No such byte found!"<<endl;
+        //cout<<"Byte1: "<<(int)address_temp[0]<<"byte2: "<<(int)address_temp[1]<<endl;
         Bak.seekp(0, ios::end);
     }
     delete address_temp;
