@@ -7,6 +7,7 @@
 #define Special_Tail 0x0F19
 #define MAX_TIME 500
 #define MAX_LEVEL 30
+#define OutPutName "dd"
 #define BF_Default_Color_RGB 0, 0, 0, 158, 173, 134
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
