@@ -50,6 +50,7 @@ public:
     int get_score();
     int get_speed();
     Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase);
+    Tetris_Core(char* path);
     ~Tetris_Core();
     int Full_Line_Clean();
     void Add_model(model *target, Key_dec *Key);
