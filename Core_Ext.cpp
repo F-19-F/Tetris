@@ -450,6 +450,8 @@ bool Tetris_Core::Save_To_file()
     //int Sum;
     bool *temp = source;
     char *Color_temp = Color;
+    char *address_temp;
+    long address=0;
     //long bool_table_address;
     //long color_table_address;
     fstream Bak("dd", ios::out | ios::binary | ios::in);
@@ -458,7 +460,27 @@ bool Tetris_Core::Save_To_file()
     //存储文件大小参数
     int File_Length = Bak.tellg();
     //将文件写指针移动至文件末尾
-    Bak.seekp(0, ios::end);
+    Bak.seekg(-2,ios::end);
+    address_temp=new char[2];
+    Bak.read(address_temp,2);
+    //如果在尾部寻找到特殊字节，则认为是标准的游戏数据文件，将替换原有数据
+    if (address_temp[0]==0xFF,address_temp[1]==0x19)
+    {
+        Bak.seekg(-5,ios::end);
+        delete address_temp;
+        address_temp = new char[3];
+        //读取3字节地址
+        Bak.read(address_temp,3);
+        workout_address;
+        Bak.seekp(address,ios::beg);
+        File_Length=address;
+    }
+    else
+    {
+        //否则移动至文件末尾
+        Bak.seekp(0, ios::end);
+    }
+    delete address_temp;
     //将Tetris_Core对象写入文件，但现在存储的文件中指针的部分只存储了指针的地址
     Bak.write((char *)this, sizeof(*this));
     //将source中的数据以字节为单位存入文件，可以节约空间,以后会推出
