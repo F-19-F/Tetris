@@ -58,6 +58,7 @@ public:
     bool Can_move_left(int x, int y, model *target);
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
-    bool Save_To_file();
+    bool Save_To_file(char *path);
 };
+bool Is_Cofig_file(char* path);
 #endif

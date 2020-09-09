@@ -326,7 +326,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 break;
             case space:
                 Lock->lock();
-                core->Save_To_file();
+                core->Save_To_file((char *)"dd");
                 Can_I_Run;
                 suspend = true;
                 break;
@@ -433,6 +433,19 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
     }
 }
+bool Is_Cofig_file(char* path)
+{
+    char Temp[2];
+    fstream t(path, ios::out | ios::binary | ios::in);
+    t.seekg(0,ios::end);
+    t.read(Temp,2);
+    t.close();
+    if (Temp[0]==0xFF&&Temp[1]==0x19)
+    {
+        return true;
+    }
+    return false;
+}
 //以字节为单位直接写入数据，file为ostream对象
 void Direct_Hex(std::ostream &file, long address, int Length)
 {
@@ -444,17 +457,13 @@ void Direct_Hex(std::ostream &file, long address, int Length)
     //将数据写入
     file.write((char *)bytes, Length);
 }
-bool Tetris_Core::Save_To_file()
+bool Tetris_Core::Save_To_file(char *path)
 {
-    //int temp_num;
-    //int Sum;
     bool *temp = source;
     char *Color_temp = Color;
     char *address_temp;
     long address=0;
-    //long bool_table_address;
-    //long color_table_address;
-    fstream Bak("dd", ios::out | ios::binary | ios::in);
+    fstream Bak(path, ios::out | ios::binary | ios::in);
     //移动读取指针到当前文件的末尾，以获取文件的大小信息
     Bak.seekg(0, ios::end);
     //存储文件大小参数
