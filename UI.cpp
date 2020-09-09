@@ -199,29 +199,40 @@ void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
 int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 {
 	int i;
+	int score;
 	model *a;
 	model *temp;
 	Size ini_size;
 	ini_size = Getsize();
+	Tetris_Core *core;
 	srand((unsigned)time(NULL));
-	Tetris_Core b(Gsize.r, Gsize.c, x, y, Game_Level,true);
+	if (Is_Cofig_file((char *)"dd"))
+	{
+		core=new Tetris_Core((char*)"dd");
+	}
+	else
+	{
+		core=new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level,true);
+	}
 	clean_screen();
 	cout.flush();
-	b.Core_Print();
+	core->Core_Print();
 	i = rand() % 7 + 1;
-	while (!b.over)
+	while (!core->over)
 	{
 		hide_cursor();
 		a = new model(i);
 		i = rand() % 7 + 1;
 		temp = new model(i);
-		Infor_print(x + Gsize.c + 5, y + 3, &b, temp);
-		b.Add_model(a, Key);
+		Infor_print(x + Gsize.c + 5, y + 3, core, temp);
+		core->Add_model(a, Key);
 		delete a;
 		delete temp;
 		Key->clean();
 	}
 	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;
-	return b.get_score();
+	score=core->get_score();
+	delete core;
+	return score;
 }
