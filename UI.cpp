@@ -206,9 +206,9 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	ini_size = Getsize();
 	Tetris_Core *core;
 	srand((unsigned)time(NULL));
-	if (Is_Cofig_file((char *)"dd"))
+	if (Is_Cofig_file((char *)OutPutName))
 	{
-		core=new Tetris_Core((char*)"dd");
+		core=new Tetris_Core((char*)OutPutName);
 	}
 	else
 	{

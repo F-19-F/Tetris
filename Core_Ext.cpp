@@ -326,7 +326,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 break;
             case space:
                 Lock->lock();
-                core->Save_To_file((char *)"dd");
+                core->Save_To_file((char *)OutPutName);
                 Can_I_Run;
                 suspend = true;
                 break;
