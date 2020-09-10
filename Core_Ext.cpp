@@ -506,7 +506,7 @@ bool Tetris_Core::Save_To_file(char *path)
     //将文件读指针移动至文件倒数两个字节
     Bak.close();
     Bak.open(path, ios::out | ios::binary | ios::in);
-    if (File_Length<2)
+    if (File_Length<5)
     {
         goto WRITE;
     }
@@ -586,4 +586,31 @@ Tetris_Core* Restore_Core(char *path)
     Restored->Edit_Color(c_restored_map);
     //读取完成
     return Restored;
+}
+bool CopyFile(char* from,char* to)
+{
+    long long fsize;
+    char *Buffer=new char;
+    ifstream F(from,ios::in|ios::binary);
+    if (!F)
+    {
+        return false;
+    }
+    ofstream O(to,ios::out|ios::binary);
+    if (!O)
+    {
+        F.close();
+        return false;
+    }
+    //获取文件大小
+    F.seekg(0,ios::end);
+    fsize=F.tellg();
+    F.seekg(0,ios::beg);
+    while (--fsize)
+    {
+        F.read(Buffer,1);
+        O.write(Buffer,1);
+    }
+    delete Buffer;
+    return true;
 }
