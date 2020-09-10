@@ -443,7 +443,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
 bool Is_Cofig_file(char* path)
 {
     char Temp[2];
-    fstream t(path, ios::out | ios::binary | ios::in);
+    fstream t(path,ios::binary | ios::in);
     if (!t)
     {
         return false;
@@ -472,7 +472,7 @@ bool Close_Tail(char* path)
 {
     if (Is_Cofig_file(path))
     {
-        fstream target(path, ios::out | ios::binary | ios::in);
+        fstream target(path, ios::out | ios::binary);
         if (!target)
         {
             return false;
@@ -491,7 +491,7 @@ bool Tetris_Core::Save_To_file(char *path)
     char *Color_temp = Color;
     char *address_temp;
     long address=0;
-    fstream Bak(path, ios::out | ios::binary | ios::in | ios::app);
+    fstream Bak(path,ios::binary | ios::in | ios::app);
     if (!Bak)
     {
         return false;
@@ -505,12 +505,11 @@ bool Tetris_Core::Save_To_file(char *path)
     int File_Length = Bak.tellg();
     //将文件读指针移动至文件倒数两个字节
     Bak.close();
+    Bak.open(path, ios::out | ios::binary | ios::in);
     if (File_Length<2)
     {
-        Bak.open(path, ios::out | ios::binary | ios::in);
         goto WRITE;
     }
-    Bak.open(path, ios::out | ios::binary | ios::in);
     Bak.seekg(-2,ios::end);
     address_temp=new char[2];
     Bak.read(address_temp,2);
@@ -565,7 +564,7 @@ Tetris_Core* Restore_Core(char *path)
     int c;
     char *c_restored_map;
     Tetris_Core *Restored=(Tetris_Core *)malloc(sizeof(Tetris_Core));
-    fstream restore(path, ios::out | ios::binary | ios::in);
+    fstream restore(path,ios::binary | ios::in);
     //读取特定位置
     restore.seekg(-5, ios::end);
     //读取core地址
