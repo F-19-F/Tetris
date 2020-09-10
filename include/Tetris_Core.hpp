@@ -67,4 +67,5 @@ public:
 Tetris_Core* Restore_Core(char *path);
 bool Is_Cofig_file(char* path);
 bool Close_Tail(char* path);
+bool CopyFile(char* from,char* to);
 #endif
