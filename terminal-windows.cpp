@@ -128,6 +128,9 @@ void Reset_color()
 void Hide_File(char *path)
 {
     //通过MultiByteToWideChar函数隐藏配置文件
-    //SetFileAttributes(path, FILE_ATTRIBUTE_HIDDEN);
+    wchar_t wtext[20];
+    mbstowcs(wtext, path, strlen(path) + 1); //Plus null
+    LPWSTR ptr = wtext;
+    SetFileAttributesW(ptr, FILE_ATTRIBUTE_HIDDEN);
 }
 #endif
