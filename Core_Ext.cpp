@@ -428,6 +428,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         over = true;
         //有戏结束则关闭文件存储
         Close_Tail((char*)OutPutName);
+        remove(OutPutName);
     }
     else
     {
