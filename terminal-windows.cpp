@@ -125,4 +125,9 @@ void Reset_color()
     color(7); //在Win10,字体默认的color为7
     return;
 }
+void Hide_File(char *path)
+{
+    //通过MultiByteToWideChar函数隐藏配置文件
+    //SetFileAttributes(path, FILE_ATTRIBUTE_HIDDEN);
+}
 #endif
