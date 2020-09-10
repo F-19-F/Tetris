@@ -490,17 +490,26 @@ bool Tetris_Core::Save_To_file(char *path)
     char *Color_temp = Color;
     char *address_temp;
     long address=0;
-    fstream Bak(path, ios::out | ios::binary | ios::in);
+    fstream Bak(path, ios::out | ios::binary | ios::in | ios::app);
     if (!Bak)
     {
-        //cout<<"Fail to open file!"<<endl;
         return false;
     }
+    #ifdef  _WIN32
+    Hide_File(path);
+    #endif
     //移动读取指针到当前文件的末尾，以获取文件的大小信息
     Bak.seekg(0, ios::end);
     //存储文件大小参数
     int File_Length = Bak.tellg();
     //将文件读指针移动至文件倒数两个字节
+    Bak.close();
+    if (File_Length<2)
+    {
+        Bak.open(path, ios::out | ios::binary | ios::in);
+        goto WRITE;
+    }
+    Bak.open(path, ios::out | ios::binary | ios::in);
     Bak.seekg(-2,ios::end);
     address_temp=new char[2];
     Bak.read(address_temp,2);
@@ -522,6 +531,7 @@ bool Tetris_Core::Save_To_file(char *path)
         Bak.seekp(0, ios::end);
     }
     delete address_temp;
+    WRITE:
     //将Tetris_Core对象写入文件，但现在存储的文件中指针的部分只存储了指针的地址
     Bak.write((char *)this, sizeof(*this));
     //将source中的数据以字节为单位存入文件，可以节约空间,以后会推出
