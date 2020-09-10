@@ -51,7 +51,6 @@ public:
     int get_score();
     int get_speed();
     Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase);
-    Tetris_Core(char* path);
     ~Tetris_Core();
     int Full_Line_Clean();
     void Add_model(model *target, Key_dec *Key);
@@ -60,7 +59,12 @@ public:
     bool Can_move_right(int x, int y, model *target);
     bool Is_valid(int x, int y, model *target);
     bool Save_To_file(char *path);
+    int Get_R();
+    int Get_C();
+    void Edit_Source(bool *source);
+    void Edit_Color(char *Color);
 };
+Tetris_Core* Restore_Core(char *path);
 bool Is_Cofig_file(char* path);
 bool Close_Tail(char* path);
 #endif
