@@ -545,11 +545,13 @@ bool Tetris_Core::Save_To_file(char *path)
     Bak.close();
     return true;
 }
-Tetris_Core::Tetris_Core(char *path)
+Tetris_Core* Restore_Core(char *path)
 {
     char address_temp[3];
     long address = 0;
     bool *restored_map;
+    int r;
+    int c;
     char *c_restored_map;
     Tetris_Core *Restored=(Tetris_Core *)malloc(sizeof(Tetris_Core));
     fstream restore(path, ios::out | ios::binary | ios::in);
@@ -561,15 +563,17 @@ Tetris_Core::Tetris_Core(char *path)
     workout_address;
     //读取Core的地址
     restore.seekg(address, ios::beg);
-    restore.read((char*)Restored,sizeof(*this));
-    *this=*Restored;
+    restore.read((char*)Restored,sizeof(Tetris_Core));
     //从读取的Core中获取对应读取大小
+    r=Restored->Get_R();
+    c=Restored->Get_C();
     restored_map = (bool *)malloc(sizeof(bool)*r*c);
     restore.read((char*) restored_map,sizeof(bool)*r*c);
     c_restored_map=(char *)malloc(sizeof(char)*r*c);
     restore.read((char *)c_restored_map,sizeof(char)*r*c);
     //修改指针地址
-    source=restored_map;
-    Color=c_restored_map;
+    Restored->Edit_Source(restored_map);
+    Restored->Edit_Color(c_restored_map);
     //读取完成
+    return Restored;
 }

@@ -208,7 +208,7 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	srand((unsigned)time(NULL));
 	if (Is_Cofig_file((char *)OutPutName))
 	{
-		core=new Tetris_Core((char*)OutPutName);
+		core=Restore_Core((char*)OutPutName);
 	}
 	else
 	{
