@@ -40,9 +40,9 @@ void SetColorCompat(bool opt)
         ctrl->unlock();    \
     }
 #define workout_address               \
-    address += address_temp[0];       \
-    address += address_temp[1] * 256; \
-    address += address_temp[2] * 65536;
+    address += (address_temp[0]) * 65536;       \
+    address += (address_temp[1]) * 256; \
+    address += (address_temp[2]) ;
 //输出当前表
 void Tetris_Core::Core_Print()
 {
@@ -426,6 +426,12 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     if (y == 2 + y_offset)
     {
         over = true;
+        //有戏结束则关闭文件存储
+        Close_Tail((char*)OutPutName);
+    }
+    else
+    {
+        Save_To_file((char*)OutPutName);
     }
     Run_Lock.unlock();
     if (over)
@@ -461,6 +467,23 @@ void Direct_Hex(std::ostream &file, long address, int Length)
     //将数据写入
     file.write((char *)bytes, Length);
 }
+bool Close_Tail(char* path)
+{
+    if (Is_Cofig_file(path))
+    {
+        fstream target(path, ios::out | ios::binary | ios::in);
+        if (!target)
+        {
+            return false;
+        }
+        target.seekp(-2,ios::end);
+        Direct_Hex(target,0x0F09,2);
+        target.close();
+        return true;
+    }
+    return false;
+}
+
 bool Tetris_Core::Save_To_file(char *path)
 {
     bool *temp = source;
@@ -482,7 +505,7 @@ bool Tetris_Core::Save_To_file(char *path)
     address_temp=new char[2];
     Bak.read(address_temp,2);
     //如果在尾部寻找到特殊字节，则认为是标准的游戏数据文件，将替换原有数据
-    if ((address_temp[0]==0x0F)&&(address_temp[1]==0x19))
+    if ((address_temp[0]==0x0F)&&(address_temp[1]==0x19||address_temp[1]==0x09))
     {
         Bak.seekg(-5,ios::end);
         delete address_temp;
@@ -496,8 +519,6 @@ bool Tetris_Core::Save_To_file(char *path)
     else
     {
         //否则移动至文件末尾
-        //cout<<"No such byte found!"<<endl;
-        //cout<<"Byte1: "<<(int)address_temp[0]<<"byte2: "<<(int)address_temp[1]<<endl;
         Bak.seekp(0, ios::end);
     }
     delete address_temp;
@@ -528,7 +549,6 @@ Tetris_Core::Tetris_Core(char *path)
 {
     char address_temp[3];
     long address = 0;
-    int Stream_size = 0;
     bool *restored_map;
     char *c_restored_map;
     Tetris_Core *Restored=(Tetris_Core *)malloc(sizeof(Tetris_Core));

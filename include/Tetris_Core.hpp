@@ -62,4 +62,5 @@ public:
     bool Save_To_file(char *path);
 };
 bool Is_Cofig_file(char* path);
+bool Close_Tail(char* path);
 #endif
