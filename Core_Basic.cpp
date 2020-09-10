@@ -249,3 +249,19 @@ int Tetris_Core::get_speed()
 {
     return speed;
 }
+int Tetris_Core::Get_R()
+{
+    return r;
+}
+int Tetris_Core::Get_C()
+{
+    return c;
+}
+void Tetris_Core::Edit_Color(char *RColor)
+{
+    Color=RColor;
+}
+void Tetris_Core::Edit_Source(bool *Rsource)
+{
+    source=Rsource;
+}
