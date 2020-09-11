@@ -612,5 +612,7 @@ bool CopyFile(char* from,char* to)
         O.write(Buffer,1);
     }
     delete Buffer;
+    F.close();
+    O.close();
     return true;
 }*/
