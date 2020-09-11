@@ -606,7 +606,7 @@ bool CopyFile(char* from,char* to)
     F.seekg(0,ios::end);
     fsize=F.tellg();
     F.seekg(0,ios::beg);
-    while (--fsize)
+    while (fsize--)
     {
         F.read(Buffer,1);
         O.write(Buffer,1);
