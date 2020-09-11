@@ -461,7 +461,7 @@ bool Is_Cofig_file(char* path)
 void Direct_Hex(std::ostream &file, long address, int Length)
 {
     char *bytes = new char[Length];
-    for (int i = 0; i < Hex_Max; i++)
+    for (int i = 0; i < Length; i++)
     {
         bytes[Length - 1 - i] = (address >> (8 * i)) & 0xFF;
     }
@@ -586,7 +586,7 @@ Tetris_Core* Restore_Core(char *path)
     Restored->Edit_Color(c_restored_map);
     //读取完成
     return Restored;
-}
+}/*
 bool CopyFile(char* from,char* to)
 {
     long long fsize;
@@ -613,4 +613,4 @@ bool CopyFile(char* from,char* to)
     }
     delete Buffer;
     return true;
-}
+}*/
