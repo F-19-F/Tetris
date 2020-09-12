@@ -220,6 +220,7 @@ int Tetris_UI::Infor(model *next_model)
 	next_model->print_model(false);
 	Last_model = *next_model;
 	First_flag = 1;
+	return 0;
 }
 int Tetris_UI::Start()
 {
