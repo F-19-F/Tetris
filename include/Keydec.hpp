@@ -8,6 +8,7 @@
 #define right 67
 #define left 68
 #define space 32
+#define enter 10
 #else
 #define sp1 224
 #define up 72
@@ -15,7 +16,9 @@
 #define left 75
 #define right 77
 #define space 32
+#define enter 13
 #endif
+#define esc 27
 //定义一个按键缓冲区，getkey得到的按键值存储在其中，方块下落时从中取出数据来响应
 class Key_dec
 {
