@@ -9,12 +9,34 @@
 #include "include/UI.hpp"
 #include "include/Size.hpp"
 using namespace std;
+#define Work_XY(offset_x,offset_y) int x=Win_Size.c/2+offset_x;int y=offset_y;
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
-int Over(int x, int y, int Score, Key_dec *Key)
+Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize ,Key_dec *key)
+{
+	Win_Size=Windows_Size;
+	this->Key=key;
+	this->Gsize=Gsize;
+}
+int Tetris_UI::Dialog (char *option1,char *option2)
+{
+	int num;
+	if ((!option1)&&(!option2))
+	{
+		return -1;
+	}
+	if (!option2||!option1)
+	{
+		num=1;
+	}
+	return 0;
+	
+}
+int Tetris_UI::Over()
 {
 	color(1);
 	clean_screen();
+	Work_XY(-15,Win_Size.r/2-4);
 	cursor_move(x, y);
 #ifdef _WIN32
 	cout << "  ____                         ___";
@@ -27,7 +49,7 @@ int Over(int x, int y, int Score, Key_dec *Key)
 	movedown(1);
 	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
 	movedown(1);
-	cout << "                      你的分数:" << Score;
+	cout << "                      你的分数:" << Core->get_score();
 	movedown(5);
 	cout << "                 按空格键退出当前界面";
 #else
@@ -46,7 +68,7 @@ int Over(int x, int y, int Score, Key_dec *Key)
 	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
 	cursor_move(x, y);
 	movedown(5);
-	cout << "                      你的分数:" << Score;
+	cout << "                      你的分数:" << Core->get_score();
 	cursor_move(x, y);
 	movedown(10);
 	cout << "                 按空格键退出当前界面";
@@ -58,10 +80,11 @@ int Over(int x, int y, int Score, Key_dec *Key)
 	}
 	return 0;
 }
-int Setting(int x, int y, Key_dec *Key)
+int Tetris_UI::Setting()
 {
 	hide_cursor();
 	clean_screen();
+	Work_XY(-12,Win_Size.r/5);
 	Title;
 	int Cur_Location_Y = y + 8;
 	cursor_move(x + 8, y + 7);
@@ -98,11 +121,12 @@ int Setting(int x, int y, Key_dec *Key)
 
 	return 0;
 }
-int Menu(int x, int y, Key_dec *Key)
+int Tetris_UI::Menu()
 {
 	hide_cursor();
 	color(7);
 	clean_screen();
+	Work_XY(-12,Win_Size.r/5);
 	int Cur_Location_Y = y + 7;
 	Title;
 	cursor_move(x + 8, y + 7);
@@ -172,9 +196,10 @@ int Menu(int x, int y, Key_dec *Key)
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
-void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
+int Tetris_UI::Infor(model *next_model)
 {
 	hide_cursor();
+	Work_XY(Gsize.c-17,3);
 	static model Last_model = *next_model;
 	if (First_flag != 0)
 	{
@@ -183,10 +208,10 @@ void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
 	}
 	color(7);
 	cursor_move(x, y);
-	cout << "Score:" << core->get_score();
+	cout << "Score:" << Core->get_score();
 	cout.flush();
 	cursor_move(x, y + 3);
-	cout << "Level:" << core->get_speed();
+	cout << "Level:" << Core->get_speed();
 	cout.flush();
 	cursor_move(x, y + 6);
 	cout << "Next:";
@@ -196,7 +221,7 @@ void Infor_print(int x, int y, Tetris_Core *core, model *next_model)
 	Last_model = *next_model;
 	First_flag = 1;
 }
-int Startgame(int x, int y, Size Gsize, Key_dec *Key)
+int Tetris_UI::Start()
 {
 	int i;
 	int score;
@@ -204,35 +229,37 @@ int Startgame(int x, int y, Size Gsize, Key_dec *Key)
 	model *temp;
 	Size ini_size;
 	ini_size = Getsize();
-	Tetris_Core *core;
+	Work_XY(-22,0);
+	//Tetris_Core *core;
 	srand((unsigned)time(NULL));
 	if (Is_Cofig_file((char *)OutPutName))
 	{
-		core=Restore_Core((char*)OutPutName);
+		Core=Restore_Core((char*)OutPutName);
 	}
 	else
 	{
-		core=new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level,true);
+		Core=new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level,true);
 	}
 	clean_screen();
 	cout.flush();
-	core->Core_Print();
+	Core->Core_Print();
 	i = rand() % 7 + 1;
-	while (!core->over)
+	while (!Core->over)
 	{
 		hide_cursor();
 		a = new model(i);
 		i = rand() % 7 + 1;
 		temp = new model(i);
-		Infor_print(x + Gsize.c + 5, y + 3, core, temp);
-		core->Add_model(a, Key);
+		Infor(temp);
+		Core->Add_model(a, Key);
 		delete a;
 		delete temp;
 		Key->clean();
 	}
 	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;
-	score=core->get_score();
-	delete core;
+	score=Core->get_score();
+	Over();
+	delete Core;
 	return score;
 }

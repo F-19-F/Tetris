@@ -22,17 +22,18 @@ int main()
 	_Gsize.r = 27;
 	_Gsize.c = 18;
 	Key_dec Key;
+	Tetris_UI UI(Win_size,_Gsize,&Key);
 	int Opt = 0;
 	Key.start();
-	while ((Opt = Menu(Win_size.c / 2 - 12, Win_size.r / 5, &Key)) != 4) //Logo居中
+	while ((Opt = UI.Menu() )!= 4)
 	{
 		switch (Opt)
 		{
 		case 0:
-			Over(Win_size.c / 2 - 25, Win_size.r / 2 - 4, Startgame(Win_size.c / 2 - 22, 0, _Gsize, &Key), &Key);
+			UI.Start();
 			break;
 		case 1:
-			Setting(Win_size.c / 2 - 12, Win_size.r / 5, &Key);
+			UI.Setting();
 			break;
 		default:
 			break;

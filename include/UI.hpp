@@ -35,9 +35,26 @@
 	movedown(5);
 #endif
 extern Size _Gsize;
-int Over(int x, int y, int Score, Key_dec *Key);
+class Tetris_UI
+{
+private:
+	Tetris_Core *Core;
+	Key_dec *Key;
+	Size Gsize;
+	Size Win_Size;
+public:
+	Tetris_UI(Size Windows,Size Gsize ,Key_dec *key);
+	int Dialog(char *content1,char *content2);
+	int Menu();
+	int Setting();
+	int Start();
+	int Over();
+	int Infor(model *next_model);
+};
+
+/*int Over(int x, int y, int Score, Key_dec *Key);
 int Setting(int x, int y, Key_dec *Key);
 int Menu(int x, int y, Key_dec *Key);
 void Infor_print(int x, int y, Tetris_Core *core, model *next_model);
-int Startgame(int x, int y, Size Gsize, Key_dec *Key);
+int Startgame(int x, int y, Size Gsize, Key_dec *Key);*/
 #endif
