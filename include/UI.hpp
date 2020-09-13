@@ -2,6 +2,7 @@
 #define _TUI
 #include "Keydec.hpp"
 #include "Size.hpp"
+#define About "这是一个C++俄罗斯方块游戏\n具有以下特征\n1.游戏运行过程中途退出再次打开自动恢复\n2.大小自适应\n3.实时按键反馈"
 #ifdef _WIN32
 #define Title                              \
 	cursor_move(x, y);                     \
