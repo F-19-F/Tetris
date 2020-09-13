@@ -94,6 +94,18 @@ void key_proc(mutex *ctrl, Key_dec *output)
       output->push(space);
       Queue_lock.unlock();
     }
+    else if (c == esc)
+    {
+      Queue_lock.lock();
+      output->push(esc);
+      Queue_lock.unlock();
+    }
+    else if (c == enter)
+    {
+      Queue_lock.lock();
+      output->push(enter);
+      Queue_lock.unlock();
+    }
     else
     {
       if (!ctrl->try_lock())
@@ -154,6 +166,18 @@ void key_proc(mutex *ctrl, Key_dec *output)
     {
       Queue_lock.lock();
       output->push(space);
+      Queue_lock.unlock();
+    }
+    else if (c == esc)
+    {
+      Queue_lock.lock();
+      output->push(esc);
+      Queue_lock.unlock();
+    }
+    else if (c == enter)
+    {
+      Queue_lock.lock();
+      output->push(enter);
       Queue_lock.unlock();
     }
     else
