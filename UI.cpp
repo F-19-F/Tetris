@@ -10,18 +10,23 @@
 #include "include/UI.hpp"
 #include "include/Size.hpp"
 using namespace std;
-#define Work_XY(offset_x,offset_y) int x=Win_Size.c/2+offset_x;int y=offset_y;
+#define Work_XY(offset_x, offset_y)    \
+	int x = Win_Size.c / 2 + offset_x; \
+	int y = offset_y;
+#define Update_XY(offset_x, offset_y) \
+	x = Win_Size.c / 2 + offset_x;    \
+	y = offset_y;
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
 mutex Run;
-void Size_detecter(bool *changed,mutex *Run_Lock);
-Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize ,Key_dec *key)
+void Size_detecter(bool *changed, mutex *Run_Lock);
+Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_dec *key)
 {
-	thread Decter(Size_detecter,&size_changed,&Run);
+	thread Decter(Size_detecter, &size_changed, &Run);
 	Decter.detach();
-	Win_Size=Windows_Size;
-	this->Key=key;
-	this->Gsize=Gsize;
+	Win_Size = Windows_Size;
+	this->Key = key;
+	this->Gsize = Gsize;
 }
 Tetris_UI::~Tetris_UI()
 {
@@ -29,25 +34,24 @@ Tetris_UI::~Tetris_UI()
 	//等待大小发现线程退出
 	this_thread::sleep_for(std::chrono::milliseconds(60));
 }
-int Tetris_UI::Dialog (char *option1,char *option2 ,char *TITLE,char *content)
+int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
 	int num;
-	if ((!option1)&&(!option2))
+	if ((!option1) && (!option2))
 	{
 		return -1;
 	}
-	if (!option2||!option1)
+	if (!option2 || !option1)
 	{
-		num=1;
+		num = 1;
 	}
 	return 0;
-	
 }
 int Tetris_UI::Over()
 {
 	color(1);
 	clean_screen();
-	Work_XY(-25,Win_Size.r/2-4);
+	Work_XY(-25, Win_Size.r / 2 - 4);
 	cursor_move(x, y);
 #ifdef _WIN32
 	cout << "  ____                         ___";
@@ -95,13 +99,13 @@ int Tetris_UI::Setting()
 {
 	hide_cursor();
 	clean_screen();
-	Work_XY(-12,Win_Size.r/5);
+	Work_XY(-12, Win_Size.r / 5);
 	Title;
 	int Cur_Location_Y = y + 8;
 	cursor_move(x + 8, y + 7);
 	cout << "游戏难度";
 	cursor_move(x + 11, y + 8);
-	cout << Game_Level<<" ";
+	cout << Game_Level << " ";
 	cursor_move(x + 8, y + 8);
 	cout << "<";
 	cursor_move(x + 15, y + 8);
@@ -117,7 +121,7 @@ int Tetris_UI::Setting()
 			}
 			break;
 		case right:
-			if (Game_Level !=MAX_LEVEL)
+			if (Game_Level != MAX_LEVEL)
 			{
 				Game_Level++;
 			}
@@ -127,7 +131,7 @@ int Tetris_UI::Setting()
 			return 0;
 		}
 		cursor_move(x + 11, y + 8);
-		cout << Game_Level<<" ";
+		cout << Game_Level << " ";
 		cout.flush();
 	}
 
@@ -138,7 +142,7 @@ int Tetris_UI::Menu()
 	hide_cursor();
 	color(7);
 	clean_screen();
-	Work_XY(-12,Win_Size.r/5);
+	Work_XY(-12, Win_Size.r / 5);
 	int Cur_Location_Y = y + 7;
 	Title;
 	cursor_move(x + 8, y + 7);
@@ -215,7 +219,7 @@ int Tetris_UI::Menu()
 int Tetris_UI::Infor(model *next_model)
 {
 	hide_cursor();
-	Work_XY(Gsize.c-17,3);
+	Work_XY(Gsize.c - 17, 3);
 	static model Last_model = *next_model;
 	if (First_flag != 0)
 	{
@@ -244,15 +248,15 @@ int Tetris_UI::Start()
 	int score;
 	model *a;
 	model *temp;
-	Work_XY(-22,0);
+	Work_XY(-22, 0);
 	srand((unsigned)time(NULL));
 	if (Is_Cofig_file((char *)OutPutName))
 	{
-		Core=Restore_Core((char*)OutPutName);
+		Core = Restore_Core((char *)OutPutName);
 	}
 	else
 	{
-		Core=new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level,true);
+		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level, true);
 	}
 	clean_screen();
 	cout.flush();
@@ -269,15 +273,25 @@ int Tetris_UI::Start()
 		delete a;
 		delete temp;
 		Key->clean();
+		if (size_changed)
+		{
+			UpdateSize();
+			Update_XY(-22, 0);
+			Core->Editoffset(x, y);
+			clean_screen();
+			size_changed=false;
+			Core->Core_Print();
+		}
 	}
+
 	First_flag = 0;
-	score=Core->get_score();
+	score = Core->get_score();
 	Over();
 	delete Core;
 	return score;
 }
 int Tetris_UI::UpdateSize()
 {
-	Win_Size=Getsize();
+	Win_Size = Getsize();
 	return 0;
 }
