@@ -50,6 +50,7 @@ public:
     void Core_Print();
     int get_score();
     int get_speed();
+    void Editoffset(int x_offset,int y_offset);
     Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase);
     ~Tetris_Core();
     int Full_Line_Clean();

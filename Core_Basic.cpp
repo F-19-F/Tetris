@@ -265,3 +265,8 @@ void Tetris_Core::Edit_Source(bool *Rsource)
 {
     source=Rsource;
 }
+void Tetris_Core::Editoffset(int x_offset,int y_offset)
+{
+    this->x_offset=x_offset;
+    this->y_offset=y_offset;
+}

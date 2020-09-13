@@ -46,7 +46,7 @@ void Size_detecter(bool *changed,mutex *Run_Lock)
             return;
         }
         current =Getsize();
-        if (current.r=bak.r||current.c!=bak.c)
+        if (current.r!=bak.r||current.c!=bak.c)
         {
             bak=current;
             *changed=true;
