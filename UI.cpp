@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #ifndef _WIN32
 #include "include/ANSI_control.hpp" //linux/unix
 #else
@@ -12,13 +13,23 @@ using namespace std;
 #define Work_XY(offset_x,offset_y) int x=Win_Size.c/2+offset_x;int y=offset_y;
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
+mutex Run;
+void Size_detecter(bool *changed,mutex *Run_Lock);
 Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize ,Key_dec *key)
 {
+	thread Decter(Size_detecter,&size_changed,&Run);
+	Decter.detach();
 	Win_Size=Windows_Size;
 	this->Key=key;
 	this->Gsize=Gsize;
 }
-int Tetris_UI::Dialog (char *option1,char *option2)
+Tetris_UI::~Tetris_UI()
+{
+	Run.lock();
+	//等待大小发现线程退出
+	this_thread::sleep_for(std::chrono::milliseconds(60));
+}
+int Tetris_UI::Dialog (char *option1,char *option2 ,char *TITLE,char *content)
 {
 	int num;
 	if ((!option1)&&(!option2))
@@ -36,7 +47,7 @@ int Tetris_UI::Over()
 {
 	color(1);
 	clean_screen();
-	Work_XY(-15,Win_Size.r/2-4);
+	Work_XY(-25,Win_Size.r/2-4);
 	cursor_move(x, y);
 #ifdef _WIN32
 	cout << "  ____                         ___";
@@ -112,6 +123,7 @@ int Tetris_UI::Setting()
 			}
 			break;
 		case space:
+		case enter:
 			return 0;
 		}
 		cursor_move(x + 11, y + 8);
@@ -185,8 +197,12 @@ int Tetris_UI::Menu()
 			cout << "<--";
 			break;
 		case space:
+		case enter:
 			Key->MutexLock(false);
 			return ((Cur_Location_Y - y - 7) / 2);
+		case esc:
+			Key->MutexLock(false);
+			return 4;
 			break;
 		default:
 			break;
@@ -228,10 +244,7 @@ int Tetris_UI::Start()
 	int score;
 	model *a;
 	model *temp;
-	Size ini_size;
-	ini_size = Getsize();
 	Work_XY(-22,0);
-	//Tetris_Core *core;
 	srand((unsigned)time(NULL));
 	if (Is_Cofig_file((char *)OutPutName))
 	{
@@ -257,10 +270,14 @@ int Tetris_UI::Start()
 		delete temp;
 		Key->clean();
 	}
-	cursor_move(ini_size.r, ini_size.c);
 	First_flag = 0;
 	score=Core->get_score();
 	Over();
 	delete Core;
 	return score;
+}
+int Tetris_UI::UpdateSize()
+{
+	Win_Size=Getsize();
+	return 0;
 }
