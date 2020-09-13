@@ -253,6 +253,7 @@ int Tetris_UI::Start()
 	if (Is_Cofig_file((char *)OutPutName))
 	{
 		Core = Restore_Core((char *)OutPutName);
+		Core->Editoffset(x,y);
 	}
 	else
 	{
