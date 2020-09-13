@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <cstring>
 #ifndef _WIN32
 #include "include/ANSI_control.hpp" //linux/unix
 #else
@@ -37,6 +38,10 @@ Tetris_UI::~Tetris_UI()
 int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
 	int num;
+	char temp;
+	int j=0;
+	int sum=0;
+	clean_screen();
 	if ((!option1) && (!option2))
 	{
 		return -1;
@@ -44,6 +49,37 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	if (!option2 || !option1)
 	{
 		num = 1;
+	}
+	Work_XY(-12, Win_Size.r / 5);
+	Title;
+	Update_XY(-strlen(TITLE)/2,Win_Size.r / 5 + 7);
+	cursor_move(x,y);
+	cout<<TITLE;
+	Update_XY(-strlen(TITLE)/2,Win_Size.r / 5 + 9);
+	cursor_move(x,y);
+	for(int i=0;i<strlen(content);i++)
+	{
+		if ((temp=content[i])!='\n')
+		{
+			cout<<temp;
+		}
+		else
+		{
+			++j;
+			cursor_move(x,y+j);
+		}
+	}
+	//cout<<content;
+	cout.flush();
+	while (1)
+	{
+		switch (Key->pop())
+		{
+		case space:
+		case enter:
+			return 0;
+		break;
+		}
 	}
 	return 0;
 }
@@ -281,6 +317,7 @@ int Tetris_UI::Start()
 			Core->Editoffset(x, y);
 			clean_screen();
 			size_changed=false;
+			hide_cursor();
 			Core->Core_Print();
 		}
 	}

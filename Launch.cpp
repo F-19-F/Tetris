@@ -35,6 +35,9 @@ int main()
 		case 1:
 			UI.Setting();
 			break;
+		case 3:
+			UI.Dialog("1","2","关于",About);
+			break;
 		default:
 			break;
 		}
