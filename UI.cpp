@@ -141,7 +141,7 @@ int Tetris_UI::Setting()
 	cursor_move(x + 8, y + 7);
 	cout << "游戏难度";
 	cursor_move(x + 11, y + 8);
-	cout << Game_Level << " " <<endl;
+	cout << Game_Level << " ";
 	cursor_move(x + 8, y + 8);
 	cout << "<";
 	cursor_move(x + 15, y + 8);
