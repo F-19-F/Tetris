@@ -69,7 +69,6 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			cursor_move(x,y+j);
 		}
 	}
-	//cout<<content;
 	cout.flush();
 	while (1)
 	{
@@ -80,6 +79,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			return 0;
 		break;
 		}
+		this_thread::sleep_for(std::chrono::milliseconds(60));
 	}
 	return 0;
 }
