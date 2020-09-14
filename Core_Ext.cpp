@@ -74,7 +74,7 @@ void Tetris_Core::Core_Print()
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┘";
     cout.flush();
-    for (int i = 0; i < Min_R(); i++) //从0行开始到r-1行
+    for (int i = 0; i < Min_R(); i++) //从0行开始到最小空行前
     {
         cursor_move(2 + x_offset, r - i + 1 + y_offset); //+1是为了给边框空行
         for (int j = 0; j < c; j++)
@@ -111,7 +111,7 @@ int Tetris_Core::Full_Line_Clean()
     temp_fun = new clean_base;
     temp_fun->next = NULL;
     this->temp = temp_fun;
-    for (int i = 0; i < r; i++)
+    for (int i = 0; i < Min_R(); i++)
     {
         for (int j = 0; j < c; j++)
         {
