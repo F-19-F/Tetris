@@ -39,6 +39,9 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
 	int num;
 	char temp;
+	//考虑到兼容性，故采用Buffer缓冲的方式输出内容
+	char Buffer[100];
+	int buf_point=0;
 	int j=0;
 	int sum=0;
 	clean_screen();
@@ -52,21 +55,25 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	}
 	Work_XY(-12, Win_Size.r / 5);
 	Title;
-	Update_XY(-strlen(TITLE)/2,Win_Size.r / 5 + 7);
+	Update_XY(-(int)(strlen(TITLE)/2),Win_Size.r / 5 + 7);
 	cursor_move(x,y);
 	cout<<TITLE;
 	Update_XY(-12,Win_Size.r / 5 + 9);
 	cursor_move(x,y);
-	for(int i=0;i<strlen(content);i++)
+	for(int i=0;i<(strlen(content));i++)
 	{
 		if ((temp=content[i])!='\n')
 		{
-			cout<<temp;
+			Buffer[buf_point++] = content[i];
 		}
 		else
 		{
 			++j;
 			cursor_move(x,y+j);
+			Buffer[buf_point]='\0';
+			cout << Buffer;
+			memset(Buffer, 0, 100 * sizeof(char));
+			buf_point = 0;
 		}
 	}
 	cout.flush();
@@ -78,6 +85,8 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 		case enter:
 			return 0;
 		break;
+		default:
+			break;
 		}
 		this_thread::sleep_for(std::chrono::milliseconds(60));
 	}
