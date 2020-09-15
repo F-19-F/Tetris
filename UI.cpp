@@ -60,7 +60,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	cout<<TITLE;
 	Update_XY(-12,Win_Size.r / 5 + 9);
 	cursor_move(x,y);
-	for(int i=0;i<(strlen(content));i++)
+	for(int i=0;i<(int)(strlen(content));i++)
 	{
 		if ((temp=content[i])!='\n')
 		{
