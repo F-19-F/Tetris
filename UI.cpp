@@ -40,7 +40,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	int num;
 	char temp;
 	//考虑到兼容性，故采用Buffer缓冲的方式输出内容
-	char Buffer[100];
+	char Buffer[Win_Char_Buffer_Size];
 	int buf_point=0;
 	int j=0;
 	int sum=0;

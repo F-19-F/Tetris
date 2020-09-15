@@ -36,7 +36,7 @@ int main()
 			UI.Setting();
 			break;
 		case 3:
-			UI.Dialog("1","2","关于",About);
+			UI.Dialog((char*)"1",(char*)"2",(char*)"关于",(char*)About);
 			break;
 		default:
 			break;
