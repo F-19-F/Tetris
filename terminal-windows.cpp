@@ -7,6 +7,15 @@ COORD common;
 int cursor_location = 0;
 COLORREF ColorTable_Back[16];
 CONSOLE_FONT_INFOEX cfi_bak;
+HANDLE Stand_Bufer;
+HANDLE Empty_Bak;
+COORD coord = { 0,0 };
+DWORD bytes = 0;
+CHAR_INFO chiBuffer[160];
+CHAR_INFO chiBuffer_Cheat[160];
+SMALL_RECT srctRect;
+COORD coordBufSize;
+COORD coordBufCoord;
 void Win_Required()
 {
     system("chcp 65001");
@@ -16,6 +25,30 @@ void Win_Required()
     cfi_bak = cfi;
     wcscpy(cfi.FaceName, L"Lucida Console");
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
+    system("cls");
+    //以下部分来自微软官方文档
+    //启动双缓冲区
+    Empty_Bak = CreateConsoleScreenBuffer(
+        GENERIC_READ | // read/write access
+        GENERIC_WRITE,
+        FILE_SHARE_READ |
+        FILE_SHARE_WRITE,    // shared
+        NULL,                    // default security attributes
+        CONSOLE_TEXTMODE_BUFFER, // must be TEXTMODE
+        NULL);                   // reserved; must be NULL
+    Stand_Bufer = GetStdHandle(STD_OUTPUT_HANDLE);
+    ReadConsoleOutput(
+        Stand_Bufer,        // screen buffer to read from
+        chiBuffer,      // buffer to copy into
+        coordBufSize,   // col-row size of chiBuffer
+        coordBufCoord,  // top left dest. cell in chiBuffer
+        &srctRect); // screen buffer source rectangle
+    WriteConsoleOutput(
+        Empty_Bak, // screen buffer to write to
+        chiBuffer,        // buffer to copy from
+        coordBufSize,     // col-row size of chiBuffer
+        coordBufCoord,    // top left src cell in chiBuffer
+        &srctRect);  // dest. screen buffer rectangle
 }
 void Reset_Win_Required()
 {
@@ -76,6 +109,22 @@ void movedown(int i)
     cursor_location = 0;
     common.Y = common.Y + i;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
+}
+void FlushBuffer()
+{
+    //以下部分来自微软官方文档
+    ReadConsoleOutput(
+        Stand_Bufer,        // screen buffer to read from
+        chiBuffer_Cheat,      // buffer to copy into
+        coordBufSize,   // col-row size of chiBuffer
+        coordBufCoord,  // top left dest. cell in chiBuffer
+        &srctRect); // screen buffer source rectangle
+    WriteConsoleOutput(
+        Stand_Bufer, // screen buffer to write to
+        chiBuffer,        // buffer to copy from
+        coordBufSize,     // col-row size of chiBuffer
+        coordBufCoord,    // top left src cell in chiBuffer
+        &srctRect);  // dest. screen buffer rectangle
 }
 void clean_screen()
 {

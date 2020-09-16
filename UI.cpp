@@ -76,7 +76,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			buf_point = 0;
 		}
 	}
-	cout.flush();
+	FlushBuffer();
 	while (1)
 	{
 		switch (Key->pop())
@@ -133,7 +133,7 @@ int Tetris_UI::Over()
 	movedown(10);
 	cout << "                 按空格键退出当前界面";
 #endif
-	cout.flush();
+	FlushBuffer();
 	while (Key->pop() != space)
 	{
 		this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -177,7 +177,7 @@ int Tetris_UI::Setting()
 		}
 		cursor_move(x + 11, y + 8);
 		cout << Game_Level << " ";
-		cout.flush();
+		FlushBuffer();
 	}
 
 	return 0;
@@ -256,7 +256,7 @@ int Tetris_UI::Menu()
 		default:
 			break;
 		}
-		cout.flush();
+		FlushBuffer();
 		Key->MutexLock(false);
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
@@ -274,13 +274,13 @@ int Tetris_UI::Infor(model *next_model)
 	color(7);
 	cursor_move(x, y);
 	cout << "Score:" << Core->get_score();
-	cout.flush();
+	FlushBuffer();
 	cursor_move(x, y + 3);
 	cout << "Level:" << Core->get_speed();
-	cout.flush();
+	FlushBuffer();
 	cursor_move(x, y + 6);
 	cout << "Next:";
-	cout.flush();
+	FlushBuffer();
 	cursor_move(x, y + 7);
 	next_model->print_model(false);
 	Last_model = *next_model;
@@ -305,7 +305,7 @@ int Tetris_UI::Start()
 		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level, true);
 	}
 	clean_screen();
-	cout.flush();
+	FlushBuffer();
 	Core->Core_Print();
 	i = rand() % 7 + 1;
 	while (!Core->over)

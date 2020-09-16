@@ -18,13 +18,15 @@ void SetColorCompat(bool opt)
 #endif
 #define Print_Current  \
     cursor_move(x, y); \
-    target->print_model(false);
+    target->print_model(false);\
+    FlushBuffer();
 #define Clean_Current  \
     cursor_move(x, y); \
     target->print_model(true);
 #define Print_Current_P  \
     cursor_move(*x, *y); \
-    target->print_model(false);
+    target->print_model(false);\
+    FlushBuffer();
 #define Clean_Current_P  \
     cursor_move(*x, *y); \
     target->print_model(true);
@@ -73,7 +75,7 @@ void Tetris_Core::Core_Print()
     cout << "┐";
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┘";
-    cout.flush();
+    FlushBuffer();
     for (int i = 0; i < Min_R(); i++) //从0行开始到最小空行前
     {
         cursor_move(2 + x_offset, r - i + 1 + y_offset); //+1是为了给边框空行
@@ -100,7 +102,7 @@ void Tetris_Core::Core_Print()
             }
         }
     }
-    cout.flush();
+    FlushBuffer();
 }
 //执行一次，满行全部删除
 int Tetris_Core::Full_Line_Clean()
@@ -173,9 +175,9 @@ void Tetris_Core::Del_SE()
 #ifdef _WIN32
                 cursor_location++;
 #endif
-                cout.flush();
+                FlushBuffer();
             }
-            cout.flush();
+            FlushBuffer();
             target = target->next;
         }
         this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -191,9 +193,9 @@ void Tetris_Core::Del_SE()
 #ifdef _WIN32
                 cursor_location++;
 #endif
-                cout.flush();
+                FlushBuffer();
             }
-            cout.flush();
+            FlushBuffer();
             target = target->next;
         }
         target = temp->next;
@@ -208,12 +210,12 @@ void Tetris_Core::Del_SE()
         for (int i = 0; i < c; i++)
         {
             cout << " ";
-            cout.flush();
+            FlushBuffer();
 #ifdef _WIN32
             cursor_location++;
 #endif
         }
-        cout.flush();
+        FlushBuffer();
         target = target->next;
     }
 }

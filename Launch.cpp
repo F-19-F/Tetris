@@ -50,7 +50,7 @@ int main()
 	Reset_color();
 	clean_screen();
 	cout << "游戏已结束，按任意键退出游戏";
-	cout.flush();
+	FlushBuffer();
 	Key.stop();
 	//运行完后恢复光标显示
 	dishide_cusor();
