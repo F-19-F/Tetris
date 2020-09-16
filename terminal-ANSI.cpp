@@ -3,10 +3,6 @@
 #include "include/ANSI_control.hpp"
 #include "include/Tetris_Core.hpp"
 using namespace std;
-void FlushBuffer()
-{
-    cout.flush();
-}
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
 {
     if (!compat_mode)
