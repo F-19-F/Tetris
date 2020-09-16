@@ -202,8 +202,8 @@ int Tetris_UI::Menu()
 	cout << "退出游戏";
 	cursor_move(x + 5, Cur_Location_Y);
 	cout << "-->";
-	cursor_move(x + 16, Cur_Location_Y);
-	cout << "<--";
+	//cursor_move(x + 16, Cur_Location_Y);
+	//cout << "<--";
 	while (1)
 	{
 		Key->MutexLock(true);
@@ -224,8 +224,8 @@ int Tetris_UI::Menu()
 			}
 			cursor_move(x + 5, Cur_Location_Y);
 			cout << "-->";
-			cursor_move(x + 16, Cur_Location_Y);
-			cout << "<--";
+			//cursor_move(x + 16, Cur_Location_Y);
+			//cout << "<--";
 			break;
 		case down:
 			cursor_move(x + 5, Cur_Location_Y);
@@ -242,8 +242,8 @@ int Tetris_UI::Menu()
 			}
 			cursor_move(x + 5, Cur_Location_Y);
 			cout << "-->";
-			cursor_move(x + 16, Cur_Location_Y);
-			cout << "<--";
+			//cursor_move(x + 16, Cur_Location_Y);
+			//cout << "<--";
 			break;
 		case space:
 		case enter:
