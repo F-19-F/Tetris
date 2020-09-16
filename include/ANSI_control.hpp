@@ -36,5 +36,6 @@
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b);
 void color(int i);
 void Reset_color();
+void FlushBuffer();
 #endif
 //It seems that ANSI works not as well as winapi.

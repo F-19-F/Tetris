@@ -171,7 +171,6 @@ void model::print_model(bool clean)
         movedown(1);
         moveleft(length);
     }
-    cout.flush();
 }
 void model::Part_to_temp(int n)
 {
