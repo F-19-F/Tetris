@@ -57,4 +57,3 @@ public:
 	int Over();
 	int Infor(model *next_model);
 };
-#endif
