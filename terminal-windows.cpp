@@ -26,9 +26,8 @@ void Win_Required()
     wcscpy(cfi.FaceName, L"Lucida Console");
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
     system("cls");
-    //以下部分来自微软官方文档
-    //启动双缓冲区
-    Empty_Bak = CreateConsoleScreenBuffer(
+    //启动另外一个缓冲区，尚未正式使用
+    /*Empty_Bak = CreateConsoleScreenBuffer(
         GENERIC_READ | // read/write access
         GENERIC_WRITE,
         FILE_SHARE_READ |
@@ -36,6 +35,7 @@ void Win_Required()
         NULL,                    // default security attributes
         CONSOLE_TEXTMODE_BUFFER, // must be TEXTMODE
         NULL);                   // reserved; must be NULL
+    SetCurrentConsoleFontEx(Empty_Bak, false, &cfi);
     Stand_Bufer = GetStdHandle(STD_OUTPUT_HANDLE);
     ReadConsoleOutput(
         Stand_Bufer,        // screen buffer to read from
@@ -48,7 +48,7 @@ void Win_Required()
         chiBuffer,        // buffer to copy from
         coordBufSize,     // col-row size of chiBuffer
         coordBufCoord,    // top left src cell in chiBuffer
-        &srctRect);  // dest. screen buffer rectangle
+        &srctRect);  // dest. screen buffer rectangle*/
 }
 void Reset_Win_Required()
 {
@@ -82,21 +82,18 @@ void dishide_cusor()
 }
 void moveright(int i)
 {
-    //COORD common;
     common.X = common.X + cursor_location + i;
     cursor_location = 0;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void moveleft(int i)
 {
-    //COORD common;
     common.X = common.X + cursor_location - i;
     cursor_location = 0;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void moveup(int i)
 {
-    //COORD common;
     common.X = common.X + cursor_location;
     cursor_location = 0;
     common.Y = common.Y - i;
@@ -112,6 +109,8 @@ void movedown(int i)
 }
 void FlushBuffer()
 {
+    // Windows上是双缓冲区的同步函数，现在尚未使用
+    /*
     //以下部分来自微软官方文档
     ReadConsoleOutput(
         Stand_Bufer,        // screen buffer to read from
@@ -120,15 +119,16 @@ void FlushBuffer()
         coordBufCoord,  // top left dest. cell in chiBuffer
         &srctRect); // screen buffer source rectangle
     WriteConsoleOutput(
-        Stand_Bufer, // screen buffer to write to
+        Empty_Bak, // screen buffer to write to
         chiBuffer,        // buffer to copy from
         coordBufSize,     // col-row size of chiBuffer
         coordBufCoord,    // top left src cell in chiBuffer
-        &srctRect);  // dest. screen buffer rectangle
+        &srctRect);  // dest. screen buffer rectangle*/
 }
 void clean_screen()
 {
     system("cls");
+    SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));//解决Win7上清屏失效的问题，在测试双缓冲区时候发现的
 }
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
 {
