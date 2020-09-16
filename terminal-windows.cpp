@@ -7,7 +7,7 @@ COORD common;
 int cursor_location = 0;
 COLORREF ColorTable_Back[16];
 CONSOLE_FONT_INFOEX cfi_bak;
-HANDLE Stand_Bufer;
+/*HANDLE Stand_Bufer;
 HANDLE Empty_Bak;
 COORD coord = { 0,0 };
 DWORD bytes = 0;
@@ -15,7 +15,7 @@ CHAR_INFO chiBuffer[160];
 CHAR_INFO chiBuffer_Cheat[160];
 SMALL_RECT srctRect;
 COORD coordBufSize;
-COORD coordBufCoord;
+COORD coordBufCoord;*/
 void Win_Required()
 {
     system("chcp 65001");
