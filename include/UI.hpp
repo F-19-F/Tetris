@@ -35,6 +35,7 @@ private:
 	
 public:
 	bool size_changed;
+	model *NEXT;
 	Tetris_UI(Size Windows,Size Gsize ,Key_dec *key);
 	~Tetris_UI();
 	int UpdateSize();
@@ -43,7 +44,7 @@ public:
 	int Setting();
 	int Start();
 	int Over();
-	int Infor(model *next_model);
+	int Infor();
 	int Infor(bool Pause);
 };
 extern Tetris_UI *_UI;
