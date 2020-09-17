@@ -89,16 +89,10 @@ void Tetris_Core::Core_Print()
                     C_temp = *(Color + i * c + j);
                 }
                 cout << (Print_base);
-#ifdef _WIN32
-                cursor_location++;
-#endif
             }
             else
             {
                 cout << " ";
-#ifdef _WIN32
-                cursor_location++;
-#endif
             }
         }
     }
@@ -142,9 +136,6 @@ int Tetris_Core::Full_Line_Clean()
         for (int j = 0; j < c; j++)
         {
             cout << " ";
-#ifdef _WIN32
-            cursor_location++;
-#endif
         }
         moveleft(c);
         movedown(1);
@@ -172,9 +163,6 @@ void Tetris_Core::Del_SE()
             for (int i = 0; i < c; i++)
             {
                 cout << " ";
-#ifdef _WIN32
-                cursor_location++;
-#endif
                 cout.flush();
             }
             cout.flush();
@@ -190,9 +178,6 @@ void Tetris_Core::Del_SE()
             for (int i = 0; i < c; i++)
             {
                 cout << Print_base;
-#ifdef _WIN32
-                cursor_location++;
-#endif
                 cout.flush();
             }
             cout.flush();
@@ -211,9 +196,6 @@ void Tetris_Core::Del_SE()
         {
             cout << " ";
             cout.flush();
-#ifdef _WIN32
-            cursor_location++;
-#endif
         }
         cout.flush();
         target = target->next;

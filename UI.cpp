@@ -98,21 +98,6 @@ int Tetris_UI::Over()
 	clean_screen();
 	Work_XY(-25, Win_Size.r / 2 - 4);
 	cursor_move(x, y);
-#ifdef _WIN32
-	cout << "  ____                         ___";
-	movedown(1);
-	cout << " / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
-	movedown(1);
-	cout << "| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
-	movedown(1);
-	cout << "| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
-	movedown(1);
-	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
-	movedown(1);
-	cout << "                      你的分数:" << Core->get_score();
-	movedown(5);
-	cout << "                 按空格键退出当前界面";
-#else
 	cout << "  ____                         ___";
 	cursor_move(x, y);
 	movedown(1);
@@ -132,7 +117,6 @@ int Tetris_UI::Over()
 	cursor_move(x, y);
 	movedown(10);
 	cout << "                 按空格键退出当前界面";
-#endif
 	cout.flush();
 	while (Key->pop() != space)
 	{
