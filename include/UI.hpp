@@ -5,20 +5,6 @@
 #define About "这是一个C++俄罗斯方块游戏\n具有以下特征\n   1.游戏运行过程中途退出再次打开自动恢复\n   2.大小自适应\n   3.实时按键反馈\
 \n \n By SWU-F19"
 #define Win_Char_Buffer_Size 100
-#ifdef _WIN32
-#define Title                              \
-	cursor_move(x, y);                     \
-	cout << " _____    _        _";        \
-	movedown(1);                           \
-	cout << "|_   _|__| |_ _ __(_)___";    \
-	movedown(1);                           \
-	cout << "  | |/ _ \\ __| '__| / __|";  \
-	movedown(1);                           \
-	cout << "  | |  __/ |_| |  | \\__ \\"; \
-	movedown(1);                           \
-	cout << "  |_|\\___|\\__|_|  |_|___/"; \
-	movedown(1);
-#else
 #define Title                              \
 	cursor_move(x, y);                     \
 	cout << " _____    _        _";        \
@@ -36,7 +22,6 @@
 	cout << "  |_|\\___|\\__|_|  |_|___/"; \
 	cursor_move(x, y);                     \
 	movedown(5);
-#endif
 extern Size _Gsize;
 class Tetris_UI
 {

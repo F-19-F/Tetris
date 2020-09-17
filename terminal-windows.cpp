@@ -4,17 +4,23 @@
 #include "include/Model.hpp"
 COORD common;
 //记录每一次cout导致的光标位移
-int cursor_location = 0;
 COLORREF ColorTable_Back[16];
 CONSOLE_FONT_INFOEX cfi_bak;
+#define GetPos                                                          \
+    CONSOLE_SCREEN_BUFFER_INFO csbi = {};                               \
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi); \
+    common.X = csbi.dwCursorPosition.X;                                 \
+    common.Y = csbi.dwCursorPosition.Y;
 void Win_Required()
 {
+    //将控制台切换为UTF-8的编码格式
     system("chcp 65001");
+    //下面开始修改字体，Lucida Console在Windows上默认安装的一个字体，且显示UTF-8效果较好
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
     GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
     cfi_bak = cfi;
-    cfi.FontFamily=FF_DONTCARE;
+    cfi.FontFamily = FF_DONTCARE;
     wcscpy(cfi.FaceName, L"Lucida Console");
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
     system("cls");
@@ -26,11 +32,9 @@ void Reset_Win_Required()
 }
 void cursor_move(int x, int y)
 {
-    //COORD common;
     common.X = x;
     common.Y = y;
     //重新设置光标位置后将位移重置为0
-    cursor_location = 0;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void hide_cursor()
@@ -51,35 +55,32 @@ void dishide_cusor()
 }
 void moveright(int i)
 {
-    common.X = common.X + cursor_location + i;
-    cursor_location = 0;
+    GetPos;
+    common.X = common.X + i;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void moveleft(int i)
 {
-    common.X = common.X + cursor_location - i;
-    cursor_location = 0;
+    GetPos;
+    common.X = common.X - i;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void moveup(int i)
 {
-    common.X = common.X + cursor_location;
-    cursor_location = 0;
+    GetPos;
     common.Y = common.Y - i;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void movedown(int i)
 {
-    //下移时重置为0
-    common.X = common.X + cursor_location;
-    cursor_location = 0;
+    GetPos;
     common.Y = common.Y + i;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), common);
 }
 void clean_screen()
 {
     system("cls");
-    SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));//解决Win7上清屏失效的问题，在测试双缓冲区时候发现的
+    SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE)); //解决Win7上清屏失效的问题，在测试双缓冲区时候发现的
 }
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
 {
@@ -127,7 +128,6 @@ void Reset_color()
 }
 void Hide_File(char *path)
 {
-    //通过MultiByteToWideChar函数隐藏配置文件
     wchar_t wtext[20];
     mbstowcs(wtext, path, strlen(path) + 1); //Plus null
     LPWSTR ptr = wtext;

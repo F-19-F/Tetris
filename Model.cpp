@@ -151,16 +151,10 @@ void model::print_model(bool clean)
                 if (clean)
                 {
                     cout << " ";
-#ifdef _WIN32
-                    cursor_location++;
-#endif
                 }
                 else
                 {
                     cout << Print_base;
-#ifdef _WIN32
-                    cursor_location++;
-#endif
                 }
             }
             else
