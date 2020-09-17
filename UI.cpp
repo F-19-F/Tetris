@@ -29,7 +29,7 @@ Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_dec *key)
 	Win_Size = Windows_Size;
 	this->Key = key;
 	this->Gsize = Gsize;
-	_UI=this;
+	_UI = this;
 }
 Tetris_UI::~Tetris_UI()
 {
@@ -39,8 +39,8 @@ Tetris_UI::~Tetris_UI()
 }
 int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
-	int num=2;
-	int choose=1;
+	int num = 2;
+	int choose = 1;
 	//考虑到兼容性，故采用Buffer缓冲的方式输出内容
 	char Buffer[Win_Char_Buffer_Size];
 	int buf_point = 0;
@@ -54,12 +54,12 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	if (!option1)
 	{
 		num = -1;
-		choose=2;
+		choose = 2;
 	}
 	if (!option2)
 	{
 		num = 1;
-		choose=1;
+		choose = 1;
 	}
 	Work_XY(-12, Win_Size.r / 5);
 	Title;
@@ -87,19 +87,19 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	cout.flush();
 	if (num != 2)
 	{
-		x+=10;
+		x += 10;
 		if (num == 1)
 		{
-			x-=strlen(option1)/2;
-			cursor_move(x-4, y + j + 4);
+			x -= strlen(option1) / 2;
+			cursor_move(x - 4, y + j + 4);
 			cout << "-->";
 			cursor_move(x, y + j + 4);
 			cout << option1;
 		}
 		else
 		{
-			x-=strlen(option2)/2;
-			cursor_move(x-4, y + j + 4);
+			x -= strlen(option2) / 2;
+			cursor_move(x - 4, y + j + 4);
 			cout << "-->";
 			cursor_move(x, y + j + 4);
 			cout << option2;
@@ -120,12 +120,12 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 		switch (Key->pop())
 		{
 		case left:
-			if (num==2)
+			if (num == 2)
 			{
-				if (choose==2)
+				if (choose == 2)
 				{
-					choose=1;
-					cursor_move(x+20, y + j + 4);
+					choose = 1;
+					cursor_move(x + 20, y + j + 4);
 					cout << "   ";
 					cursor_move(x, y + j + 4);
 					cout << "-->";
@@ -134,14 +134,14 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			}
 			break;
 		case right:
-			if (num==2)
+			if (num == 2)
 			{
-				if (choose==1)
+				if (choose == 1)
 				{
-					choose=2;
+					choose = 2;
 					cursor_move(x, y + j + 4);
 					cout << "   ";
-					cursor_move(x+20, y + j + 4);
+					cursor_move(x + 20, y + j + 4);
 					cout << "-->";
 					cout.flush();
 				}
@@ -308,22 +308,23 @@ int Tetris_UI::Infor(bool pause)
 	cursor_move(x, y + 14);
 	if (pause)
 	{
-	cout<<"已暂停!\0";
-	cout.flush();
+		color(1);
+		cout << "已暂停!\0";
+		cout.flush();
 	}
 	else
 	{
-		cout<<"           ";
+		cout << "           ";
 		cout.flush();
 	}
 	return 0;
 }
 
-int Tetris_UI::Infor(model *next_model)
+int Tetris_UI::Infor()
 {
 	hide_cursor();
 	Work_XY(Gsize.c - 17, 3);
-	static model Last_model = *next_model;
+	static model Last_model = *NEXT;
 	if (First_flag != 0)
 	{
 		cursor_move(x, y + 7);
@@ -340,8 +341,8 @@ int Tetris_UI::Infor(model *next_model)
 	cout << "Next:";
 	cout.flush();
 	cursor_move(x, y + 7);
-	next_model->print_model(false);
-	Last_model = *next_model;
+	NEXT->print_model(false);
+	Last_model = *NEXT;
 	First_flag = 1;
 	return 0;
 }
@@ -350,10 +351,9 @@ int Tetris_UI::Start()
 	int i;
 	int score;
 	model *a;
-	model *temp;
 	Work_XY(-22, 0);
 	srand((unsigned)time(NULL));
-	if (Is_Cofig_file((char *)OutPutName)&&Dialog((char *)"是",(char *)"否",(char*)"警告",(char*)Warning)==1)
+	if (Is_Cofig_file((char *)OutPutName) && Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning) == 1)
 	{
 		Core = Restore_Core((char *)OutPutName);
 		Core->Editoffset(x, y);
@@ -372,11 +372,11 @@ int Tetris_UI::Start()
 		hide_cursor();
 		a = new model(i);
 		i = rand() % 7 + 1;
-		temp = new model(i);
-		Infor(temp);
+		NEXT = new model(i);
+		Infor();
 		Core->Add_model(a, Key);
 		delete a;
-		delete temp;
+		delete NEXT;
 		Key->clean();
 		if (size_changed)
 		{
