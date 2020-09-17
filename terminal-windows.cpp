@@ -14,6 +14,7 @@ void Win_Required()
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
     GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
     cfi_bak = cfi;
+    cfi.FontFamily=FF_DONTCARE;
     wcscpy(cfi.FaceName, L"Lucida Console");
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
     system("cls");
