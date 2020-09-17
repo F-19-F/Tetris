@@ -19,14 +19,14 @@ void SetColorCompat(bool opt)
 #define Print_Current  \
     cursor_move(x, y); \
     target->print_model(false);\
-    FlushBuffer();
+    cout.flush();
 #define Clean_Current  \
     cursor_move(x, y); \
     target->print_model(true);
 #define Print_Current_P  \
     cursor_move(*x, *y); \
     target->print_model(false);\
-    FlushBuffer();
+    cout.flush();
 #define Clean_Current_P  \
     cursor_move(*x, *y); \
     target->print_model(true);
@@ -75,7 +75,7 @@ void Tetris_Core::Core_Print()
     cout << "┐";
     cursor_move(c + 2 + x_offset, r + 2 + y_offset);
     cout << "┘";
-    FlushBuffer();
+    cout.flush();
     for (int i = 0; i < Min_R(); i++) //从0行开始到最小空行前
     {
         cursor_move(2 + x_offset, r - i + 1 + y_offset); //+1是为了给边框空行
@@ -102,7 +102,7 @@ void Tetris_Core::Core_Print()
             }
         }
     }
-    FlushBuffer();
+    cout.flush();
 }
 //执行一次，满行全部删除
 int Tetris_Core::Full_Line_Clean()
@@ -175,9 +175,9 @@ void Tetris_Core::Del_SE()
 #ifdef _WIN32
                 cursor_location++;
 #endif
-                FlushBuffer();
+                cout.flush();
             }
-            FlushBuffer();
+            cout.flush();
             target = target->next;
         }
         this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -193,9 +193,9 @@ void Tetris_Core::Del_SE()
 #ifdef _WIN32
                 cursor_location++;
 #endif
-                FlushBuffer();
+                cout.flush();
             }
-            FlushBuffer();
+            cout.flush();
             target = target->next;
         }
         target = temp->next;
@@ -210,12 +210,12 @@ void Tetris_Core::Del_SE()
         for (int i = 0; i < c; i++)
         {
             cout << " ";
-            FlushBuffer();
+            cout.flush();
 #ifdef _WIN32
             cursor_location++;
 #endif
         }
-        FlushBuffer();
+        cout.flush();
         target = target->next;
     }
 }
@@ -588,33 +588,4 @@ Tetris_Core* Restore_Core(char *path)
     Restored->Edit_Color(c_restored_map);
     //读取完成
     return Restored;
-}/*
-bool CopyFile(char* from,char* to)
-{
-    long long fsize;
-    char *Buffer=new char;
-    ifstream F(from,ios::in|ios::binary);
-    if (!F)
-    {
-        return false;
-    }
-    ofstream O(to,ios::out|ios::binary);
-    if (!O)
-    {
-        F.close();
-        return false;
-    }
-    //获取文件大小
-    F.seekg(0,ios::end);
-    fsize=F.tellg();
-    F.seekg(0,ios::beg);
-    while (fsize--)
-    {
-        F.read(Buffer,1);
-        O.write(Buffer,1);
-    }
-    delete Buffer;
-    F.close();
-    O.close();
-    return true;
-}*/
+}
