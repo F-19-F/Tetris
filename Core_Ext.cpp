@@ -17,16 +17,16 @@ void SetColorCompat(bool opt)
 #else
 #include "include/WinAPI_control.hpp"
 #endif
-#define Print_Current  \
-    cursor_move(x, y); \
-    target->print_model(false);\
+#define Print_Current           \
+    cursor_move(x, y);          \
+    target->print_model(false); \
     cout.flush();
 #define Clean_Current  \
     cursor_move(x, y); \
     target->print_model(true);
-#define Print_Current_P  \
-    cursor_move(*x, *y); \
-    target->print_model(false);\
+#define Print_Current_P         \
+    cursor_move(*x, *y);        \
+    target->print_model(false); \
     cout.flush();
 #define Clean_Current_P  \
     cursor_move(*x, *y); \
@@ -42,10 +42,10 @@ void SetColorCompat(bool opt)
     {                      \
         ctrl->unlock();    \
     }
-#define workout_address               \
-    address += (address_temp[0]) * 65536;       \
-    address += (address_temp[1]) * 256; \
-    address += (address_temp[2]) ;
+#define workout_address                   \
+    address += (address_temp[0]) * 65536; \
+    address += (address_temp[1]) * 256;   \
+    address += (address_temp[2]);
 //输出当前表
 void Tetris_Core::Core_Print()
 {
@@ -223,9 +223,19 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             }
             if (Key_Got == esc)
             {
-                *signal=2;
-                Lock->unlock();
-                break;
+                if (UI->Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)"是否退出？\n") == 1)
+                {
+                    *signal = 2;
+                    Lock->unlock();
+                    break;
+                }
+                else
+                {
+                    clean_screen();
+                    core->Core_Print();
+                    UI->Infor();
+                    Print_Current_P;
+                }
             }
         }
         else
@@ -342,7 +352,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     int Score_In = 0;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
-    thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock ,_UI);
+    thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock, _UI);
     t1.detach();
     y_lock.unlock();
     while (1)
@@ -352,9 +362,9 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         {
             //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
             y_lock.lock();
-            if (signal==2)
+            if (signal == 2)
             {
-                over=true;
+                over = true;
                 y_lock.unlock();
                 t1.~thread();
                 remove(OutPutName);
@@ -379,9 +389,9 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         else
         {
             y_lock.lock();
-            if (signal==2)
+            if (signal == 2)
             {
-                over=true;
+                over = true;
                 y_lock.unlock();
                 t1.~thread();
                 remove(OutPutName);
@@ -436,12 +446,12 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     {
         over = true;
         //有戏结束则关闭文件存储
-        Close_Tail((char*)OutPutName);
+        Close_Tail((char *)OutPutName);
         remove(OutPutName);
     }
     else
     {
-        Save_To_file((char*)OutPutName);
+        Save_To_file((char *)OutPutName);
     }
     Run_Lock.unlock();
     if (over)
@@ -449,18 +459,18 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         this_thread::sleep_for(std::chrono::milliseconds(Time_speed));
     }
 }
-bool Is_Cofig_file(char* path)
+bool Is_Cofig_file(char *path)
 {
     char Temp[2];
-    fstream t(path,ios::binary | ios::in);
+    fstream t(path, ios::binary | ios::in);
     if (!t)
     {
         return false;
     }
-    t.seekg(-2,ios::end);
-    t.read(Temp,2);
+    t.seekg(-2, ios::end);
+    t.read(Temp, 2);
     t.close();
-    if ((Temp[0]==0x0F)&&(Temp[1]==0x19))
+    if ((Temp[0] == 0x0F) && (Temp[1] == 0x19))
     {
         return true;
     }
@@ -477,7 +487,7 @@ void Direct_Hex(std::ostream &file, long address, int Length)
     //将数据写入
     file.write((char *)bytes, Length);
 }
-bool Close_Tail(char* path)
+bool Close_Tail(char *path)
 {
     if (Is_Cofig_file(path))
     {
@@ -486,8 +496,8 @@ bool Close_Tail(char* path)
         {
             return false;
         }
-        target.seekp(-2,ios::end);
-        Direct_Hex(target,0x0F09,2);
+        target.seekp(-2, ios::end);
+        Direct_Hex(target, 0x0F09, 2);
         target.close();
         return true;
     }
@@ -499,15 +509,15 @@ bool Tetris_Core::Save_To_file(char *path)
     bool *temp = source;
     char *Color_temp = Color;
     char *address_temp;
-    long address=0;
-    fstream Bak(path,ios::binary | ios::in | ios::app);
+    long address = 0;
+    fstream Bak(path, ios::binary | ios::in | ios::app);
     if (!Bak)
     {
         return false;
     }
-    #ifdef  _WIN32
+#ifdef _WIN32
     Hide_File(path);
-    #endif
+#endif
     //移动读取指针到当前文件的末尾，以获取文件的大小信息
     Bak.seekg(0, ios::end);
     //存储文件大小参数
@@ -515,24 +525,24 @@ bool Tetris_Core::Save_To_file(char *path)
     //将文件读指针移动至文件倒数两个字节
     Bak.close();
     Bak.open(path, ios::out | ios::binary | ios::in);
-    if (File_Length<5)
+    if (File_Length < 5)
     {
         goto WRITE;
     }
-    Bak.seekg(-2,ios::end);
-    address_temp=new char[2];
-    Bak.read(address_temp,2);
+    Bak.seekg(-2, ios::end);
+    address_temp = new char[2];
+    Bak.read(address_temp, 2);
     //如果在尾部寻找到特殊字节，则认为是标准的游戏数据文件，将替换原有数据
-    if ((address_temp[0]==0x0F)&&(address_temp[1]==0x19||address_temp[1]==0x09))
+    if ((address_temp[0] == 0x0F) && (address_temp[1] == 0x19 || address_temp[1] == 0x09))
     {
-        Bak.seekg(-5,ios::end);
+        Bak.seekg(-5, ios::end);
         delete address_temp;
         address_temp = new char[3];
         //读取3字节地址
-        Bak.read(address_temp,3);
+        Bak.read(address_temp, 3);
         workout_address;
-        Bak.seekp(address,ios::beg);
-        File_Length=address;
+        Bak.seekp(address, ios::beg);
+        File_Length = address;
     }
     else
     {
@@ -540,7 +550,7 @@ bool Tetris_Core::Save_To_file(char *path)
         Bak.seekp(0, ios::end);
     }
     delete address_temp;
-    WRITE:
+WRITE:
     //将Tetris_Core对象写入文件，但现在存储的文件中指针的部分只存储了指针的地址
     Bak.write((char *)this, sizeof(*this));
     //将source中的数据以字节为单位存入文件，可以节约空间,以后会推出
@@ -564,7 +574,7 @@ bool Tetris_Core::Save_To_file(char *path)
     Bak.close();
     return true;
 }
-Tetris_Core* Restore_Core(char *path)
+Tetris_Core *Restore_Core(char *path)
 {
     char address_temp[3];
     long address = 0;
@@ -572,8 +582,8 @@ Tetris_Core* Restore_Core(char *path)
     int r;
     int c;
     char *c_restored_map;
-    Tetris_Core *Restored=(Tetris_Core *)malloc(sizeof(Tetris_Core));
-    fstream restore(path,ios::binary | ios::in);
+    Tetris_Core *Restored = (Tetris_Core *)malloc(sizeof(Tetris_Core));
+    fstream restore(path, ios::binary | ios::in);
     //读取特定位置
     restore.seekg(-5, ios::end);
     //读取core地址
@@ -582,14 +592,14 @@ Tetris_Core* Restore_Core(char *path)
     workout_address;
     //读取Core的地址
     restore.seekg(address, ios::beg);
-    restore.read((char*)Restored,sizeof(Tetris_Core));
+    restore.read((char *)Restored, sizeof(Tetris_Core));
     //从读取的Core中获取对应读取大小
-    r=Restored->Get_R();
-    c=Restored->Get_C();
-    restored_map = (bool *)malloc(sizeof(bool)*r*c);
-    restore.read((char*) restored_map,sizeof(bool)*r*c);
-    c_restored_map=(char *)malloc(sizeof(char)*r*c);
-    restore.read((char *)c_restored_map,sizeof(char)*r*c);
+    r = Restored->Get_R();
+    c = Restored->Get_C();
+    restored_map = (bool *)malloc(sizeof(bool) * r * c);
+    restore.read((char *)restored_map, sizeof(bool) * r * c);
+    c_restored_map = (char *)malloc(sizeof(char) * r * c);
+    restore.read((char *)c_restored_map, sizeof(char) * r * c);
     //修改指针地址
     Restored->Edit_Source(restored_map);
     Restored->Edit_Color(c_restored_map);
