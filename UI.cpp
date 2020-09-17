@@ -95,6 +95,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			cout << "-->";
 			cursor_move(x, y + j + 4);
 			cout << option1;
+			cout.flush();
 		}
 		else
 		{
@@ -103,6 +104,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			cout << "-->";
 			cursor_move(x, y + j + 4);
 			cout << option2;
+			cout.flush();
 		}
 	}
 	else
