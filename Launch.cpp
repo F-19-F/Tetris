@@ -22,10 +22,10 @@ int main()
 	_Gsize.r = 27;
 	_Gsize.c = 18;
 	Key_dec Key;
-	Tetris_UI UI(Win_size,_Gsize,&Key);
+	Tetris_UI UI(Win_size, _Gsize, &Key);
 	int Opt = 0;
 	Key.start();
-	while ((Opt = UI.Menu() )!= 4)
+	while ((Opt = UI.Menu()) != 4)
 	{
 		switch (Opt)
 		{
@@ -36,21 +36,20 @@ int main()
 			UI.Setting();
 			break;
 		case 3:
-			UI.Dialog((char*)"1",(char*)"2",(char*)"关于",(char*)About);
+			UI.Dialog((char *)"1", (char *)"2", (char *)"关于", (char *)About);
 			break;
 		default:
 			break;
 		}
 	}
-
+	clean_screen();
+	cout << "游戏已结束，按任意键退出游戏";
+	cout.flush();
 #ifdef _WIN32
 	Reset_Win_Required();
 #endif
 	//重置终端颜色
 	Reset_color();
-	clean_screen();
-	cout << "游戏已结束，按任意键退出游戏";
-	cout.flush();
 	Key.stop();
 	//运行完后恢复光标显示
 	dishide_cusor();
