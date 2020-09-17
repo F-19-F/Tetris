@@ -20,6 +20,7 @@ using namespace std;
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
 mutex Run;
+Tetris_UI *_UI;
 void Size_detecter(bool *changed, mutex *Run_Lock);
 Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_dec *key)
 {
@@ -28,6 +29,7 @@ Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_dec *key)
 	Win_Size = Windows_Size;
 	this->Key = key;
 	this->Gsize = Gsize;
+	_UI=this;
 }
 Tetris_UI::~Tetris_UI()
 {
@@ -299,6 +301,24 @@ int Tetris_UI::Menu()
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
+int Tetris_UI::Infor(bool pause)
+{
+	hide_cursor();
+	Work_XY(Gsize.c - 17, 3);
+	cursor_move(x, y + 14);
+	if (pause)
+	{
+	cout<<"已暂停!\0";
+	cout.flush();
+	}
+	else
+	{
+		cout<<"           ";
+		cout.flush();
+	}
+	return 0;
+}
+
 int Tetris_UI::Infor(model *next_model)
 {
 	hide_cursor();

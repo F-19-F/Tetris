@@ -35,6 +35,9 @@ int main()
 		case 1:
 			UI.Setting();
 			break;
+		case 2:
+			UI.Dialog((char *)"确认", NULL, (char *)"玩法", (char *)HowToPlay);
+			break;
 		case 3:
 			UI.Dialog((char *)"确认", NULL, (char *)"关于", (char *)About);
 			break;

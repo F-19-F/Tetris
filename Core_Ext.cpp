@@ -5,6 +5,7 @@
 #include <mutex>
 using namespace std;
 #include "include/Tetris_Core.hpp"
+#include "include/UI.hpp"
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
 bool compat_mode = true;
@@ -201,8 +202,8 @@ void Tetris_Core::Del_SE()
         target = target->next;
     }
 }
-//signal为线程间同步变量，为0时代表需要一个下降的delay，为1时则正常运行,为2时代表线程已结束
-void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock)
+//signal为线程间同步变量，为0时代表需要一个下降的delay，为1时则正常运行,为2时代表线程已结束(或者用户主动退出)
+void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock, Tetris_UI *UI)
 {
     bool suspend = false;
     int Key_Got;
@@ -216,8 +217,15 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
         {
             if (Key_Got == space)
             {
+                UI->Infor(false);
                 Lock->unlock();
                 suspend = false;
+            }
+            if (Key_Got == esc)
+            {
+                *signal=2;
+                Lock->unlock();
+                break;
             }
         }
         else
@@ -313,6 +321,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 core->Save_To_file((char *)OutPutName);
                 Can_I_Run;
                 suspend = true;
+                UI->Infor(true);
                 break;
             default:
                 break;
@@ -333,7 +342,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
     int Score_In = 0;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
-    thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock);
+    thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock ,_UI);
     t1.detach();
     y_lock.unlock();
     while (1)
@@ -343,6 +352,14 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         {
             //当如果Move在响应时，下落将等待其结束，以防止光标位置错乱导致的奇怪输出
             y_lock.lock();
+            if (signal==2)
+            {
+                over=true;
+                y_lock.unlock();
+                t1.~thread();
+                remove(OutPutName);
+                return;
+            }
             if (target->All_Model())
             {
                 y++;
@@ -362,6 +379,14 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         else
         {
             y_lock.lock();
+            if (signal==2)
+            {
+                over=true;
+                y_lock.unlock();
+                t1.~thread();
+                remove(OutPutName);
+                return;
+            }
             if (signal == 0) //写入delay,在检测到delay请求时则延缓写入，并且在delay阶段允许左右移动
             {
                 signal = 1;
