@@ -5,6 +5,7 @@
 #define About "这是一个C++俄罗斯方块游戏\n具有以下特征\n   1.游戏运行过程中途退出再次打开自动恢复\n   2.大小自适应\n   3.实时按键反馈\
 \n \n By SWU-F19"
 #define Warning "    检测到非正常结束\n    是否恢复上次游戏?\n"
+#define HowToPlay "按方向键盘'←'和'→'来移动方块\n按'↑'来改变形状\n按'↓'来加速下落\n"
 #define Win_Char_Buffer_Size 100
 #define Title                              \
 	cursor_move(x, y);                     \
@@ -43,5 +44,7 @@ public:
 	int Start();
 	int Over();
 	int Infor(model *next_model);
+	int Infor(bool Pause);
 };
+extern Tetris_UI *_UI;
 #endif
