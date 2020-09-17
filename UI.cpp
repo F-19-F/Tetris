@@ -37,54 +37,118 @@ Tetris_UI::~Tetris_UI()
 }
 int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
-	int num;
-	char temp;
+	int num=2;
+	int choose=1;
 	//考虑到兼容性，故采用Buffer缓冲的方式输出内容
 	char Buffer[Win_Char_Buffer_Size];
-	int buf_point=0;
-	int j=0;
-	int sum=0;
+	int buf_point = 0;
+	int j = 0; //用来记录行数
+	int sum = 0;
 	clean_screen();
 	if ((!option1) && (!option2))
 	{
 		return -1;
 	}
-	if (!option2 || !option1)
+	if (!option1)
+	{
+		num = -1;
+		choose=2;
+	}
+	if (!option2)
 	{
 		num = 1;
+		choose=1;
 	}
 	Work_XY(-12, Win_Size.r / 5);
 	Title;
-	Update_XY(-(int)(strlen(TITLE)/2),Win_Size.r / 5 + 7);
-	cursor_move(x,y);
-	cout<<TITLE;
-	Update_XY(-12,Win_Size.r / 5 + 9);
-	cursor_move(x,y);
-	for(int i=0;i<(int)(strlen(content));i++)
+	Update_XY(-(int)(strlen(TITLE) / 2), Win_Size.r / 5 + 7);
+	cursor_move(x, y);
+	cout << TITLE;
+	Update_XY(-12, Win_Size.r / 5 + 9);
+	cursor_move(x, y);
+	for (int i = 0; i < (int)(strlen(content)); i++)
 	{
-		if ((temp=content[i])!='\n')
+		if (content[i] != '\n')
 		{
 			Buffer[buf_point++] = content[i];
 		}
 		else
 		{
 			++j;
-			cursor_move(x,y+j);
-			Buffer[buf_point]='\0';
+			cursor_move(x, y + j);
+			Buffer[buf_point] = '\0';
 			cout << Buffer;
 			memset(Buffer, 0, 100 * sizeof(char));
 			buf_point = 0;
 		}
 	}
 	cout.flush();
+	if (num != 2)
+	{
+		x+=10;
+		if (num == 1)
+		{
+			x-=strlen(option1)/2;
+			cursor_move(x-4, y + j + 4);
+			cout << "-->";
+			cursor_move(x, y + j + 4);
+			cout << option1;
+		}
+		else
+		{
+			x-=strlen(option2)/2;
+			cursor_move(x-4, y + j + 4);
+			cout << "-->";
+			cursor_move(x, y + j + 4);
+			cout << option2;
+		}
+	}
+	else
+	{
+		cursor_move(x, y + j + 4);
+		cout << "-->";
+		cursor_move(x + 4, y + j + 4);
+		cout << option1;
+		cursor_move(x + 24, y + j + 4);
+		cout << option2;
+		cout.flush();
+	}
 	while (1)
 	{
 		switch (Key->pop())
 		{
+		case left:
+			if (num==2)
+			{
+				if (choose==2)
+				{
+					choose=1;
+					cursor_move(x+20, y + j + 4);
+					cout << "   ";
+					cursor_move(x, y + j + 4);
+					cout << "-->";
+					cout.flush();
+				}
+			}
+			break;
+		case right:
+			if (num==2)
+			{
+				if (choose==1)
+				{
+					choose=2;
+					cursor_move(x, y + j + 4);
+					cout << "   ";
+					cursor_move(x+20, y + j + 4);
+					cout << "-->";
+					cout.flush();
+				}
+			}
+			break;
 		case space:
 		case enter:
-			return 0;
-		break;
+			return choose;
+			break;
 		default:
 			break;
 		}
@@ -186,8 +250,6 @@ int Tetris_UI::Menu()
 	cout << "退出游戏";
 	cursor_move(x + 5, Cur_Location_Y);
 	cout << "-->";
-	//cursor_move(x + 16, Cur_Location_Y);
-	//cout << "<--";
 	while (1)
 	{
 		Key->MutexLock(true);
@@ -195,8 +257,6 @@ int Tetris_UI::Menu()
 		{
 		case up:
 			cursor_move(x + 5, Cur_Location_Y);
-			cout << "   ";
-			cursor_move(x + 16, Cur_Location_Y);
 			cout << "   ";
 			if (Cur_Location_Y == y + 7)
 			{
@@ -208,13 +268,9 @@ int Tetris_UI::Menu()
 			}
 			cursor_move(x + 5, Cur_Location_Y);
 			cout << "-->";
-			//cursor_move(x + 16, Cur_Location_Y);
-			//cout << "<--";
 			break;
 		case down:
 			cursor_move(x + 5, Cur_Location_Y);
-			cout << "   ";
-			cursor_move(x + 16, Cur_Location_Y);
 			cout << "   ";
 			if (Cur_Location_Y == y + 15)
 			{
@@ -226,8 +282,6 @@ int Tetris_UI::Menu()
 			}
 			cursor_move(x + 5, Cur_Location_Y);
 			cout << "-->";
-			//cursor_move(x + 16, Cur_Location_Y);
-			//cout << "<--";
 			break;
 		case space:
 		case enter:
@@ -279,13 +333,14 @@ int Tetris_UI::Start()
 	model *temp;
 	Work_XY(-22, 0);
 	srand((unsigned)time(NULL));
-	if (Is_Cofig_file((char *)OutPutName))
+	if (Is_Cofig_file((char *)OutPutName)&&Dialog((char *)"是",(char *)"否",(char*)"警告",(char*)Warning)==1)
 	{
 		Core = Restore_Core((char *)OutPutName);
-		Core->Editoffset(x,y);
+		Core->Editoffset(x, y);
 	}
 	else
 	{
+		remove(OutPutName);
 		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level, true);
 	}
 	clean_screen();
@@ -309,7 +364,7 @@ int Tetris_UI::Start()
 			Update_XY(-22, 0);
 			Core->Editoffset(x, y);
 			clean_screen();
-			size_changed=false;
+			size_changed = false;
 			hide_cursor();
 			Core->Core_Print();
 		}

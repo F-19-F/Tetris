@@ -6,6 +6,7 @@ COORD common;
 //记录每一次cout导致的光标位移
 COLORREF ColorTable_Back[16];
 CONSOLE_FONT_INFOEX cfi_bak;
+//获取当前的光标位置，以方便光标移动函数
 #define GetPos                                                          \
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};                               \
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi); \
@@ -15,7 +16,7 @@ void Win_Required()
 {
     //将控制台切换为UTF-8的编码格式
     system("chcp 65001");
-    //下面开始修改字体，Lucida Console在Windows上默认安装的一个字体，且显示UTF-8效果较好
+    //下面开始修改字体，Lucida Console在Windows上默认安装的一个字体，UTF-8效果较好，且游戏界面也美观
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
     GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
@@ -23,6 +24,7 @@ void Win_Required()
     cfi.FontFamily = FF_DONTCARE;
     wcscpy(cfi.FaceName, L"Lucida Console");
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &cfi);
+    //设置好cmd属性后清屏，以免影响用户体验
     system("cls");
 }
 void Reset_Win_Required()
