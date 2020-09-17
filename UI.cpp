@@ -332,13 +332,13 @@ int Tetris_UI::Infor()
 	}
 	color(7);
 	cursor_move(x, y);
-	cout << "Score:" << Core->get_score();
+	cout << "分数:" << Core->get_score();
 	cout.flush();
 	cursor_move(x, y + 3);
-	cout << "Level:" << Core->get_speed();
+	cout << "等级:" << Core->get_speed();
 	cout.flush();
 	cursor_move(x, y + 6);
-	cout << "Next:";
+	cout << "下一个:";
 	cout.flush();
 	cursor_move(x, y + 7);
 	NEXT->print_model(false);
