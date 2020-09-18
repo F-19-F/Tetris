@@ -358,10 +358,10 @@ int Tetris_UI::Infor()
 	}
 	color(7);
 	cursor_move(x, y);
-	cout << "分数:" << Core->get_score();
+	cout << "分数:   " << Core->get_score()<<"  ";
 	cout.flush();
 	cursor_move(x, y + 3);
-	cout << "等级:" << Core->get_speed();
+	cout << "等级:   " << Core->get_speed()<<"  ";
 	cout.flush();
 	cursor_move(x, y + 6);
 	cout << "下一个:";
