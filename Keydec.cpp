@@ -1,3 +1,5 @@
+/*按键发现相关函数，基本原理就是通过一个线程，将符合条件的按键输入放到一个队列之中
+高速响应的基础*/
 #ifndef _WIN32
 #include <termios.h>
 #include <unistd.h>

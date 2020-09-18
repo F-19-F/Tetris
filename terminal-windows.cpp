@@ -1,3 +1,4 @@
+/*这里通过WinAPI封装了一个统一接口*/
 #ifdef _WIN32
 #include "windows.h"
 #include "include/WinAPI_control.hpp"

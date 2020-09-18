@@ -1,3 +1,4 @@
+/*这里是方块模型的实现，可以通过构造进行一系列*/
 #include <iostream>
 #include <cmath>
 #ifndef _WIN32

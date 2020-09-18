@@ -1,3 +1,4 @@
+/*这是窗口大小发现的实现*/
 #include <thread>
 #include <mutex>
 #include "include/Size.hpp"
