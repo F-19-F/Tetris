@@ -47,5 +47,5 @@ public:
 	int Infor();
 	int Infor(bool Pause);
 };
-extern Tetris_UI *_UI;
+extern Tetris_UI *_UI;//一个全局的的UI对象指针，方便调用
 #endif

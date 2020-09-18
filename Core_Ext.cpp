@@ -1,3 +1,4 @@
+/*这是核心的一些高级函数，包括按键响应函数等*/
 #include <iostream>
 #include <fstream>
 #include <thread>
@@ -371,16 +372,18 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
     *signal = 2; //告诉主线程，此线程已结束，无需再等待
     return;
 }
+//添加方块的函数
 void Tetris_Core::Add_model(model *target, Key_dec *Key)
 {
-    mutex y_lock; 
-    mutex Run_Lock;
+    mutex y_lock;//定义 C++线程同步锁，用于按键响应和主下落进程的同步 
+    mutex Run_Lock;//子线程控制运行锁，用于控制子线程的退出
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
     int Score_In = 0;
     int Time_speed = MAX_TIME / speed;
     y_lock.lock();
+    //启动按键响应线程，高速响应的实现之一
     thread t1(Move, &x, &y, &signal, target, &Run_Lock, Key, this, &y_lock, _UI);
     t1.detach();
     y_lock.unlock();
@@ -431,7 +434,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
                 signal = 1;
                 Print_Current;
                 y_lock.unlock();
-                this_thread::sleep_for(std::chrono::milliseconds(30));
+                this_thread::sleep_for(std::chrono::milliseconds(80));
                 y_lock.lock();
                 //如果delay阶段的移动使得方块能继续下降，则继续下降
                 if (Can_move_down(x, y, target))
@@ -456,6 +459,7 @@ void Tetris_Core::Add_model(model *target, Key_dec *Key)
         }
     }
     t1.~thread();
+    //仅当有清除行的时候才会刷新底层表
     if ((Score_In = Full_Line_Clean()) != 0)
     {
         Core_Print();
@@ -532,7 +536,7 @@ bool Close_Tail(char *path)
     }
     return false;
 }
-
+//将游戏保存到文件，可以在意外退出时进行恢复
 bool Tetris_Core::Save_To_file(char *path)
 {
     bool *temp = source;
@@ -603,6 +607,7 @@ WRITE:
     Bak.close();
     return true;
 }
+//从备份文件读取Tetris_Core
 Tetris_Core *Restore_Core(char *path)
 {
     char address_temp[3];
