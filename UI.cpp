@@ -17,6 +17,13 @@ using namespace std;
 #define Update_XY(offset_x, offset_y) \
 	x = Win_Size.c / 2 + offset_x;    \
 	y = offset_y;
+#define Act_Change if (size_changed)\
+		{\
+			hide_cursor();\
+			UpdateSize();\
+			size_changed=false;\
+			goto Sudden_Changed;\
+		}
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
 mutex Run;
@@ -36,6 +43,7 @@ Tetris_UI::~Tetris_UI()
 	Run.lock();
 	//等待大小发现线程退出
 	this_thread::sleep_for(std::chrono::milliseconds(60));
+	Run.unlock();
 }
 int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 {
@@ -46,6 +54,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	int buf_point = 0;
 	int j = 0; //用来记录行数
 	int sum = 0;
+Sudden_Changed:
 	clean_screen();
 	if ((!option1) && (!option2))
 	{
@@ -119,6 +128,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 	}
 	while (1)
 	{
+		Key->MutexLock(true);
 		switch (Key->pop())
 		{
 		case left:
@@ -151,11 +161,14 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 			break;
 		case space:
 		case enter:
+			Key->MutexLock(false);
 			return choose;
 			break;
 		default:
 			break;
 		}
+		Key->MutexLock(false);
+		Act_Change;
 		this_thread::sleep_for(std::chrono::milliseconds(60));
 	}
 	return 0;
@@ -163,6 +176,7 @@ int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
 int Tetris_UI::Over()
 {
 	color(1);
+Sudden_Changed:
 	clean_screen();
 	Work_XY(-25, Win_Size.r / 2 - 4);
 	cursor_move(x, y);
@@ -188,6 +202,7 @@ int Tetris_UI::Over()
 	cout.flush();
 	while (Key->pop() != space)
 	{
+		Act_Change;
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	return 0;
@@ -195,20 +210,22 @@ int Tetris_UI::Over()
 int Tetris_UI::Setting()
 {
 	hide_cursor();
+Sudden_Changed:
 	clean_screen();
 	Work_XY(-12, Win_Size.r / 5);
 	Title;
-	int Cur_Location_Y = y + 8;
-	cursor_move(x + 8, y + 7);
+	int Cur_Location_Y = y + 12;
+	cursor_move(x + 8, y + 9);
 	cout << "游戏难度";
-	cursor_move(x + 11, y + 8);
+	cursor_move(x + 11, y + 12);
 	cout << Game_Level << " ";
-	cursor_move(x + 8, y + 8);
+	cursor_move(x + 8, y + 12);
 	cout << "<";
-	cursor_move(x + 15, y + 8);
+	cursor_move(x + 15, y + 12);
 	cout << ">";
 	while (1)
 	{
+		Key->MutexLock(true);
 		switch (Key->pop())
 		{
 		case left:
@@ -225,11 +242,15 @@ int Tetris_UI::Setting()
 			break;
 		case space:
 		case enter:
+			Key->MutexLock(false);
 			return 0;
 		}
-		cursor_move(x + 11, y + 8);
+		Key->MutexLock(false);
+		cursor_move(x + 11, y + 12);
 		cout << Game_Level << " ";
 		cout.flush();
+		Act_Change;
+		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
 	return 0;
@@ -238,6 +259,7 @@ int Tetris_UI::Menu()
 {
 	hide_cursor();
 	color(7);
+Sudden_Changed:
 	clean_screen();
 	Work_XY(-12, Win_Size.r / 5);
 	int Cur_Location_Y = y + 7;
@@ -300,6 +322,7 @@ int Tetris_UI::Menu()
 		}
 		cout.flush();
 		Key->MutexLock(false);
+		Act_Change;
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
