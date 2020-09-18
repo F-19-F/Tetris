@@ -208,6 +208,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
     bool suspend = false;
     int Key_Got;
     int temp_x;
+    bool Locked=false;
     while (ctrl->try_lock())
     {
         ctrl->unlock();
@@ -344,7 +345,10 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             temp_x=*x-(_Gsize.c/2+_UI->Win_Size.c/2-22);
             _UI->UpdateSize();
             hide_cursor();
-            Lock->lock();
+            if (Lock->try_lock())
+            {
+                Locked=true;
+            }
             core->Editoffset(_UI->Win_Size.c/2-22,0);
             *x=_Gsize.c/2+_UI->Win_Size.c/2-22+temp_x;
             clean_screen();
@@ -352,7 +356,15 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
             core->Save_To_file((char *)OutPutName);
             Print_Current_P;
             core->Core_Print();
-            Lock->unlock();
+            if (!Locked)
+            {
+                UI->Infor(true);
+            }
+            if (Locked)
+            {
+                Locked=false;
+                Lock->unlock();
+            }
         }
         this_thread::sleep_for(std::chrono::milliseconds(10));
     }
