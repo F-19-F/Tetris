@@ -1,3 +1,4 @@
+/*这里是界面类的实现*/
 #include <iostream>
 #include <thread>
 #include <mutex>
