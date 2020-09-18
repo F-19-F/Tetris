@@ -31,9 +31,9 @@ private:
 	Tetris_Core *Core;
 	Key_dec *Key;
 	Size Gsize;
-	Size Win_Size;
 	
 public:
+	Size Win_Size;
 	bool size_changed;
 	model *NEXT;
 	Tetris_UI(Size Windows,Size Gsize ,Key_dec *key);

@@ -207,6 +207,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
 {
     bool suspend = false;
     int Key_Got;
+    int temp_x;
     while (ctrl->try_lock())
     {
         ctrl->unlock();
@@ -337,6 +338,22 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
                 break;
             }
         }
+        if (_UI->size_changed)
+        {
+            _UI->size_changed=false;
+            temp_x=*x-(_Gsize.c/2+_UI->Win_Size.c/2-22);
+            _UI->UpdateSize();
+            hide_cursor();
+            Lock->lock();
+            core->Editoffset(_UI->Win_Size.c/2-22,0);
+            *x=_Gsize.c/2+_UI->Win_Size.c/2-22+temp_x;
+            clean_screen();
+            UI->Infor();
+            core->Save_To_file((char *)OutPutName);
+            Print_Current_P;
+            core->Core_Print();
+            Lock->unlock();
+        }
         this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     *signal = 2; //告诉主线程，此线程已结束，无需再等待
@@ -344,7 +361,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
 }
 void Tetris_Core::Add_model(model *target, Key_dec *Key)
 {
-    mutex y_lock;
+    mutex y_lock; 
     mutex Run_Lock;
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
