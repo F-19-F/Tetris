@@ -132,10 +132,10 @@ void key_proc(mutex *ctrl, Key_dec *output)
   while (ctrl->try_lock())
   {
     ctrl->unlock();
-    c = getch();
+    c = _getch();
     if (sp1 == (int)c)
     {
-      c = getch();
+      c = _getch();
       switch (c)
       {
       case up:
