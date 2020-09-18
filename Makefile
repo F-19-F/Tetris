@@ -14,9 +14,9 @@ DEPENDS=$(patsubst %.cpp,%.d,$(SRC))
 DEPEND=$(EXEC).D
 EXEC =Tetris
 $(EXEC): $(OBJ)
-	cd $(OUTPATH);$(CXX) -pthread $(OBJ) -o $(EXEC)
+	cd $(OUTPATH);$(CXX) -std=c++11 -pthread $(OBJ) -o $(EXEC)
 %.o: %.cpp
-	$(CXX) -c $< -o $(OUTPATH)$@
+	$(CXX) -std=c++11 -c $< -o $(OUTPATH)$@
 include $(DEPEND)
 #在g++ -MM的输出中添加.d的目标,以实现自动创建依赖
 $(DEPEND) : $(DEPENDS)
