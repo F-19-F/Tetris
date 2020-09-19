@@ -7,7 +7,7 @@
 #define Random_Color_4 26, 232, 26
 #define Random_Color_5 107, 34, 141
 #define Random_Color_6 149, 120, 90
-#define Print_base "■"
+#define Print_base "█"
 class model
 {
 private:
