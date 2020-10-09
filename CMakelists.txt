@@ -1,5 +1,0 @@
-set(CMAKE_CXX_COMPILER "/usr/local/bin/g++")
-cmake_minimum_required(VERSION 2.7)
-project(Tetris)
-aux_source_directory(. Srcs)
-add_executable(Tetris ${Srcs})

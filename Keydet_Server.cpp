@@ -1,4 +1,4 @@
-/*按键发现相关函数，基本原理就是通过一个线程，将符合条件的按键输入放到一个队列之中
+/*按键发现Server，基本原理就是通过一个线程，将符合条件的按键输入放到一个队列之中
 高速响应的基础*/
 #ifndef _WIN32
 #include <termios.h>
@@ -11,22 +11,22 @@
 #include <chrono>
 #include <mutex>
 #include <queue>
-#include "include/Keydec.hpp"
+#include "include/Keydet.hpp"
 #include "include/Model.hpp"
 using namespace std;
 queue<int> base;
 mutex Queue_lock;
 mutex Run_lock;
-Key_dec::Key_dec()
+Key_det::Key_det()
 {
   psignal = 1;
 }
-int Key_dec::push(int signal)
+int Key_det::push(int signal)
 {
   base.push(signal);
   return 0;
 }
-int Key_dec::pop()
+int Key_det::pop()
 {
   int r;
   if (base.empty())
@@ -39,7 +39,7 @@ int Key_dec::pop()
   return r;
 }
 #ifndef _WIN32
-void key_proc(mutex *ctrl, Key_dec *output)
+void key_proc(mutex *ctrl, Key_det *output)
 {
   char c;
   static struct termios oldt, newt;
@@ -128,7 +128,7 @@ void key_proc(mutex *ctrl, Key_dec *output)
   return;
 }
 #else
-void key_proc(mutex *ctrl, Key_dec *output)
+void key_proc(mutex *ctrl, Key_det *output)
 {
   int c;
   while (ctrl->try_lock())
@@ -199,12 +199,12 @@ void key_proc(mutex *ctrl, Key_dec *output)
   return;
 }
 #endif
-void Key_dec::start()
+void Key_det::start()
 {
   thread t1(key_proc, &Run_lock, this);
   t1.detach();
 }
-void Key_dec::stop()
+void Key_det::stop()
 {
   Run_lock.lock();
   while (psignal != -1)
@@ -213,7 +213,7 @@ void Key_dec::stop()
   }
   Run_lock.unlock();
 }
-void Key_dec::clean()
+void Key_det::clean()
 {
   Queue_lock.lock();
   while (!base.empty())
@@ -222,7 +222,7 @@ void Key_dec::clean()
   }
   Queue_lock.unlock();
 }
-void Key_dec::MutexLock(bool lock)
+void Key_det::MutexLock(bool lock)
 {
   if (lock)
   {

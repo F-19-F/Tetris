@@ -1,13 +1,15 @@
 #ifndef _TCORE
 #define _TCORE
 #include "Model.hpp"
-#include "Keydec.hpp"
+#include "Keydet.hpp"
 //将游戏保存到文件中用到的宏
 #define Hex_Max 3
 #define Special_Tail 0x0F19
+//定义最大下落时间
 #define MAX_TIME 500
 #define MAX_LEVEL 30
 #define OutPutName ".core_bak"
+//定义默认背景和前景RGB颜色
 #define BF_Default_Color_RGB 158, 173, 134, 34, 32, 3
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
@@ -54,7 +56,7 @@ public:
     Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase);
     ~Tetris_Core();
     int Full_Line_Clean();
-    void Add_model(model *target, Key_dec *Key);
+    void Add_model(model *target, Key_det *Key);
     bool Can_move_down(int x, int y, model *target);
     bool Can_move_left(int x, int y, model *target);
     bool Can_move_right(int x, int y, model *target);
