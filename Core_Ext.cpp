@@ -10,7 +10,7 @@ using namespace std;
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
 //定义Linux/Unix上颜色兼容性模式，部分不支持ansi 24位色的终端可以修改这个选项来更改颜色方案
-bool compat_mode = true;
+bool compat_mode = false;
 void SetColorCompat(bool opt)
 {
     compat_mode = opt;
