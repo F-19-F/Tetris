@@ -1,6 +1,6 @@
 # Tetris
  
-This a terminal game Tetris.
+This a cross platform terminal game Tetris.
  
 ### How to build
  
