@@ -1,4 +1,4 @@
-/*这里是方块模型的实现，可以通过构造进行一系列*/
+/*这里是方块模型的实现，实际上想添加新的方块类型只需要在8X8的表中设定好位置和旋转中心即可*/
 #include <iostream>
 #include <cmath>
 #ifndef _WIN32
@@ -85,60 +85,6 @@ model::model(int mode)
     get_temp();
     Current_Print_Line=0;
 }
-//输出原始数据，以便调试--for debug
-void model::print_row(int mode)
-{
-    if (mode == 0)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            cout << i;
-            for (int j = 0; j < 8; j++)
-            {
-                if (base[j][i])
-                {
-                    cout << Print_base;
-                }
-                else
-                {
-                    cout << Print_base;
-                }
-            }
-            cout << endl;
-        }
-        cout << " ";
-        for (int i = 0; i < 8; i++)
-        {
-            cout << i;
-        }
-        cout << endl;
-    }
-    else
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            cout << i;
-            for (int j = 0; j < 4; j++)
-            {
-                if (temp[i][j])
-                {
-                    cout << Print_base;
-                }
-                else
-                {
-                    cout << " ";
-                }
-            }
-            cout << endl;
-        }
-        cout << " ";
-        for (int i = 0; i < 4; i++)
-        {
-            cout << i;
-        }
-        cout << endl;
-    }
-}
 //输出model形状,clean判定是否清除,true将清除(输出空格)
 void model::print_model(bool clean)
 {
@@ -167,6 +113,7 @@ void model::print_model(bool clean)
         moveleft(length);
     }
 }
+//用于模拟模型从顶部部分出来的效果
 void model::Part_to_temp(int n)
 {
     int r_temp=0;

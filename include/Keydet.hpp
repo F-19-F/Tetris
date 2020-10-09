@@ -19,11 +19,10 @@
 #define enter 13
 #endif
 #define esc 27
-//定义一个按键缓冲区，getkey得到的按键值存储在其中，方块下落时从中取出数据来响应
-class Key_dec
+class Key_det
 {
 public:
-    Key_dec();
+    Key_det();
     int psignal;
     void start();
     void stop();

@@ -1,4 +1,4 @@
-/*这是窗口大小发现的实现*/
+/*这是获取窗口大小的函数实现,以及定时监控窗口大小的Server*/
 #include <thread>
 #include <mutex>
 #include "include/Size.hpp"

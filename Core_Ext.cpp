@@ -1,4 +1,4 @@
-/*这是核心的一些高级函数，包括按键响应函数等*/
+/*这是核心的一些高级函数，包括按键响应Cilent、游戏消去动画等*/
 #include <iostream>
 #include <fstream>
 #include <thread>
@@ -9,6 +9,7 @@ using namespace std;
 #include "include/UI.hpp"
 #ifndef _WIN32
 #include "include/ANSI_control.hpp"
+//定义Linux/Unix上颜色兼容性模式，部分不支持ansi 24位色的终端可以修改这个选项来更改颜色方案
 bool compat_mode = true;
 void SetColorCompat(bool opt)
 {
@@ -204,7 +205,7 @@ void Tetris_Core::Del_SE()
     }
 }
 //signal为线程间同步变量，为0时代表需要一个下降的delay，为1时则正常运行,为2时代表线程已结束(或者用户主动退出)
-void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key, Tetris_Core *core, mutex *Lock, Tetris_UI *UI)
+void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_det *Key, Tetris_Core *core, mutex *Lock, Tetris_UI *UI)
 {
     bool suspend = false;
     int Key_Got;
@@ -373,7 +374,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_dec *Key,
     return;
 }
 //添加方块的函数
-void Tetris_Core::Add_model(model *target, Key_dec *Key)
+void Tetris_Core::Add_model(model *target, Key_det *Key)
 {
     mutex y_lock;//定义 C++线程同步锁，用于按键响应和主下落进程的同步 
     mutex Run_Lock;//子线程控制运行锁，用于控制子线程的退出

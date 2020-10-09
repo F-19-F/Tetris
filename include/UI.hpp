@@ -1,6 +1,6 @@
 #ifndef _TUI
 #define _TUI
-#include "Keydec.hpp"
+#include "Keydet.hpp"
 #include "Size.hpp"
 #define About "这是一个C++俄罗斯方块游戏\n具有以下特征\n   1.游戏运行过程中途退出再次打开自动恢复\n   2.大小自适应\n   3.实时按键反馈\
 \n \n By SWU-F19"
@@ -29,14 +29,14 @@ class Tetris_UI
 {
 private:
 	Tetris_Core *Core;
-	Key_dec *Key;
+	Key_det *Key;
 	Size Gsize;
 	
 public:
 	Size Win_Size;
 	bool size_changed;
 	model *NEXT;
-	Tetris_UI(Size Windows,Size Gsize ,Key_dec *key);
+	Tetris_UI(Size Windows,Size Gsize ,Key_det *key);
 	~Tetris_UI();
 	int UpdateSize();
 	int Dialog(char *option1,char *option2 ,char* TITLE,char* content);

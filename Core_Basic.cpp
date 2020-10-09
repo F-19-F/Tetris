@@ -1,9 +1,10 @@
+/*
+这里包含了游戏基本底层函数，能否左右移动，是Ext中方法调用的基础
+*/
 #include <iostream>
 #include "include/Tetris_Core.hpp"
 #include <memory.h>
 using namespace std;
-/*这是游戏底层的一些基本函数
-主要是对底层bool表的操作*/
 //初始化r表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
 Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase)
 {

@@ -30,10 +30,10 @@ int First_flag = 0; //用于游戏和信息显示通信
 mutex Run;
 Tetris_UI *_UI;
 void Size_detecter(bool *changed, mutex *Run_Lock);
-Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_dec *key)
+Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_det *key)
 {
-	thread Decter(Size_detecter, &size_changed, &Run);
-	Decter.detach();
+	thread Detecter(Size_detecter, &size_changed, &Run);
+	Detecter.detach();
 	Win_Size = Windows_Size;
 	this->Key = key;
 	this->Gsize = Gsize;
