@@ -1,6 +1,8 @@
 # Tetris
  
 This a cross platform terminal game Tetris.
+学年设计,学号222019603193110
+检查阶段暂时添加，避免误会。
  
 ### How to build
  
