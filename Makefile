@@ -22,9 +22,8 @@ include $(DEPEND)
 $(DEPEND) : $(DEPENDS)
 	@rm -rf $(DEPEND);cd $(OUTPATH);cat $(DEPENDS) >>../$(DEPEND)
 %.d : %.cpp
+	@test -d compiled || mkdir compiled
 	@rm -rf $(OUTPATH)$@;$(CXX) -MM $< > $(OUTPATH)$@.temp;cd $(OUTPATH);\
 	sed 's,$(patsubst %.cpp,%.o,$<),$(patsubst %.cpp,%.o,$<) $@ ,g' <$@.temp > $@;rm -rf $(patsubst %.cpp,%.d,$<).temp
-test :
-	echo $(SRC)
 clean:
-	rm -rf $(DEPEND);cd ./compiled;rm -rf $(OBJ) $(EXEC) $(DEPENDS)
+	rm -rf $(DEPEND);rm -rf compiled

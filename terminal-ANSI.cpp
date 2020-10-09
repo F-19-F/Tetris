@@ -1,9 +1,10 @@
-/*用于ANSI控制字符的封装*/
+/*ANSI控制字符的封装,这里主要是颜色部分，其它部分采用宏定义*/
 #ifndef _WIN32
 #include <iostream>
 #include "include/ANSI_control.hpp"
 #include "include/Tetris_Core.hpp"
 using namespace std;
+//设置背景色以及前景色
 void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
 {
     if (!compat_mode)
@@ -23,6 +24,7 @@ void Set_Default_color(int r, int g, int b, int f_r, int f_g, int f_b)
         cout.flush();
     }
 }
+//方便修改颜色设定的一些函数
 void color(int i)
 {
     if (!compat_mode)

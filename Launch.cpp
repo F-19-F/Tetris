@@ -1,3 +1,6 @@
+/*
+main入口
+*/
 #include <iostream>
 #include <thread>
 #ifndef _WIN32
@@ -21,7 +24,7 @@ int main()
 	Size Win_size = Getsize(); //获取窗口大小
 	_Gsize.r = 27;
 	_Gsize.c = 18;
-	Key_dec Key;
+	Key_det Key;
 	Tetris_UI UI(Win_size, _Gsize, &Key);
 	int Opt = 0;
 	Key.start();
