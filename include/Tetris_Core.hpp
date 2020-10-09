@@ -8,7 +8,7 @@
 #define MAX_TIME 500
 #define MAX_LEVEL 30
 #define OutPutName ".core_bak"
-#define BF_Default_Color_RGB 0, 0, 0, 158, 173, 134
+#define BF_Default_Color_RGB 158, 173, 134, 34, 32, 3
 //由于Windows的坐标机制不一样，故分出两种初始偏移量
 #ifdef _WIN32
 #define x_ini_offset -1
