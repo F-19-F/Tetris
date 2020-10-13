@@ -24,6 +24,6 @@ or add source files and head files into VidsualStudio(you can use msvc too)
 
 ## Authors
  
-* **F-19-F/F19/swutangtf**
+***F-19-F/F19/swutangtf**
 
 See also the list of [contributors](https://github.com/F-19-F/Tetris/contributors) who participated in this project.
