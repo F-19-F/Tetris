@@ -24,14 +24,35 @@
 	cout << "  |_|\\___|\\__|_|  |_|___/"; \
 	cursor_move(x, y);                     \
 	movedown(5);
+#define Act_Change            \
+	if (size_changed)         \
+	{                         \
+		hide_cursor();        \
+		UpdateSize();         \
+		size_changed = false; \
+		goto Sudden_Changed;  \
+	}
+#define Work_XY(offset_x, offset_y)    \
+	int x = Win_Size.c / 2 + offset_x; \
+	int y = offset_y;
+#define Update_XY(offset_x, offset_y) \
+	x = Win_Size.c / 2 + offset_x;    \
+	y = offset_y;
 extern Size _Gsize;
+struct Settings
+{
+	int Game_ini_Level;
+	bool Open_Se;
+	bool Open_Delay;
+	bool Open_Increase;
+};
 class Tetris_UI
 {
 private:
 	Tetris_Core *Core;
 	Key_det *Key;
 	Size Gsize;
-	
+	Settings cur_config;
 public:
 	Size Win_Size;
 	bool size_changed;
