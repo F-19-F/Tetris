@@ -18,13 +18,14 @@ using namespace std;
 #define Update_XY(offset_x, offset_y) \
 	x = Win_Size.c / 2 + offset_x;    \
 	y = offset_y;
-#define Act_Change if (size_changed)\
-		{\
-			hide_cursor();\
-			UpdateSize();\
-			size_changed=false;\
-			goto Sudden_Changed;\
-		}
+#define Act_Change            \
+	if (size_changed)         \
+	{                         \
+		hide_cursor();        \
+		UpdateSize();         \
+		size_changed = false; \
+		goto Sudden_Changed;  \
+	}
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
 mutex Run;
@@ -261,6 +262,17 @@ int Tetris_UI::Menu()
 	hide_cursor();
 	color(7);
 Sudden_Changed:
+	if(Is_Cofig_file((char *)OutPutName))
+	{
+		if (Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning)==1)
+		{
+			Start(true);
+		}
+		else
+		{
+			remove(OutPutName);
+		}
+	}
 	clean_screen();
 	Work_XY(-12, Win_Size.r / 5);
 	int Cur_Location_Y = y + 7;
@@ -358,10 +370,10 @@ int Tetris_UI::Infor()
 	}
 	color(7);
 	cursor_move(x, y);
-	cout << "分数:   " << Core->get_score()<<"  ";
+	cout << "分数:   " << Core->get_score() << "  ";
 	cout.flush();
 	cursor_move(x, y + 3);
-	cout << "等级:   " << Core->get_speed()<<"  ";
+	cout << "等级:   " << Core->get_speed() << "  ";
 	cout.flush();
 	cursor_move(x, y + 6);
 	cout << "下一个:";
@@ -372,14 +384,14 @@ int Tetris_UI::Infor()
 	First_flag = 1;
 	return 0;
 }
-int Tetris_UI::Start()
+int Tetris_UI::Start(bool Reco)
 {
 	int i;
 	int score;
 	model *a;
 	Work_XY(-22, 0);
 	srand((unsigned)time(NULL));
-	if (Is_Cofig_file((char *)OutPutName) && Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning) == 1)
+	if (Reco)
 	{
 		Core = Restore_Core((char *)OutPutName);
 		Core->Editoffset(x, y);

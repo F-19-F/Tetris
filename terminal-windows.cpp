@@ -4,7 +4,6 @@
 #include "include/WinAPI_control.hpp"
 #include "include/Model.hpp"
 COORD common;
-//记录每一次cout导致的光标位移
 COLORREF ColorTable_Back[16];
 CONSOLE_FONT_INFOEX cfi_bak;
 //获取当前的光标位置，以方便光标移动函数
