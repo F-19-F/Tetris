@@ -42,7 +42,7 @@ public:
 	int Dialog(char *option1,char *option2 ,char* TITLE,char* content);
 	int Menu();
 	int Setting();
-	int Start();
+	int Start(bool Reco);
 	int Over();
 	int Infor();
 	int Infor(bool Pause);
