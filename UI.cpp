@@ -12,19 +12,20 @@
 #include "include/UI.hpp"
 #include "include/Size.hpp"
 using namespace std;
-#define Work_XY(offset_x, offset_y)    \
-	int x = Win_Size.c / 2 + offset_x; \
-	int y = offset_y;
-#define Update_XY(offset_x, offset_y) \
-	x = Win_Size.c / 2 + offset_x;    \
-	y = offset_y;
-#define Act_Change            \
-	if (size_changed)         \
-	{                         \
-		hide_cursor();        \
-		UpdateSize();         \
-		size_changed = false; \
-		goto Sudden_Changed;  \
+#define TorF(Val_Name) (Val_Name ? "是" : "否")
+#define LR_cur(X_off, Y_off, len)            \
+	cursor_move(x + X_off, y + Y_off);       \
+	cout << "<";                             \
+	cursor_move(x + X_off + len, y + Y_off); \
+	cout << ">";
+#define ChSwtich(Val_Name) \
+	if (Val_Name)          \
+	{                      \
+		Val_Name = false;  \
+	}                      \
+	else                   \
+	{                      \
+		Val_Name = true;   \
 	}
 int Game_Level = 1;
 int First_flag = 0; //用于游戏和信息显示通信
@@ -38,6 +39,10 @@ Tetris_UI::Tetris_UI(Size Windows_Size, Size Gsize, Key_det *key)
 	Win_Size = Windows_Size;
 	this->Key = key;
 	this->Gsize = Gsize;
+	cur_config.Game_ini_Level = 1;
+	cur_config.Open_Delay = false;
+	cur_config.Open_Increase = true;
+	cur_config.Open_Se = true;
 	_UI = this;
 }
 Tetris_UI::~Tetris_UI()
@@ -47,199 +52,103 @@ Tetris_UI::~Tetris_UI()
 	this_thread::sleep_for(std::chrono::milliseconds(60));
 	Run.unlock();
 }
-int Tetris_UI::Dialog(char *option1, char *option2, char *TITLE, char *content)
-{
-	int num = 2;
-	int choose = 1;
-	//考虑到兼容性，故采用Buffer缓冲的方式输出内容
-	char Buffer[Win_Char_Buffer_Size];
-	int buf_point = 0;
-	int j = 0; //用来记录行数
-	int sum = 0;
-Sudden_Changed:
-	clean_screen();
-	if ((!option1) && (!option2))
-	{
-		return -1;
-	}
-	if (!option1)
-	{
-		num = -1;
-		choose = 2;
-	}
-	if (!option2)
-	{
-		num = 1;
-		choose = 1;
-	}
-	Work_XY(-12, Win_Size.r / 5);
-	Title;
-	Update_XY(-(int)(strlen(TITLE) / 2), Win_Size.r / 5 + 7);
-	cursor_move(x, y);
-	cout << TITLE;
-	Update_XY(-12, Win_Size.r / 5 + 9);
-	cursor_move(x, y);
-	for (int i = 0; i < (int)(strlen(content)); i++)
-	{
-		if (content[i] != '\n')
-		{
-			Buffer[buf_point++] = content[i];
-		}
-		else
-		{
-			++j;
-			cursor_move(x, y + j);
-			Buffer[buf_point] = '\0';
-			cout << Buffer;
-			memset(Buffer, 0, 100 * sizeof(char));
-			buf_point = 0;
-		}
-	}
-	cout.flush();
-	if (num != 2)
-	{
-		x += 10;
-		if (num == 1)
-		{
-			x -= strlen(option1) / 2;
-			cursor_move(x - 4, y + j + 4);
-			cout << "-->";
-			cursor_move(x, y + j + 4);
-			cout << option1;
-			cout.flush();
-		}
-		else
-		{
-			x -= strlen(option2) / 2;
-			cursor_move(x - 4, y + j + 4);
-			cout << "-->";
-			cursor_move(x, y + j + 4);
-			cout << option2;
-			cout.flush();
-		}
-	}
-	else
-	{
-		cursor_move(x, y + j + 4);
-		cout << "-->";
-		cursor_move(x + 4, y + j + 4);
-		cout << option1;
-		cursor_move(x + 24, y + j + 4);
-		cout << option2;
-		cout.flush();
-	}
-	while (1)
-	{
-		Key->MutexLock(true);
-		switch (Key->pop())
-		{
-		case left:
-			if (num == 2)
-			{
-				if (choose == 2)
-				{
-					choose = 1;
-					cursor_move(x + 20, y + j + 4);
-					cout << "   ";
-					cursor_move(x, y + j + 4);
-					cout << "-->";
-					cout.flush();
-				}
-			}
-			break;
-		case right:
-			if (num == 2)
-			{
-				if (choose == 1)
-				{
-					choose = 2;
-					cursor_move(x, y + j + 4);
-					cout << "   ";
-					cursor_move(x + 20, y + j + 4);
-					cout << "-->";
-					cout.flush();
-				}
-			}
-			break;
-		case space:
-		case enter:
-			Key->MutexLock(false);
-			return choose;
-			break;
-		default:
-			break;
-		}
-		Key->MutexLock(false);
-		Act_Change;
-		this_thread::sleep_for(std::chrono::milliseconds(60));
-	}
-	return 0;
-}
-int Tetris_UI::Over()
-{
-	color(1);
-Sudden_Changed:
-	clean_screen();
-	Work_XY(-25, Win_Size.r / 2 - 4);
-	cursor_move(x, y);
-	cout << "  ____                         ___";
-	cursor_move(x, y);
-	movedown(1);
-	cout << " / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __";
-	cursor_move(x, y);
-	movedown(2);
-	cout << "| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|";
-	cursor_move(x, y);
-	movedown(3);
-	cout << "| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |";
-	cursor_move(x, y);
-	movedown(4);
-	cout << " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|";
-	cursor_move(x, y);
-	movedown(5);
-	cout << "                      你的分数:" << Core->get_score();
-	cursor_move(x, y);
-	movedown(10);
-	cout << "                 按空格键退出当前界面";
-	cout.flush();
-	while (Key->pop() != space)
-	{
-		Act_Change;
-		this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-	return 0;
-}
 int Tetris_UI::Setting()
 {
+	int item = 0;
 	hide_cursor();
 Sudden_Changed:
 	clean_screen();
 	Work_XY(-12, Win_Size.r / 5);
 	Title;
 	int Cur_Location_Y = y + 12;
-	cursor_move(x + 8, y + 9);
-	cout << "游戏难度";
-	cursor_move(x + 11, y + 12);
-	cout << Game_Level << " ";
-	cursor_move(x + 8, y + 12);
-	cout << "<";
-	cursor_move(x + 15, y + 12);
-	cout << ">";
+	cursor_move(x + 8, y + 6);
+	cout << "游戏设置";
+	cursor_move(x + 6, y + 9);
+	cout << "起始下降速度";
+	LR_cur(8, 12, 7);
+	cursor_move(x + 4, y + 14);
+	cout << "是否开启消去动画";
+	LR_cur(8, 16, 7);
+	cursor_move(x + 11, y + 16);
+	cursor_move(x + 1, y + 18);
+	cout << "是否随分数自动提升速度";
+	LR_cur(8, 20, 7);
+	cursor_move(x + 11, y + 20);
+	cursor_move(x + 1, y + 22);
+	cout << "左右移动时是否延迟下落";
+	LR_cur(8, 24, 7);
+	cursor_move(x + 11, y + 24);
 	while (1)
 	{
 		Key->MutexLock(true);
 		switch (Key->pop())
 		{
-		case left:
-			if (Game_Level != 1)
+		case up:
+			cursor_move(x + 3, y + 12 + item * 4);
+			cout << "   ";
+			if (item == 0)
 			{
-				Game_Level--;
+				item = 3;
+			}
+			else
+			{
+				item--;
+			}
+			break;
+		case down:
+			cursor_move(x + 3, y + 12 + item * 4);
+			cout << "   ";
+			if (item == 3)
+			{
+				item = 0;
+			}
+			else
+			{
+				item++;
+			}
+			break;
+		case left:
+			switch (item)
+			{
+			case 0:
+				if (cur_config.Game_ini_Level != 1)
+				{
+					cur_config.Game_ini_Level--;
+				}
+				break;
+			case 1:
+				ChSwtich(cur_config.Open_Se);
+				break;
+			case 2:
+				ChSwtich(cur_config.Open_Increase);
+				break;
+			case 3:
+				ChSwtich(cur_config.Open_Delay);
+				break;
+			default:
+				break;
 			}
 			break;
 		case right:
-			if (Game_Level != MAX_LEVEL)
+			switch (item)
 			{
-				Game_Level++;
+			case 0:
+				if (cur_config.Game_ini_Level != MAX_LEVEL)
+				{
+					cur_config.Game_ini_Level++;
+				}
+				break;
+			case 1:
+				ChSwtich(cur_config.Open_Se);
+				break;
+			case 2:
+				ChSwtich(cur_config.Open_Increase);
+				break;
+			case 3:
+				ChSwtich(cur_config.Open_Delay);
+				break;
+			default:
+				break;
 			}
 			break;
 		case space:
@@ -249,95 +158,21 @@ Sudden_Changed:
 		}
 		Key->MutexLock(false);
 		cursor_move(x + 11, y + 12);
-		cout << Game_Level << " ";
+		cout << cur_config.Game_ini_Level << " ";
+		cursor_move(x + 11, y + 16);
+		cout << TorF(cur_config.Open_Se);
+		cursor_move(x + 11, y + 20);
+		cout << TorF(cur_config.Open_Increase);
+		cursor_move(x + 11, y + 24);
+		cout << TorF(cur_config.Open_Delay);
+		cursor_move(x + 3, y + 12 + item * 4);
+		cout << "-->";
 		cout.flush();
 		Act_Change;
 		this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
 	return 0;
-}
-int Tetris_UI::Menu()
-{
-	hide_cursor();
-	color(7);
-Sudden_Changed:
-	if (Is_Cofig_file((char *)OutPutName))
-	{
-		if (Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning) == 1)
-		{
-			Start(true);
-		}
-		else
-		{
-			remove(OutPutName);
-		}
-	}
-	clean_screen();
-	Work_XY(-12, Win_Size.r / 5);
-	int Cur_Location_Y = y + 7;
-	Title;
-	cursor_move(x + 8, y + 7);
-	cout << "开始游戏";
-	cursor_move(x + 8, y + 9);
-	cout << "游戏设置";
-	cursor_move(x + 8, y + 11);
-	cout << "玩法介绍";
-	cursor_move(x + 8, y + 13);
-	cout << "关于游戏";
-	cursor_move(x + 8, y + 15);
-	cout << "退出游戏";
-	cursor_move(x + 5, Cur_Location_Y);
-	cout << "-->";
-	while (1)
-	{
-		Key->MutexLock(true);
-		switch (Key->pop())
-		{
-		case up:
-			cursor_move(x + 5, Cur_Location_Y);
-			cout << "   ";
-			if (Cur_Location_Y == y + 7)
-			{
-				Cur_Location_Y = y + 15;
-			}
-			else
-			{
-				Cur_Location_Y -= 2;
-			}
-			cursor_move(x + 5, Cur_Location_Y);
-			cout << "-->";
-			break;
-		case down:
-			cursor_move(x + 5, Cur_Location_Y);
-			cout << "   ";
-			if (Cur_Location_Y == y + 15)
-			{
-				Cur_Location_Y = y + 7;
-			}
-			else
-			{
-				Cur_Location_Y += 2;
-			}
-			cursor_move(x + 5, Cur_Location_Y);
-			cout << "-->";
-			break;
-		case space:
-		case enter:
-			Key->MutexLock(false);
-			return ((Cur_Location_Y - y - 7) / 2);
-		case esc:
-			Key->MutexLock(false);
-			return 4;
-			break;
-		default:
-			break;
-		}
-		cout.flush();
-		Key->MutexLock(false);
-		Act_Change;
-		this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
 }
 int Tetris_UI::Infor(bool pause)
 {
@@ -423,7 +258,7 @@ int Tetris_UI::Start(bool Reco)
 	else
 	{
 		remove(OutPutName);
-		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, Game_Level, true);
+		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, cur_config.Game_ini_Level,cur_config.Open_Increase);
 	}
 	clean_screen();
 	cout.flush();
