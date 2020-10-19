@@ -2,6 +2,7 @@
 #define _TUI
 #include "Keydet.hpp"
 #include "Size.hpp"
+#include "Tetris_Core.hpp"
 #define About "这是一个C++俄罗斯方块游戏\n具有以下特征\n   1.游戏运行过程中途退出再次打开自动恢复\n   2.大小自适应\n   3.实时按键反馈\
 \n \n By SWU-F19"
 #define Warning "    检测到非正常结束\n    是否恢复上次游戏?\n"
@@ -39,13 +40,6 @@
 	x = Win_Size.c / 2 + offset_x;    \
 	y = offset_y;
 extern Size _Gsize;
-struct Settings
-{
-	int Game_ini_Level;
-	bool Open_Se;
-	bool Open_Delay;
-	bool Open_Increase;
-};
 class Tetris_UI
 {
 private:
