@@ -130,7 +130,10 @@ int Tetris_Core::Full_Line_Clean()
     }
     R_delete();
     Hide_Empty_Line();
-    Del_SE();
+    if (Show_SE)
+    {
+        Del_SE();
+    }
     Clean_base_cache(); //避免内存泄漏
     cursor_move(2 + x_offset, r + 2 - Before_min + y_offset);
     //清除多余行
@@ -210,7 +213,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_det *Key,
     bool suspend = false;
     int Key_Got;
     int temp_x;
-    bool Locked=false;
+    bool Locked = false;
     while (ctrl->try_lock())
     {
         ctrl->unlock();
@@ -343,16 +346,16 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_det *Key,
         }
         if (_UI->size_changed)
         {
-            _UI->size_changed=false;
-            temp_x=*x-(_Gsize.c/2+_UI->Win_Size.c/2-22);
+            _UI->size_changed = false;
+            temp_x = *x - (_Gsize.c / 2 + _UI->Win_Size.c / 2 - 22);
             _UI->UpdateSize();
             hide_cursor();
             if (Lock->try_lock())
             {
-                Locked=true;
+                Locked = true;
             }
-            core->Editoffset(_UI->Win_Size.c/2-22,0);
-            *x=_Gsize.c/2+_UI->Win_Size.c/2-22+temp_x;
+            core->Editoffset(_UI->Win_Size.c / 2 - 22, 0);
+            *x = _Gsize.c / 2 + _UI->Win_Size.c / 2 - 22 + temp_x;
             clean_screen();
             UI->Infor();
             core->Save_To_file((char *)OutPutName);
@@ -364,7 +367,7 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_det *Key,
             }
             if (Locked)
             {
-                Locked=false;
+                Locked = false;
                 Lock->unlock();
             }
         }
@@ -376,8 +379,8 @@ void Move(int *x, int *y, int *signal, model *target, mutex *ctrl, Key_det *Key,
 //添加方块的函数
 void Tetris_Core::Add_model(model *target, Key_det *Key)
 {
-    mutex y_lock;//定义 C++线程同步锁，用于按键响应和主下落进程的同步 
-    mutex Run_Lock;//子线程控制运行锁，用于控制子线程的退出
+    mutex y_lock;   //定义 C++线程同步锁，用于按键响应和主下落进程的同步
+    mutex Run_Lock; //子线程控制运行锁，用于控制子线程的退出
     int y = 2 + y_offset;
     int x = c / 2 + x_offset;
     int signal = 1;
@@ -406,10 +409,22 @@ void Tetris_Core::Add_model(model *target, Key_det *Key)
             if (target->All_Model())
             {
                 y++;
+                if (Move_Delay && signal == 0)
+                {
+                    signal = 1;
+                    y--;
+                }
             }
             else
             {
-                target->Part_to_temp(target->Current_Print_Line + 1);
+                if (!Move_Delay || signal != 0)
+                {
+                    target->Part_to_temp(target->Current_Print_Line + 1);
+                }
+                else
+                {
+                    signal = 1;
+                }
             }
             Print_Current;
             y_lock.unlock();

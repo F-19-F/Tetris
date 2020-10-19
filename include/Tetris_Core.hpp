@@ -21,6 +21,13 @@
 extern bool compat_mode;
 void SetColorCompat(bool opt);
 #endif
+struct Settings
+{
+	int Game_ini_Level;
+	bool Open_Se;
+	bool Open_Delay;
+	bool Open_Increase;
+};
 struct clean_base
 {
     int location;
@@ -37,6 +44,8 @@ private:
     long score;
     int Died_Line;
     bool Auto_Increase;
+    bool Show_SE;
+    bool Move_Delay;
     int x_offset;
     int y_offset;
     clean_base *temp;
@@ -53,7 +62,7 @@ public:
     int get_score();
     int get_speed();
     void Editoffset(int x_offset, int y_offset);
-    Tetris_Core(int r, int c, int x_offset, int y_offset, int speed, bool Auto_increase);
+    Tetris_Core(int r, int c, int x_offset, int y_offset, int speed, Settings config);
     ~Tetris_Core();
     int Full_Line_Clean();
     void Add_model(model *target, Key_det *Key);
