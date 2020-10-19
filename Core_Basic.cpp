@@ -6,14 +6,16 @@
 #include <memory.h>
 using namespace std;
 //初始化r表示能能够占有的行，c表示能够占用的列,speed为模型下落速度
-Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , bool Auto_increase)
+Tetris_Core::Tetris_Core(int r, int c, int x_offset, int y_offset, int speed , Settings config)
 {
     this->r = r - 2; //方便打印边框
     this->c = c - 2;
     this->x_offset = x_ini_offset + x_offset;
     this->y_offset = y_ini_offset + y_offset;
     over = false;
-    this->Auto_Increase=Auto_increase;
+    this->Auto_Increase=config.Open_Increase;
+    this->Show_SE=config.Open_Se;
+    this->Move_Delay=config.Open_Delay;
     score = 0;
     Died_Line=0;
     source = new bool[r * c]; //new []为分配多少个空间，（）为分配一个空间并初始化内容为()中的数

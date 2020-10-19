@@ -8,7 +8,6 @@
 #else
 #include "include/WinAPI_control.hpp"
 #endif
-#include "include/Tetris_Core.hpp"
 #include "include/UI.hpp"
 #include "include/Size.hpp"
 using namespace std;
@@ -258,7 +257,7 @@ int Tetris_UI::Start(bool Reco)
 	else
 	{
 		remove(OutPutName);
-		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, cur_config.Game_ini_Level,cur_config.Open_Increase);
+		Core = new Tetris_Core(Gsize.r, Gsize.c, x, y, cur_config.Game_ini_Level,cur_config);
 	}
 	clean_screen();
 	cout.flush();
