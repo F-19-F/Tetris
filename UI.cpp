@@ -262,9 +262,9 @@ int Tetris_UI::Menu()
 	hide_cursor();
 	color(7);
 Sudden_Changed:
-	if(Is_Cofig_file((char *)OutPutName))
+	if (Is_Cofig_file((char *)OutPutName))
 	{
-		if (Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning)==1)
+		if (Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning) == 1)
 		{
 			Start(true);
 		}
@@ -365,7 +365,7 @@ int Tetris_UI::Infor()
 	static model Last_model = *NEXT;
 	if (First_flag != 0)
 	{
-		cursor_move(x, y + 7);
+		cursor_move(x + 2, y + 9);
 		Last_model.print_model(true);
 	}
 	color(7);
@@ -378,7 +378,31 @@ int Tetris_UI::Infor()
 	cursor_move(x, y + 6);
 	cout << "下一个:";
 	cout.flush();
-	cursor_move(x, y + 7);
+	color(1);
+	for (int i = 0; i < 6; i++)
+	{
+		cursor_move(x + i, y + 7);
+		cout << "─" << endl;
+		cursor_move(x + i, y + 13);
+		cout << "─" << endl;
+	}
+	cursor_move(x - 1, y + 7);
+	cout << "┌";
+	cursor_move(x + 6, y + 7);
+	cout << "┐";
+	cursor_move(x - 1, y + 13);
+	cout << "└";
+	cursor_move(x + 6, y + 13);
+	cout << "┘";
+	for (int i = 1; i < 6; i++)
+	{
+		cursor_move(x - 1, y + 7 + i);
+		cout << "│";
+		cursor_move(x + 6, y + 7 + i);
+		cout << "│";
+	}
+	cout.flush(); //清空缓冲区
+	cursor_move(x + 2, y + 9);
 	NEXT->print_model(false);
 	Last_model = *NEXT;
 	First_flag = 1;
