@@ -33,7 +33,7 @@ int main()
 		switch (Opt)
 		{
 		case 0:
-			UI.Start(false);//启动一个新游戏，Menu会自动判断是否非正常关闭
+			UI.Start(false); //启动一个新游戏，Menu会自动判断是否非正常关闭
 			break;
 		case 1:
 			UI.Setting();
@@ -48,16 +48,16 @@ int main()
 			break;
 		}
 	}
-	//重置终端颜色
-	Reset_color();
-	clean_screen();
-	cout << "游戏已结束，按任意键退出游戏";
-	cout.flush();
 #ifdef _WIN32
 	Reset_Win_Required();
 #endif
-	Key.stop();
+	//重置终端颜色
+	Reset_color();
+	clean_screen();
 	//运行完后恢复光标显示
 	dishide_cusor();
+	cout << "游戏已结束，按任意键退出游戏";
+	cout.flush();
+	Key.stop();
 	return 0;
 }
