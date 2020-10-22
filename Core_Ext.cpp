@@ -535,6 +535,7 @@ void Direct_Hex(std::ostream &file, long address, int Length)
     }
     //将数据写入
     file.write((char *)bytes, Length);
+    delete [] bytes;
 }
 bool Close_Tail(char *path)
 {

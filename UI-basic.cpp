@@ -182,6 +182,7 @@ Sudden_Changed:
 		if (Dialog((char *)"是", (char *)"否", (char *)"警告", (char *)Warning) == 1)
 		{
 			Start(true);
+			color(7);
 		}
 		else
 		{
